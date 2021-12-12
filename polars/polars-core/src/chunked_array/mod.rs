@@ -201,7 +201,7 @@ impl<T> ChunkedArray<T> {
     }
 
     #[inline]
-    /// Return if any the chunks in this `[ChunkedArray]` have a validity bitmap.
+    /// Return if any chunk in this `[ChunkedArray]` has a validity bitmap.
     /// no bitmap means no null values.
     pub fn has_validity(&self) -> bool {
         self.iter_validities().any(|valid| valid.is_some())
@@ -824,6 +824,7 @@ pub(crate) mod test {
             &[None, Some("b"), Some("z")]
         );
     }
+
 
     #[test]
     fn reverse() {
