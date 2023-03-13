@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["NullStrategy",""]],"mod":[["explode",""],["groupby",""],["hash_join",""],["select",""]],"struct":[["DataFrame","A contiguous growable collection of `Series` that have the same length."],["RecordBatchIter",""]]});
+window.SIDEBAR_ITEMS = {"enum":["NullStrategy","UniqueKeepStrategy"],"mod":["explode","groupby","hash_join","row"],"struct":["DataFrame","PhysRecordBatchIter","RecordBatchIter"],"type":["ArrowChunk"]};

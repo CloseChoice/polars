@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["Pow",""]]});
+window.SIDEBAR_ITEMS = {"trait":["ArrayArithmetics"]};

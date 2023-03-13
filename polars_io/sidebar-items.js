@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["ScanAggregation",""]],"mod":[["csv","(De)serializing CSV files"],["csv_core",""],["mmap",""],["prelude",""]],"trait":[["ArrowReader",""],["PhysicalIoExpr",""],["SerReader",""],["SerWriter",""]]});
+window.SIDEBAR_ITEMS = {"fn":["is_cloud_url"],"mod":["csv","export","ipc","json","mmap","ndjson_core","parquet","predicates","prelude"],"struct":["RowCount"],"trait":["ArrowReader","SerReader","SerWriter","WriterFactory"]};

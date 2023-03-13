@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["changelog",""],["time","DateTime related functionality"]]});
+window.SIDEBAR_ITEMS = {"mod":["changelog"]};

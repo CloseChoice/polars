@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["temporal","macros that define kernels for extracting `week`, `weekday`, `year`, `hour` etc. from primitive arrays."]]});
+window.SIDEBAR_ITEMS = {};

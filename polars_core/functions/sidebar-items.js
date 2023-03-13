@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["argsort_by","Find the indexes that would sort these series in order of appearance. That means that the first `Series` will be used to determine the ordering until duplicates are found. Once duplicates are found, the next `Series` will be used and so on."],["cov","Compute the covariance between two columns."],["pearson_corr","Compute the pearson correlation between two columns."]]});
+window.SIDEBAR_ITEMS = {"fn":["arg_sort_by","concat_str","cov_f","cov_i","diag_concat_df","hor_concat_df","pearson_corr_f","pearson_corr_i"]};

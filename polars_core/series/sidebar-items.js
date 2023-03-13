@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["implementations",""],["ops",""],["unstable",""]],"struct":[["Series","Series"]],"trait":[["IntoSeries",""],["NamedFrom",""],["SeriesTrait",""]]});
+window.SIDEBAR_ITEMS = {"enum":["IsSorted"],"mod":["arithmetic","implementations","ops","unstable"],"struct":["Series","SeriesIter"],"trait":["IntoSeries","SeriesTrait"]};

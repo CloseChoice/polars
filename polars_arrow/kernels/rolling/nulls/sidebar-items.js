@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["rolling_max",""],["rolling_mean",""],["rolling_min",""],["rolling_sum",""],["rolling_var",""]]});
+window.SIDEBAR_ITEMS = {"fn":["is_reverse_sorted_max_nulls","rolling_max","rolling_mean","rolling_median","rolling_min","rolling_quantile","rolling_quantile_by_iter","rolling_std","rolling_sum","rolling_var"],"struct":["MaxWindow","MeanWindow","MinMaxWindow","MinWindow","SortedMinMax","StdWindow","SumWindow","VarWindow"],"trait":["RollingAggWindowNulls"]};

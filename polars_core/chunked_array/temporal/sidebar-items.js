@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["unix_time",""]],"mod":[["conversion",""],["timedelta",""]]});
+window.SIDEBAR_ITEMS = {"fn":["unix_time"],"mod":["conversion"]};

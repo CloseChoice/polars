@@ -1,1 +1,1 @@
-initSidebarItems({});
+window.SIDEBAR_ITEMS = {"mod":["dsl","frame","physical_plan","prelude","utils"]};
