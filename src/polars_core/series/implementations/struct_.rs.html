@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `polars/polars-core/src/series/implementations/struct_.rs`."><title>struct_.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../../../static.files/ayu-be46fdc453a55015.css"><script src="../../../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../polars_core/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `polars/polars-core/src/series/implementations/struct_.rs`."><title>struct_.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="polars_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (a77c55248 2023-05-06)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-6f6ffb5395b17c6e.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../polars_core/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -378,14 +378,10 @@
 <a href="#378" id="378">378</a>
 <a href="#379" id="379">379</a>
 <a href="#380" id="380">380</a>
-<a href="#381" id="381">381</a>
-<a href="#382" id="382">382</a>
-<a href="#383" id="383">383</a>
-<a href="#384" id="384">384</a>
-<a href="#385" id="385">385</a>
-</pre><pre class="rust"><code><span class="kw">use </span>std::any::Any;
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::any::Any;
 
 <span class="kw">use super</span>::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::hashing::series_to_hashes;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::series::private::{PrivateSeries, PrivateSeriesNumeric};
 
@@ -448,15 +444,23 @@
             .unwrap();
         <span class="prelude-val">Ok</span>(gb.take_groups())
     }
+
+    <span class="kw">fn </span>vec_hash(<span class="kw-2">&amp;</span><span class="self">self</span>, random_state: RandomState, buf: <span class="kw-2">&amp;mut </span>Vec&lt;u64&gt;) -&gt; PolarsResult&lt;()&gt; {
+        series_to_hashes(<span class="self">self</span>.<span class="number">0</span>.fields(), <span class="prelude-val">Some</span>(random_state), buf)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="kw">fn </span>vec_hash_combine(<span class="kw-2">&amp;</span><span class="self">self</span>, build_hasher: RandomState, hashes: <span class="kw-2">&amp;mut </span>[u64]) -&gt; PolarsResult&lt;()&gt; {
+        <span class="kw">for </span>field <span class="kw">in </span><span class="self">self</span>.<span class="number">0</span>.fields() {
+            field.vec_hash_combine(build_hasher.clone(), hashes)<span class="question-mark">?</span>;
+        }
+        <span class="prelude-val">Ok</span>(())
+    }
 }
 
 <span class="kw">impl </span>SeriesTrait <span class="kw">for </span>SeriesWrap&lt;StructChunked&gt; {
     <span class="kw">fn </span>rename(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str) {
         <span class="self">self</span>.<span class="number">0</span>.rename(name)
-    }
-
-    <span class="kw">fn </span>take_every(<span class="kw-2">&amp;</span><span class="self">self</span>, n: usize) -&gt; Series {
-        <span class="self">self</span>.<span class="number">0</span>.apply_fields(|s| s.take_every(n)).into_series()
     }
 
     <span class="kw">fn </span>has_validity(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
@@ -647,46 +651,17 @@
 
     <span class="doccomment">/// Count the null values.
     </span><span class="kw">fn </span>null_count(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
-        <span class="kw">if </span><span class="self">self
-            </span>.<span class="number">0
-            </span>.fields()
-            .iter()
-            .map(|s| s.null_count())
-            .sum::&lt;usize&gt;()
-            &gt; <span class="number">0
-        </span>{
-            <span class="kw">let </span><span class="kw-2">mut </span>null_count = <span class="number">0</span>;
-
-            <span class="kw">let </span>chunks_lens = <span class="self">self</span>.<span class="number">0</span>.fields()[<span class="number">0</span>].chunks().len();
-
-            <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..chunks_lens {
-                <span class="comment">// If all fields are null we count it as null
-                // so we bitand every chunk
-                </span><span class="kw">let </span><span class="kw-2">mut </span>validity_agg = <span class="prelude-val">None</span>;
-
-                <span class="kw">for </span>s <span class="kw">in </span><span class="self">self</span>.<span class="number">0</span>.fields() {
-                    <span class="kw">let </span>arr = <span class="kw-2">&amp;</span>s.chunks()[i];
-
-                    <span class="kw">match </span>(<span class="kw-2">&amp;</span>validity_agg, arr.validity()) {
-                        (<span class="prelude-val">Some</span>(agg), <span class="prelude-val">Some</span>(validity)) =&gt; validity_agg = <span class="prelude-val">Some</span>(validity.bitand(agg)),
-                        (<span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(validity)) =&gt; validity_agg = <span class="prelude-val">Some</span>(validity.clone()),
-                        <span class="kw">_ </span>=&gt; {}
-                    }
-                    <span class="kw">if let </span><span class="prelude-val">Some</span>(validity) = <span class="kw-2">&amp;</span>validity_agg {
-                        null_count += validity.unset_bits()
-                    }
-                }
-            }
-
-            null_count
-        } <span class="kw">else </span>{
-            <span class="number">0
-        </span>}
+        <span class="self">self</span>.<span class="number">0</span>.null_count()
     }
 
     <span class="doccomment">/// Get unique values in the Series.
     </span><span class="kw">fn </span>unique(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; PolarsResult&lt;Series&gt; {
-        <span class="kw">let </span>groups = <span class="self">self</span>.group_tuples(<span class="bool-val">true</span>, <span class="bool-val">false</span>);
+        <span class="comment">// this can called in aggregation, so this fast path can be worth a lot
+        </span><span class="kw">if </span><span class="self">self</span>.len() &lt; <span class="number">2 </span>{
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="number">0</span>.clone().into_series());
+        }
+        <span class="kw">let </span>main_thread = POOL.current_thread_index().is_none();
+        <span class="kw">let </span>groups = <span class="self">self</span>.group_tuples(main_thread, <span class="bool-val">false</span>);
         <span class="comment">// safety:
         // groups are in bounds
         </span><span class="prelude-val">Ok</span>(<span class="kw">unsafe </span>{ <span class="self">self</span>.<span class="number">0</span>.clone().into_series().agg_first(<span class="kw-2">&amp;</span>groups<span class="question-mark">?</span>) })
@@ -694,13 +669,28 @@
 
     <span class="doccomment">/// Get unique values in the Series.
     </span><span class="kw">fn </span>n_unique(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; PolarsResult&lt;usize&gt; {
-        <span class="kw">let </span>groups = <span class="self">self</span>.group_tuples(<span class="bool-val">true</span>, <span class="bool-val">false</span>)<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(groups.len())
+        <span class="comment">// this can called in aggregation, so this fast path can be worth a lot
+        </span><span class="kw">match </span><span class="self">self</span>.len() {
+            <span class="number">0 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="number">0</span>),
+            <span class="number">1 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="number">1</span>),
+            <span class="kw">_ </span>=&gt; {
+                <span class="comment">// TODO! try row encoding
+                </span><span class="kw">let </span>main_thread = POOL.current_thread_index().is_none();
+                <span class="kw">let </span>groups = <span class="self">self</span>.group_tuples(main_thread, <span class="bool-val">false</span>)<span class="question-mark">?</span>;
+                <span class="prelude-val">Ok</span>(groups.len())
+            }
+        }
     }
 
     <span class="doccomment">/// Get first indexes of unique values.
     </span><span class="kw">fn </span>arg_unique(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; PolarsResult&lt;IdxCa&gt; {
-        <span class="kw">let </span>groups = <span class="self">self</span>.group_tuples(<span class="bool-val">true</span>, <span class="bool-val">false</span>)<span class="question-mark">?</span>;
+        <span class="comment">// this can called in aggregation, so this fast path can be worth a lot
+        </span><span class="kw">if </span><span class="self">self</span>.len() == <span class="number">1 </span>{
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(IdxCa::new_vec(<span class="self">self</span>.name(), <span class="macro">vec!</span>[<span class="number">0 </span><span class="kw">as </span>IdxSize]));
+        }
+        <span class="comment">// TODO! try row encoding
+        </span><span class="kw">let </span>main_thread = POOL.current_thread_index().is_none();
+        <span class="kw">let </span>groups = <span class="self">self</span>.group_tuples(main_thread, <span class="bool-val">false</span>)<span class="question-mark">?</span>;
         <span class="kw">let </span>first = groups.take_group_firsts();
         <span class="prelude-val">Ok</span>(IdxCa::from_vec(<span class="self">self</span>.name(), first))
     }
@@ -736,10 +726,6 @@
         <span class="self">self</span>.<span class="number">0</span>.is_in(other)
     }
 
-    <span class="kw">fn </span>fmt_list(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
-        <span class="self">self</span>.<span class="number">0</span>.fmt_list()
-    }
-
     <span class="kw">fn </span>clone_inner(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Arc&lt;<span class="kw">dyn </span>SeriesTrait&gt; {
         Arc::new(SeriesWrap(Clone::clone(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>)))
     }
@@ -767,6 +753,9 @@
             .unwrap();
         StructChunked::new_unchecked(<span class="self">self</span>.name(), <span class="kw-2">&amp;</span>out.columns).into_series()
     }
+
+    <span class="kw">fn </span>arg_sort(<span class="kw-2">&amp;</span><span class="self">self</span>, options: SortOptions) -&gt; IdxCa {
+        <span class="self">self</span>.<span class="number">0</span>.arg_sort(options)
+    }
 }
-</code></pre></div>
-</section></main><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="polars_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.70.0-nightly (39f2657d1 2023-03-09)" data-search-js="search-8a59a8356673ec1f.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" ></div></body></html>
+</code></pre></div></section></main></body></html>

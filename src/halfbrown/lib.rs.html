@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/halfbrown-0.1.18/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../static.files/ayu-be46fdc453a55015.css"><script src="../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../halfbrown/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/halfbrown-0.2.1/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="halfbrown" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (a77c55248 2023-05-06)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-6f6ffb5395b17c6e.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../halfbrown/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1089,9 +1089,72 @@
 <a href="#1089" id="1089">1089</a>
 <a href="#1090" id="1090">1090</a>
 <a href="#1091" id="1091">1091</a>
-</pre><pre class="rust"><code><span class="doccomment">//! Halfbrown is a hashmap implementation that provides
+<a href="#1092" id="1092">1092</a>
+<a href="#1093" id="1093">1093</a>
+<a href="#1094" id="1094">1094</a>
+<a href="#1095" id="1095">1095</a>
+<a href="#1096" id="1096">1096</a>
+<a href="#1097" id="1097">1097</a>
+<a href="#1098" id="1098">1098</a>
+<a href="#1099" id="1099">1099</a>
+<a href="#1100" id="1100">1100</a>
+<a href="#1101" id="1101">1101</a>
+<a href="#1102" id="1102">1102</a>
+<a href="#1103" id="1103">1103</a>
+<a href="#1104" id="1104">1104</a>
+<a href="#1105" id="1105">1105</a>
+<a href="#1106" id="1106">1106</a>
+<a href="#1107" id="1107">1107</a>
+<a href="#1108" id="1108">1108</a>
+<a href="#1109" id="1109">1109</a>
+<a href="#1110" id="1110">1110</a>
+<a href="#1111" id="1111">1111</a>
+<a href="#1112" id="1112">1112</a>
+<a href="#1113" id="1113">1113</a>
+<a href="#1114" id="1114">1114</a>
+<a href="#1115" id="1115">1115</a>
+<a href="#1116" id="1116">1116</a>
+<a href="#1117" id="1117">1117</a>
+<a href="#1118" id="1118">1118</a>
+<a href="#1119" id="1119">1119</a>
+<a href="#1120" id="1120">1120</a>
+<a href="#1121" id="1121">1121</a>
+<a href="#1122" id="1122">1122</a>
+<a href="#1123" id="1123">1123</a>
+<a href="#1124" id="1124">1124</a>
+<a href="#1125" id="1125">1125</a>
+<a href="#1126" id="1126">1126</a>
+<a href="#1127" id="1127">1127</a>
+<a href="#1128" id="1128">1128</a>
+<a href="#1129" id="1129">1129</a>
+<a href="#1130" id="1130">1130</a>
+<a href="#1131" id="1131">1131</a>
+<a href="#1132" id="1132">1132</a>
+<a href="#1133" id="1133">1133</a>
+<a href="#1134" id="1134">1134</a>
+<a href="#1135" id="1135">1135</a>
+<a href="#1136" id="1136">1136</a>
+<a href="#1137" id="1137">1137</a>
+<a href="#1138" id="1138">1138</a>
+<a href="#1139" id="1139">1139</a>
+<a href="#1140" id="1140">1140</a>
+<a href="#1141" id="1141">1141</a>
+<a href="#1142" id="1142">1142</a>
+<a href="#1143" id="1143">1143</a>
+<a href="#1144" id="1144">1144</a>
+<a href="#1145" id="1145">1145</a>
+<a href="#1146" id="1146">1146</a>
+<a href="#1147" id="1147">1147</a>
+<a href="#1148" id="1148">1148</a>
+<a href="#1149" id="1149">1149</a>
+<a href="#1150" id="1150">1150</a>
+<a href="#1151" id="1151">1151</a>
+<a href="#1152" id="1152">1152</a>
+<a href="#1153" id="1153">1153</a>
+<a href="#1154" id="1154">1154</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! Halfbrown is a hashmap implementation that provides
 //! high performance for both small and large maps by
-//! dymaically switching between different backend.
+//! dynamically switching between different backend.
 //!
 //! The basic idea is that hash maps are expensive to
 //! insert and lookup for small numbers of entries
@@ -1111,15 +1174,15 @@
 
 </span><span class="attr">#![warn(unused_extern_crates)]
 #![cfg_attr(
-    feature = <span class="string">&quot;cargo-clippy&quot;</span>,
-    deny(
-        clippy::all,
-        clippy::unwrap_used,
-        clippy::unnecessary_unwrap,
-        clippy::pedantic
-    ),
-    <span class="comment">// We might want to revisit inline_always
-    </span>allow(clippy::module_name_repetitions, clippy::inline_always)
+feature = <span class="string">&quot;cargo-clippy&quot;</span>,
+deny(
+clippy::all,
+clippy::unwrap_used,
+clippy::unnecessary_unwrap,
+clippy::pedantic
+),
+<span class="comment">// We might want to revisit inline_always
+</span>allow(clippy::module_name_repetitions, clippy::inline_always)
 )]
 #![deny(missing_docs)]
 
@@ -1130,6 +1193,7 @@
 <span class="attr">#[cfg(feature = <span class="string">&quot;serde&quot;</span>)]
 </span><span class="kw">mod </span>serde;
 <span class="kw">mod </span>vecmap;
+<span class="kw">mod </span>vectypes;
 
 <span class="kw">pub use </span><span class="kw">crate</span>::entry::<span class="kw-2">*</span>;
 <span class="kw">pub use </span><span class="kw">crate</span>::iter::<span class="kw-2">*</span>;
@@ -1143,27 +1207,38 @@
 <span class="kw">use </span>std::ops::Index;
 
 <span class="attr">#[cfg(feature = <span class="string">&quot;fxhash&quot;</span>)]
-</span><span class="kw">pub use </span>fxhash::FxBuildHasher <span class="kw">as </span>DefaultHashBuilder;
+</span><span class="doccomment">/// Default hasher
+</span><span class="kw">pub type </span>DefaultHashBuilder = core::hash::BuildHasherDefault&lt;rustc_hash::FxHasher&gt;;
+
+<span class="kw">use </span><span class="kw">crate</span>::vectypes::VecDrain;
 <span class="attr">#[cfg(not(feature = <span class="string">&quot;fxhash&quot;</span>))]
 </span><span class="kw">pub use </span>hashbrown::hash_map::DefaultHashBuilder;
 
+<span class="doccomment">/// `SizedHashMap` implementation that alternates between a vector
+/// and a hashmap to improve performance for low key counts.
+/// With a standard upper vector limit of 32
+</span><span class="kw">pub type </span>HashMap&lt;K, V, S = DefaultHashBuilder&gt; = SizedHashMap&lt;K, V, S, <span class="number">32</span>&gt;;
+
 <span class="doccomment">/// Maximum nymber of elements before the representaiton is swapped from
 /// Vec to `HashMap`
-</span><span class="kw">pub const </span>VEC_LIMIT_UPPER: usize = <span class="number">32</span>;
 
-<span class="doccomment">/// `HashMap` implementation that alternates between a vector
-/// and a hashmap to improve performance for low key counts.
+/// `SizedHashMap` implementation that alternates between a vector
+/// and a hashmap to improve performance for low key counts. With a configurable upper vector limit
 </span><span class="attr">#[derive(Clone)]
-</span><span class="kw">pub struct </span>HashMap&lt;K, V, S = DefaultHashBuilder&gt;(HashMapInt&lt;K, V, S&gt;);
+</span><span class="kw">pub struct </span>SizedHashMap&lt;K, V, S = DefaultHashBuilder, <span class="kw">const </span>VEC_LIMIT_UPPER: usize = <span class="number">32</span>&gt;(
+    HashMapInt&lt;K, V, VEC_LIMIT_UPPER, S&gt;,
+);
 
-<span class="kw">impl</span>&lt;K, V, S: Default&gt; Default <span class="kw">for </span>HashMap&lt;K, V, S&gt; {
+<span class="kw">impl</span>&lt;K, V, S: Default, <span class="kw">const </span>VEC_LIMIT_UPPER: usize&gt; Default
+    <span class="kw">for </span>SizedHashMap&lt;K, V, S, VEC_LIMIT_UPPER&gt;
+{
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>(HashMapInt::default())
     }
 }
 
-<span class="kw">impl</span>&lt;K, V, S&gt; Debug <span class="kw">for </span>HashMap&lt;K, V, S&gt;
+<span class="kw">impl</span>&lt;K, V, S, <span class="kw">const </span>VEC_LIMIT_UPPER: usize&gt; Debug <span class="kw">for </span>SizedHashMap&lt;K, V, S, VEC_LIMIT_UPPER&gt;
 <span class="kw">where
     </span>K: Debug,
     V: Debug,
@@ -1174,20 +1249,19 @@
 }
 
 <span class="attr">#[derive(Clone)]
-</span><span class="kw">enum </span>HashMapInt&lt;K, V, S = DefaultHashBuilder&gt; {
+</span><span class="kw">enum </span>HashMapInt&lt;K, V, <span class="kw">const </span>N: usize, S = DefaultHashBuilder&gt; {
     Map(HashBrown&lt;K, V, S&gt;),
-    Vec(VecMap&lt;K, V, S&gt;),
-    <span class="prelude-val">None</span>,
+    Vec(VecMap&lt;K, V, N, S&gt;),
 }
 
-<span class="kw">impl</span>&lt;K, V, S: Default&gt; Default <span class="kw">for </span>HashMapInt&lt;K, V, S&gt; {
+<span class="kw">impl</span>&lt;K, V, <span class="kw">const </span>N: usize, S: Default&gt; Default <span class="kw">for </span>HashMapInt&lt;K, V, N, S&gt; {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::Vec(VecMap::default())
     }
 }
 
-<span class="kw">impl</span>&lt;K, V&gt; HashMap&lt;K, V, DefaultHashBuilder&gt; {
+<span class="kw">impl</span>&lt;K, V, <span class="kw">const </span>VEC_LIMIT_UPPER: usize&gt; SizedHashMap&lt;K, V, DefaultHashBuilder, VEC_LIMIT_UPPER&gt; {
     <span class="doccomment">/// Creates an empty `HashMap`.
     ///
     /// The hash map is initially created with a capacity of 0, so it will not allocate until it
@@ -1202,7 +1276,7 @@
     </span><span class="attr">#[inline]
     #[must_use]
     </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>(HashMapInt::Vec(VecMap::new()))
+        <span class="self">Self</span>::default()
     }
     <span class="doccomment">/// Creates an empty `HashMap` with the specified capacity.
     ///
@@ -1245,7 +1319,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;K, V, S&gt; HashMap&lt;K, V, S&gt; {
+<span class="kw">impl</span>&lt;K, V, S, <span class="kw">const </span>VEC_LIMIT_UPPER: usize&gt; SizedHashMap&lt;K, V, S, VEC_LIMIT_UPPER&gt; {
     <span class="doccomment">/// Creates an empty `HashMap` which will use the given hash builder to hash
     /// keys.
     ///
@@ -1318,7 +1392,6 @@
         <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; m.hasher(),
             HashMapInt::Vec(m) =&gt; m.hasher(),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
@@ -1340,7 +1413,6 @@
         <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; m.capacity(),
             HashMapInt::Vec(m) =&gt; m.capacity(),
-            HashMapInt::None =&gt; <span class="macro">unimplemented!</span>(),
         }
     }
 
@@ -1435,7 +1507,6 @@
         <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; IterInt::Map(m.iter()).into(),
             HashMapInt::Vec(m) =&gt; IterInt::Vec(m.iter()).into(),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
@@ -1466,7 +1537,6 @@
         <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; IterMutInt::Map(m.iter_mut()).into(),
             HashMapInt::Vec(m) =&gt; IterMutInt::Vec(m.iter_mut()).into(),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
@@ -1487,7 +1557,6 @@
         <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; m.len(),
             HashMapInt::Vec(m) =&gt; m.len(),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
@@ -1508,7 +1577,6 @@
         <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; m.is_empty(),
             HashMapInt::Vec(m) =&gt; m.is_empty(),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
@@ -1532,11 +1600,10 @@
     /// assert!(a.is_empty());
     /// ```
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>drain(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Drain&lt;K, V&gt; {
+    </span><span class="kw">pub fn </span>drain(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Drain&lt;K, V, VEC_LIMIT_UPPER&gt; {
         <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; Drain(DrainInt::Map(m.drain())),
             HashMapInt::Vec(m) =&gt; Drain(DrainInt::Vec(m.drain())),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
@@ -1558,12 +1625,11 @@
         <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; m.clear(),
             HashMapInt::Vec(m) =&gt; m.clear(),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 }
 
-<span class="kw">impl</span>&lt;K, V, S&gt; HashMap&lt;K, V, S&gt;
+<span class="kw">impl</span>&lt;K, V, S, <span class="kw">const </span>VEC_LIMIT_UPPER: usize&gt; SizedHashMap&lt;K, V, S, VEC_LIMIT_UPPER&gt;
 <span class="kw">where
     </span>K: Eq + Hash,
     S: BuildHasher,
@@ -1590,7 +1656,6 @@
         <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; m.reserve(additional),
             HashMapInt::Vec(m) =&gt; m.reserve(additional),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
     <span class="comment">/*
@@ -1616,7 +1681,6 @@
         match &amp;mut self.0 {
             HashMapInt::Map(m) =&gt; m.try_reserve(additional),
             HashMapInt::Vec(m) =&gt; m.try_reserve(additional),
-            HashMapInt::None =&gt; unreachable!(),
         }
     }
     */
@@ -1640,7 +1704,6 @@
         <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; m.shrink_to_fit(),
             HashMapInt::Vec(m) =&gt; m.shrink_to_fit(),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
@@ -1663,11 +1726,18 @@
     /// assert_eq!(letters[&amp;&#39;u&#39;], 1);
     /// assert_eq!(letters.get(&amp;&#39;y&#39;), None);
     /// ```
-    </span><span class="kw">pub fn </span>entry(<span class="kw-2">&amp;mut </span><span class="self">self</span>, key: K) -&gt; Entry&lt;K, V, S&gt; {
+    </span><span class="kw">pub fn </span>entry(<span class="kw-2">&amp;mut </span><span class="self">self</span>, key: K) -&gt; Entry&lt;K, V, VEC_LIMIT_UPPER, S&gt;
+    <span class="kw">where
+        </span>S: Default,
+    {
+        <span class="kw">if let </span>HashMapInt::Vec(m) = <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0 </span>{
+            <span class="kw">if </span>m.len() &gt;= VEC_LIMIT_UPPER {
+                <span class="self">self</span>.swap_backend_to_map();
+            }
+        }
         <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; m.entry(key).into(),
             HashMapInt::Vec(m) =&gt; m.entry(key).into(),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
@@ -1699,7 +1769,6 @@
         <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; m.get(k),
             HashMapInt::Vec(m) =&gt; m.get(k),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
@@ -1730,7 +1799,6 @@
         <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; m.contains_key(k),
             HashMapInt::Vec(m) =&gt; m.contains_key(k),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
@@ -1755,7 +1823,6 @@
     /// }
     /// assert_eq!(map[&amp;1], &quot;b&quot;);
     /// ```
-
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>get_mut&lt;Q&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, k: <span class="kw-2">&amp;</span>Q) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>V&gt;
     <span class="kw">where
@@ -1765,10 +1832,29 @@
         <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; m.get_mut(k),
             HashMapInt::Vec(m) =&gt; m.get_mut(k),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
+    <span class="kw">fn </span>swap_backend_to_map(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>hashbrown::HashMap&lt;K, V, S&gt;
+    <span class="kw">where
+        </span>S: Default,
+    {
+        <span class="self">self</span>.<span class="number">0 </span>= <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0 </span>{
+            HashMapInt::Vec(m) =&gt; {
+                <span class="kw">let </span>m1: HashBrown&lt;K, V, S&gt; = m.drain().collect();
+                HashMapInt::Map(m1)
+            }
+            HashMapInt::Map(<span class="kw">_</span>) =&gt; {
+                <span class="macro">unreachable!</span>()
+            }
+        };
 
+        <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0 </span>{
+            HashMapInt::Map(m) =&gt; m,
+            HashMapInt::Vec(<span class="kw">_</span>) =&gt; {
+                <span class="macro">unreachable!</span>()
+            }
+        }
+    }
     <span class="doccomment">/// Inserts a key-value pair into the map.
     ///
     /// If the map did not have this key present, [`None`] is returned.
@@ -1803,21 +1889,12 @@
             HashMapInt::Map(m) =&gt; m.insert(k, v),
             HashMapInt::Vec(m) =&gt; {
                 <span class="kw">if </span>m.len() &gt;= VEC_LIMIT_UPPER {
-                    <span class="kw">let </span>r;
-                    <span class="self">self</span>.<span class="number">0 </span>= <span class="kw">match </span>std::mem::replace(<span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0</span>, HashMapInt::None) {
-                        HashMapInt::Vec(<span class="kw-2">mut </span>m) =&gt; {
-                            <span class="kw">let </span><span class="kw-2">mut </span>m1: HashBrown&lt;K, V, S&gt; = m.drain().collect();
-                            r = m1.insert(k, v);
-                            HashMapInt::Map(m1)
-                        }
-                        <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
-                    };
-                    r
+                    <span class="kw">let </span>map = <span class="self">self</span>.swap_backend_to_map();
+                    map.insert(k, v)
                 } <span class="kw">else </span>{
                     m.insert(k, v)
                 }
             }
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
@@ -1850,7 +1927,6 @@
         <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; m.remove(k),
             HashMapInt::Vec(m) =&gt; m.remove(k),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
@@ -1883,7 +1959,6 @@
         <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; m.remove_entry(k),
             HashMapInt::Vec(m) =&gt; m.remove_entry(k),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
@@ -1909,7 +1984,6 @@
         <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; m.retain(f),
             HashMapInt::Vec(m) =&gt; m.retain(f),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
@@ -1917,13 +1991,22 @@
     /// map if keys are present - it&#39;s a fast way to build
     /// a new map when uniqueness is known ahead of time.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>insert_nocheck(<span class="kw-2">&amp;mut </span><span class="self">self</span>, k: K, v: V) {
+    </span><span class="kw">pub fn </span>insert_nocheck(<span class="kw-2">&amp;mut </span><span class="self">self</span>, k: K, v: V)
+    <span class="kw">where
+        </span>S: Default,
+    {
         <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(m) =&gt; {
                 m.insert_unique_unchecked(k, v);
             }
-            HashMapInt::Vec(m) =&gt; m.insert_nocheck(k, v),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
+            HashMapInt::Vec(m) =&gt; {
+                <span class="kw">if </span>m.len() &gt;= VEC_LIMIT_UPPER {
+                    <span class="kw">let </span>map = <span class="self">self</span>.swap_backend_to_map();
+                    map.insert_unique_unchecked(k, v);
+                } <span class="kw">else </span>{
+                    m.insert_nocheck(k, v);
+                }
+            }
         }
     }
 
@@ -1933,7 +2016,6 @@
         <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(_m) =&gt; <span class="bool-val">true</span>,
             HashMapInt::Vec(_m) =&gt; <span class="bool-val">false</span>,
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
@@ -1943,12 +2025,11 @@
         <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Map(_m) =&gt; <span class="bool-val">false</span>,
             HashMapInt::Vec(_m) =&gt; <span class="bool-val">true</span>,
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 }
 
-<span class="kw">impl</span>&lt;K, Q, V, S&gt; Index&lt;<span class="kw-2">&amp;</span>Q&gt; <span class="kw">for </span>HashMap&lt;K, V, S&gt;
+<span class="kw">impl</span>&lt;K, Q, V, S, <span class="kw">const </span>VEC_LIMIT_UPPER: usize&gt; Index&lt;<span class="kw-2">&amp;</span>Q&gt; <span class="kw">for </span>SizedHashMap&lt;K, V, S, VEC_LIMIT_UPPER&gt;
 <span class="kw">where
     </span>K: Eq + Hash + Borrow&lt;Q&gt;,
     Q: Eq + Hash + <span class="question-mark">?</span>Sized,
@@ -1967,7 +2048,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;K, V, S&gt; HashMap&lt;K, V, S&gt;
+<span class="kw">impl</span>&lt;K, V, S, <span class="kw">const </span>VEC_LIMIT_UPPER: usize&gt; SizedHashMap&lt;K, V, S, VEC_LIMIT_UPPER&gt;
 <span class="kw">where
     </span>S: BuildHasher,
     K: Eq + Hash,
@@ -2004,11 +2085,18 @@
     /// acting erratically, with two keys randomly masking each other. Implementations
     /// are free to assume this doesn&#39;t happen (within the limits of memory-safety).
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>raw_entry_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; RawEntryBuilderMut&lt;<span class="lifetime">&#39;_</span>, K, V, S&gt; {
+    </span><span class="kw">pub fn </span>raw_entry_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; RawEntryBuilderMut&lt;<span class="lifetime">&#39;_</span>, K, V, VEC_LIMIT_UPPER, S&gt;
+    <span class="kw">where
+        </span>S: Default,
+    {
+        <span class="kw">if let </span>HashMapInt::Vec(m) = <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0 </span>{
+            <span class="kw">if </span>m.len() &gt;= VEC_LIMIT_UPPER {
+                <span class="self">self</span>.swap_backend_to_map();
+            }
+        }
         <span class="kw">match </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Vec(m) =&gt; RawEntryBuilderMut::from(m.raw_entry_mut()),
             HashMapInt::Map(m) =&gt; RawEntryBuilderMut::from(m.raw_entry_mut()),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
@@ -2028,22 +2116,22 @@
     ///
     /// Immutable raw entries have very limited use; you might instead want `raw_entry_mut`.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>raw_entry(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RawEntryBuilder&lt;<span class="lifetime">&#39;_</span>, K, V, S&gt; {
+    </span><span class="kw">pub fn </span>raw_entry(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RawEntryBuilder&lt;<span class="lifetime">&#39;_</span>, K, V, VEC_LIMIT_UPPER, S&gt; {
         <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0 </span>{
             HashMapInt::Vec(m) =&gt; RawEntryBuilder::from(m.raw_entry()),
             HashMapInt::Map(m) =&gt; RawEntryBuilder::from(m.raw_entry()),
-            HashMapInt::None =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 }
 
-<span class="kw">impl</span>&lt;K, V, S, S1&gt; PartialEq&lt;HashMap&lt;K, V, S1&gt;&gt; <span class="kw">for </span>HashMap&lt;K, V, S&gt;
+<span class="kw">impl</span>&lt;K, V, S, S1, <span class="kw">const </span>VEC_LIMIT_UPPER1: usize, <span class="kw">const </span>VEC_LIMIT_UPPER2: usize&gt;
+    PartialEq&lt;SizedHashMap&lt;K, V, S1, VEC_LIMIT_UPPER1&gt;&gt; <span class="kw">for </span>SizedHashMap&lt;K, V, S, VEC_LIMIT_UPPER2&gt;
 <span class="kw">where
     </span>K: Eq + Hash,
     V: PartialEq,
     S1: BuildHasher,
 {
-    <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>HashMap&lt;K, V, S1&gt;) -&gt; bool {
+    <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>SizedHashMap&lt;K, V, S1, VEC_LIMIT_UPPER1&gt;) -&gt; bool {
         <span class="kw">if </span><span class="self">self</span>.len() != other.len() {
             <span class="kw">return </span><span class="bool-val">false</span>;
         }
@@ -2053,7 +2141,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;K, V, S&gt; Eq <span class="kw">for </span>HashMap&lt;K, V, S&gt;
+<span class="kw">impl</span>&lt;K, V, S, <span class="kw">const </span>VEC_LIMIT_UPPER: usize&gt; Eq <span class="kw">for </span>SizedHashMap&lt;K, V, S, VEC_LIMIT_UPPER&gt;
 <span class="kw">where
     </span>K: Eq + Hash,
     V: Eq,
@@ -2085,6 +2173,7 @@
 </span><span class="kw">pub struct </span>Values&lt;<span class="lifetime">&#39;a</span>, K, V&gt; {
     inner: Iter&lt;<span class="lifetime">&#39;a</span>, K, V&gt;,
 }
+
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K, V&gt; Iterator <span class="kw">for </span>Values&lt;<span class="lifetime">&#39;a</span>, K, V&gt; {
     <span class="kw">type </span>Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>V;
 
@@ -2118,14 +2207,14 @@
 }
 
 <span class="doccomment">/// Drains the map
-</span><span class="kw">pub struct </span>Drain&lt;<span class="lifetime">&#39;a</span>, K, V&gt;(DrainInt&lt;<span class="lifetime">&#39;a</span>, K, V&gt;);
+</span><span class="kw">pub struct </span>Drain&lt;<span class="lifetime">&#39;a</span>, K, V, <span class="kw">const </span>N: usize&gt;(DrainInt&lt;<span class="lifetime">&#39;a</span>, K, V, N&gt;);
 
-<span class="kw">enum </span>DrainInt&lt;<span class="lifetime">&#39;a</span>, K, V&gt; {
+<span class="kw">enum </span>DrainInt&lt;<span class="lifetime">&#39;a</span>, K, V, <span class="kw">const </span>N: usize&gt; {
     Map(hashbrown::hash_map::Drain&lt;<span class="lifetime">&#39;a</span>, K, V&gt;),
-    Vec(std::vec::Drain&lt;<span class="lifetime">&#39;a</span>, (K, V)&gt;),
+    Vec(VecDrain&lt;<span class="lifetime">&#39;a</span>, (K, V), N&gt;),
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K, V&gt; Iterator <span class="kw">for </span>Drain&lt;<span class="lifetime">&#39;a</span>, K, V&gt; {
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, K, V, <span class="kw">const </span>N: usize&gt; Iterator <span class="kw">for </span>Drain&lt;<span class="lifetime">&#39;a</span>, K, V, N&gt; {
     <span class="kw">type </span>Item = (K, V);
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
@@ -2142,32 +2231,69 @@
         }
     }
 }
+
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
+
+    <span class="kw">const </span>TEST_SIZE: usize = <span class="number">5</span>;
+
     <span class="attr">#[test]
     </span><span class="kw">fn </span>scale_up() {
-        <span class="kw">let </span><span class="kw-2">mut </span>v = HashMap::new();
+        <span class="kw">let </span><span class="kw-2">mut </span>v = SizedHashMap::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, TEST_SIZE&gt;::new();
         <span class="macro">assert!</span>(v.is_vec());
-        <span class="kw">for </span>i <span class="kw">in </span><span class="number">1</span>..<span class="number">33 </span>{
-            <span class="comment">// 32 entries
-            </span>v.insert(i, i);
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">1</span>..=TEST_SIZE {
+            v.insert(i, i);
             <span class="macro">assert!</span>(v.is_vec());
         }
-        v.insert(<span class="number">33</span>, <span class="number">33</span>);
+        v.insert(TEST_SIZE + <span class="number">1</span>, TEST_SIZE + <span class="number">1</span>);
         <span class="macro">assert!</span>(v.is_map());
     }
 
     <span class="attr">#[test]
+    </span><span class="kw">fn </span>scale_up_via_entry() {
+        <span class="kw">let </span><span class="kw-2">mut </span>v = SizedHashMap::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, TEST_SIZE&gt;::new();
+        <span class="macro">assert!</span>(v.is_vec());
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">1</span>..=TEST_SIZE {
+            v.entry(i).or_insert(i);
+            <span class="macro">assert!</span>(v.is_vec());
+        }
+        v.entry(TEST_SIZE + <span class="number">1</span>).or_insert(TEST_SIZE + <span class="number">1</span>);
+        <span class="macro">assert!</span>(v.is_map());
+    }
+
+    <span class="comment">// Test that the array backend does not panic if you push enough entries
+    </span><span class="attr">#[test]
+    #[cfg(feature = <span class="string">&quot;arraybackend&quot;</span>)]
+    </span><span class="kw">fn </span>scale_up_via_no_check() {
+        <span class="kw">let </span><span class="kw-2">mut </span>v = SizedHashMap::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, TEST_SIZE&gt;::new();
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">1</span>..TEST_SIZE + <span class="number">2 </span>{
+            v.insert_nocheck(i, i);
+        }
+    }
+
+    <span class="comment">// Test that the array backend does not panic if you push enough entries
+    </span><span class="attr">#[test]
+    #[cfg(feature = <span class="string">&quot;arraybackend&quot;</span>)]
+    </span><span class="kw">fn </span>scale_up_mixed() {
+        <span class="kw">let </span><span class="kw-2">mut </span>v = SizedHashMap::&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, TEST_SIZE&gt;::new();
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">1</span>..TEST_SIZE + <span class="number">1 </span>{
+            v.insert(<span class="number">3 </span>* i, i);
+            v.insert_nocheck(<span class="number">3 </span>* i + <span class="number">1</span>, i);
+            v.entry(<span class="number">3 </span>* i + <span class="number">2</span>).or_insert(i);
+        }
+    }
+
+    <span class="attr">#[test]
     </span><span class="kw">fn </span>str_key() {
-        <span class="kw">let </span><span class="kw-2">mut </span>v: HashMap&lt;String, u32&gt; = HashMap::new();
+        <span class="kw">let </span><span class="kw-2">mut </span>v: SizedHashMap&lt;String, u32&gt; = SizedHashMap::new();
         v.insert(<span class="string">&quot;hello&quot;</span>.to_owned(), <span class="number">42</span>);
         <span class="macro">assert_eq!</span>(v[<span class="string">&quot;hello&quot;</span>], <span class="number">42</span>);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>add_remove() {
-        <span class="kw">let </span><span class="kw-2">mut </span>v = HashMap::new();
+        <span class="kw">let </span><span class="kw-2">mut </span>v = SizedHashMap::&lt;i32, i32, <span class="kw">_</span>, <span class="number">32</span>&gt;::new();
         v.insert(<span class="number">1</span>, <span class="number">1</span>);
         v.insert(<span class="number">2</span>, <span class="number">2</span>);
         v.insert(<span class="number">3</span>, <span class="number">3</span>);
@@ -2180,5 +2306,4 @@
         <span class="macro">assert_eq!</span>(v.get(<span class="kw-2">&amp;</span><span class="number">3</span>), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="number">3</span>));
     }
 }
-</code></pre></div>
-</section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="halfbrown" data-themes="" data-resource-suffix="" data-rustdoc-version="1.70.0-nightly (39f2657d1 2023-03-09)" data-search-js="search-8a59a8356673ec1f.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" ></div></body></html>
+</code></pre></div></section></main></body></html>

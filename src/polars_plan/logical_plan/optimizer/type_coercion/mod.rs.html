@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `polars/polars-lazy/polars-plan/src/logical_plan/optimizer/type_coercion/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-be46fdc453a55015.css"><script src="../../../../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../polars_plan/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `polars/polars-lazy/polars-plan/src/logical_plan/optimizer/type_coercion/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="polars_plan" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (a77c55248 2023-05-06)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-6f6ffb5395b17c6e.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../polars_plan/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -524,7 +524,22 @@
 <a href="#524" id="524">524</a>
 <a href="#525" id="525">525</a>
 <a href="#526" id="526">526</a>
-</pre><pre class="rust"><code><span class="kw">mod </span>binary;
+<a href="#527" id="527">527</a>
+<a href="#528" id="528">528</a>
+<a href="#529" id="529">529</a>
+<a href="#530" id="530">530</a>
+<a href="#531" id="531">531</a>
+<a href="#532" id="532">532</a>
+<a href="#533" id="533">533</a>
+<a href="#534" id="534">534</a>
+<a href="#535" id="535">535</a>
+<a href="#536" id="536">536</a>
+<a href="#537" id="537">537</a>
+<a href="#538" id="538">538</a>
+<a href="#539" id="539">539</a>
+<a href="#540" id="540">540</a>
+<a href="#541" id="541">541</a>
+</pre></div><pre class="rust"><code><span class="kw">mod </span>binary;
 
 <span class="kw">use </span>std::borrow::Cow;
 
@@ -859,7 +874,7 @@
             } =&gt; <span class="kw">return </span>process_binary(expr_arena, lp_arena, lp_node, node_left, op, node_right),
             <span class="attr">#[cfg(feature = <span class="string">&quot;is_in&quot;</span>)]
             </span>AExpr::Function {
-                function: FunctionExpr::IsIn,
+                function: FunctionExpr::Boolean(BooleanFunction::IsIn),
                 <span class="kw-2">ref </span>input,
                 options,
             } =&gt; {
@@ -873,6 +888,8 @@
                 <span class="macro">unpack!</span>(early_escape(<span class="kw-2">&amp;</span>type_left, <span class="kw-2">&amp;</span>type_other));
 
                 <span class="kw">let </span>casted_expr = <span class="kw">match </span>(<span class="kw-2">&amp;</span>type_left, <span class="kw-2">&amp;</span>type_other) {
+                    <span class="comment">// types are equal, do nothing
+                    </span>(a, b) <span class="kw">if </span>a == b =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
                     <span class="comment">// cast both local and global string cache
                     // note that there might not yet be a rev
                     </span><span class="attr">#[cfg(feature = <span class="string">&quot;dtype-categorical&quot;</span>)]
@@ -883,6 +900,9 @@
                             <span class="comment">// does not matter
                             </span>strict: <span class="bool-val">false</span>,
                         }
+                    }
+                    (dt, DataType::Utf8) =&gt; {
+                        <span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;cannot compare {:?} to {:?} type in &#39;is_in&#39; operation&quot;</span>, dt, type_other)
                     }
                     (DataType::List(<span class="kw">_</span>), <span class="kw">_</span>) | (<span class="kw">_</span>, DataType::List(<span class="kw">_</span>)) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
                     <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-struct&quot;</span>)]
@@ -898,7 +918,7 @@
                             </span>strict: <span class="bool-val">false</span>,
                         }
                     }
-                    <span class="comment">// types are equal, do nothing
+                    <span class="comment">// do nothing
                     </span><span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
                 };
 
@@ -907,7 +927,7 @@
                 input[<span class="number">1</span>] = other_input;
 
                 <span class="prelude-val">Some</span>(AExpr::Function {
-                    function: FunctionExpr::IsIn,
+                    function: FunctionExpr::Boolean(BooleanFunction::IsIn),
                     input,
                     options,
                 })
@@ -955,7 +975,9 @@
                 <span class="kw">let </span>(self_ae, type_self) =
                     <span class="macro">unpack!</span>(get_aexpr_and_type(expr_arena, self_node, <span class="kw-2">&amp;</span>input_schema));
 
-                <span class="kw">let </span><span class="kw-2">mut </span>super_type = type_self.clone();
+                <span class="comment">// TODO remove: false positive
+                </span><span class="attr">#[allow(clippy::redundant_clone)]
+                </span><span class="kw">let </span><span class="kw-2">mut </span>super_type = type_self.clone();
                 <span class="kw">for </span>other <span class="kw">in </span><span class="kw-2">&amp;</span>input[<span class="number">1</span>..] {
                     <span class="kw">let </span>(other, type_other) =
                         <span class="macro">unpack!</span>(get_aexpr_and_type(expr_arena, <span class="kw-2">*</span>other, <span class="kw-2">&amp;</span>input_schema));
@@ -965,7 +987,15 @@
                         <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
                     }
                     <span class="kw">let </span>new_st = <span class="macro">unpack!</span>(get_supertype(<span class="kw-2">&amp;</span>super_type, <span class="kw-2">&amp;</span>type_other));
-                    super_type = modify_supertype(new_st, self_ae, other, <span class="kw-2">&amp;</span>type_self, <span class="kw-2">&amp;</span>type_other)
+                    <span class="kw">if </span>input.len() == <span class="number">2 </span>{
+                        <span class="comment">// modify_supertype is a bit more conservative of casting columns
+                        // to literals
+                        </span>super_type =
+                            modify_supertype(new_st, self_ae, other, <span class="kw-2">&amp;</span>type_self, <span class="kw-2">&amp;</span>type_other)
+                    } <span class="kw">else </span>{
+                        <span class="comment">// when dealing with more than 1 argument, we simply find the supertypes
+                        </span>super_type = new_st
+                    }
                 }
                 <span class="comment">// only cast if the type is not already the super type.
                 // this can prevent an expensive flattening and subsequent aggregation
@@ -1037,7 +1067,7 @@
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_categorical_utf8() {
         <span class="kw">let </span><span class="kw-2">mut </span>rules: Vec&lt;Box&lt;<span class="kw">dyn </span>OptimizationRule&gt;&gt; = <span class="macro">vec!</span>[Box::new(TypeCoercionRule {})];
-        <span class="kw">let </span>schema = Schema::from(<span class="macro">vec!</span>[Field::new(<span class="string">&quot;fruits&quot;</span>, DataType::Categorical(<span class="prelude-val">None</span>))]);
+        <span class="kw">let </span>schema = Schema::from_iter([Field::new(<span class="string">&quot;fruits&quot;</span>, DataType::Categorical(<span class="prelude-val">None</span>))]);
 
         <span class="kw">let </span>expr = col(<span class="string">&quot;fruits&quot;</span>).eq(lit(<span class="string">&quot;somestr&quot;</span>));
         <span class="kw">let </span>out = optimize_expr(expr.clone(), schema.clone(), <span class="kw-2">&amp;mut </span>rules);
@@ -1050,5 +1080,4 @@
         <span class="macro">assert_eq!</span>(out, expected);
     }
 }
-</code></pre></div>
-</section></main><div id="rustdoc-vars" data-root-path="../../../../../" data-static-root-path="../../../../../static.files/" data-current-crate="polars_plan" data-themes="" data-resource-suffix="" data-rustdoc-version="1.70.0-nightly (39f2657d1 2023-03-09)" data-search-js="search-8a59a8356673ec1f.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" ></div></body></html>
+</code></pre></div></section></main></body></html>

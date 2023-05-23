@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `polars/polars-time/src/windows/duration.rs`."><title>duration.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-be46fdc453a55015.css"><script src="../../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../polars_time/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `polars/polars-time/src/windows/duration.rs`."><title>duration.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="polars_time" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (a77c55248 2023-05-06)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-6f6ffb5395b17c6e.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../polars_time/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -664,31 +664,111 @@
 <a href="#664" id="664">664</a>
 <a href="#665" id="665">665</a>
 <a href="#666" id="666">666</a>
-</pre><pre class="rust"><code><span class="kw">use </span>std::cmp::Ordering;
+<a href="#667" id="667">667</a>
+<a href="#668" id="668">668</a>
+<a href="#669" id="669">669</a>
+<a href="#670" id="670">670</a>
+<a href="#671" id="671">671</a>
+<a href="#672" id="672">672</a>
+<a href="#673" id="673">673</a>
+<a href="#674" id="674">674</a>
+<a href="#675" id="675">675</a>
+<a href="#676" id="676">676</a>
+<a href="#677" id="677">677</a>
+<a href="#678" id="678">678</a>
+<a href="#679" id="679">679</a>
+<a href="#680" id="680">680</a>
+<a href="#681" id="681">681</a>
+<a href="#682" id="682">682</a>
+<a href="#683" id="683">683</a>
+<a href="#684" id="684">684</a>
+<a href="#685" id="685">685</a>
+<a href="#686" id="686">686</a>
+<a href="#687" id="687">687</a>
+<a href="#688" id="688">688</a>
+<a href="#689" id="689">689</a>
+<a href="#690" id="690">690</a>
+<a href="#691" id="691">691</a>
+<a href="#692" id="692">692</a>
+<a href="#693" id="693">693</a>
+<a href="#694" id="694">694</a>
+<a href="#695" id="695">695</a>
+<a href="#696" id="696">696</a>
+<a href="#697" id="697">697</a>
+<a href="#698" id="698">698</a>
+<a href="#699" id="699">699</a>
+<a href="#700" id="700">700</a>
+<a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
+<a href="#703" id="703">703</a>
+<a href="#704" id="704">704</a>
+<a href="#705" id="705">705</a>
+<a href="#706" id="706">706</a>
+<a href="#707" id="707">707</a>
+<a href="#708" id="708">708</a>
+<a href="#709" id="709">709</a>
+<a href="#710" id="710">710</a>
+<a href="#711" id="711">711</a>
+<a href="#712" id="712">712</a>
+<a href="#713" id="713">713</a>
+<a href="#714" id="714">714</a>
+<a href="#715" id="715">715</a>
+<a href="#716" id="716">716</a>
+<a href="#717" id="717">717</a>
+<a href="#718" id="718">718</a>
+<a href="#719" id="719">719</a>
+<a href="#720" id="720">720</a>
+<a href="#721" id="721">721</a>
+<a href="#722" id="722">722</a>
+<a href="#723" id="723">723</a>
+<a href="#724" id="724">724</a>
+<a href="#725" id="725">725</a>
+<a href="#726" id="726">726</a>
+<a href="#727" id="727">727</a>
+<a href="#728" id="728">728</a>
+<a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a>
+<a href="#732" id="732">732</a>
+<a href="#733" id="733">733</a>
+<a href="#734" id="734">734</a>
+<a href="#735" id="735">735</a>
+<a href="#736" id="736">736</a>
+<a href="#737" id="737">737</a>
+<a href="#738" id="738">738</a>
+<a href="#739" id="739">739</a>
+<a href="#740" id="740">740</a>
+<a href="#741" id="741">741</a>
+<a href="#742" id="742">742</a>
+<a href="#743" id="743">743</a>
+<a href="#744" id="744">744</a>
+<a href="#745" id="745">745</a>
+<a href="#746" id="746">746</a>
+<a href="#747" id="747">747</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>std::cmp::Ordering;
 <span class="kw">use </span>std::ops::Mul;
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-</span><span class="kw">use </span>chrono::LocalResult;
-<span class="kw">use </span>chrono::{
-    Datelike, NaiveDate, NaiveDateTime, NaiveTime, TimeZone <span class="kw">as </span>TimeZoneTrait, Timelike, Weekday,
-};
+<span class="kw">use </span>chrono::{Datelike, NaiveDate, NaiveDateTime, NaiveTime, Timelike, Weekday};
+<span class="kw">use </span>polars_arrow::error::polars_err;
 <span class="kw">use </span>polars_arrow::export::arrow::temporal_conversions::{
     timestamp_ms_to_datetime, timestamp_ns_to_datetime, timestamp_us_to_datetime, MILLISECONDS,
 };
+<span class="kw">use </span>polars_arrow::time_zone::PolarsTimeZone;
 <span class="kw">use </span>polars_core::export::arrow::temporal_conversions::MICROSECONDS;
-<span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-</span><span class="kw">use </span>polars_core::prelude::polars_bail;
 <span class="kw">use </span>polars_core::prelude::{
-    datetime_to_timestamp_ms, datetime_to_timestamp_ns, datetime_to_timestamp_us, PolarsResult,
+    datetime_to_timestamp_ms, datetime_to_timestamp_ns, datetime_to_timestamp_us, polars_bail,
+    PolarsResult,
 };
 <span class="kw">use </span>polars_core::utils::arrow::temporal_conversions::NANOSECONDS;
 <span class="attr">#[cfg(feature = <span class="string">&quot;serde&quot;</span>)]
 </span><span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="kw">use </span><span class="kw">super</span>::calendar::{
-    is_leap_year, last_day_of_month, NS_DAY, NS_HOUR, NS_MICROSECOND, NS_MILLISECOND, NS_MINUTE,
-    NS_SECOND, NS_WEEK,
+    NS_DAY, NS_HOUR, NS_MICROSECOND, NS_MILLISECOND, NS_MINUTE, NS_SECOND, NS_WEEK,
 };
+<span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
+</span><span class="kw">use </span><span class="kw">crate</span>::utils::{localize_datetime, unlocalize_datetime};
+<span class="kw">use </span><span class="kw">crate</span>::windows::calendar::{is_leap_year, last_day_of_month};
 
 <span class="attr">#[derive(Copy, Clone, Debug, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]
@@ -705,6 +785,9 @@
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) negative: bool,
     <span class="comment">// indicates if an integer string was passed. e.g. &quot;2i&quot;
     </span><span class="kw">pub </span>parsed_int: bool,
+    <span class="comment">// indicates if an offset to a non-existent date (e.g. 2022-02-29)
+    // should saturate (to 2022-02-28) as opposed to erroring
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) saturating: bool,
 }
 
 <span class="kw">impl </span>PartialOrd&lt;<span class="self">Self</span>&gt; <span class="kw">for </span>Duration {
@@ -719,29 +802,6 @@
     }
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>localize_datetime(
-    ndt: NaiveDateTime,
-    tz: <span class="kw-2">&amp;</span><span class="kw">impl </span>TimeZoneTrait,
-) -&gt; PolarsResult&lt;NaiveDateTime&gt; {
-    <span class="comment">// e.g. &#39;2021-01-01 03:00&#39; -&gt; &#39;2021-01-01 03:00CDT&#39;
-    </span><span class="kw">match </span>tz.from_local_datetime(<span class="kw-2">&amp;</span>ndt) {
-        LocalResult::Single(tz) =&gt; <span class="prelude-val">Ok</span>(tz.naive_utc()),
-        LocalResult::Ambiguous(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; {
-            <span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;ambiguous timestamps are not (yet) supported&quot;</span>)
-        }
-        LocalResult::None =&gt; {
-            <span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;non-existent timestamps are not (yet) supported&quot;</span>)
-        }
-    }
-}
-
-<span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-</span><span class="kw">fn </span>unlocalize_datetime(ndt: NaiveDateTime, tz: <span class="kw-2">&amp;</span><span class="kw">impl </span>TimeZoneTrait) -&gt; NaiveDateTime {
-    <span class="comment">// e.g. &#39;2021-01-01 03:00CDT&#39; -&gt; &#39;2021-01-01 03:00&#39;
-    </span>tz.from_utc_datetime(<span class="kw-2">&amp;</span>ndt).naive_local()
-}
-
 <span class="kw">impl </span>Duration {
     <span class="doccomment">/// Create a new integer size `Duration`
     </span><span class="kw">pub fn </span>new(fixed_slots: i64) -&gt; <span class="self">Self </span>{
@@ -752,24 +812,42 @@
             nsecs: fixed_slots.abs(),
             negative: fixed_slots &lt; <span class="number">0</span>,
             parsed_int: <span class="bool-val">true</span>,
+            saturating: <span class="bool-val">false</span>,
         }
     }
 
-    <span class="doccomment">/// 1ns // 1 nanosecond
-    /// 1us // 1 microsecond
-    /// 1ms // 1 millisecond
-    /// 1s  // 1 second
-    /// 1m  // 1 minute
-    /// 1h  // 1 hour
-    /// 1d  // 1 day
-    /// 1w  // 1 week
-    /// 1mo // 1 calendar month
-    /// 1y  // 1 calendar year
-    /// 1i  // 1 index value (only for {Int32, Int64} dtypes
+    <span class="doccomment">/// Parse a string into a `Duration`
     ///
-    /// 3d12h4m25s // 3 days, 12 hours, 4 minutes, and 25 seconds
+    /// Strings are composed of a sequence of number-unit pairs, such as `5d` (5 days). A string may begin with a minus
+    /// sign, in which case it is interpreted as a negative duration. Some examples:
     ///
-    /// # Panics if given str is incorrect
+    /// * `&quot;1y&quot;`: 1 year
+    /// * `&quot;-1w2d&quot;`: negative 1 week, 2 days (i.e. -9 days)
+    /// * `&quot;3d12h4m25s&quot;`: 3 days, 12 hours, 4 minutes, and 25 seconds
+    ///
+    /// Aside from a leading minus sign, strings may not contain any characters other than numbers and letters
+    /// (including whitespace).
+    ///
+    /// The available units, in ascending order of magnitude, are as follows:
+    ///
+    /// * `ns`: nanosecond
+    /// * `us`: microsecond
+    /// * `ms`: millisecond
+    /// * `s`:  second
+    /// * `m`:  minute
+    /// * `h`:  hour
+    /// * `d`:  day
+    /// * `w`:  week
+    /// * `mo`: calendar month
+    /// * `y`:  calendar year
+    /// * `i`:  index value (only for {Int32, Int64} dtypes)
+    ///
+    /// Suffix with `&quot;_saturating&quot;` to indicate that dates too large for
+    /// their month should saturate at the largest date (e.g. 2022-02-29 -&gt; 2022-02-28)
+    /// instead of erroring.
+    ///
+    /// # Panics
+    /// If the given str is invalid for any reason.
     </span><span class="kw">pub fn </span>parse(duration: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>num_minus_signs = duration.matches(<span class="string">&#39;-&#39;</span>).count();
         <span class="kw">if </span>num_minus_signs &gt; <span class="number">1 </span>{
@@ -783,8 +861,14 @@
         <span class="kw">let </span><span class="kw-2">mut </span>weeks = <span class="number">0</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>days = <span class="number">0</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>months = <span class="number">0</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>iter = duration.char_indices();
         <span class="kw">let </span>negative = duration.starts_with(<span class="string">&#39;-&#39;</span>);
+        <span class="kw">let </span>(saturating, <span class="kw-2">mut </span>iter) = <span class="kw">match </span>duration.ends_with(<span class="string">&quot;_saturating&quot;</span>) {
+            <span class="bool-val">true </span>=&gt; (
+                <span class="bool-val">true</span>,
+                duration[..duration.len() - <span class="string">&quot;_saturating&quot;</span>.len()].char_indices(),
+            ),
+            <span class="bool-val">false </span>=&gt; (<span class="bool-val">false</span>, duration.char_indices()),
+        };
         <span class="kw">let </span><span class="kw-2">mut </span>start = <span class="number">0</span>;
 
         <span class="comment">// skip the &#39;-&#39; char
@@ -798,7 +882,9 @@
         <span class="kw">let </span><span class="kw-2">mut </span>unit = String::with_capacity(<span class="number">2</span>);
         <span class="kw">while let </span><span class="prelude-val">Some</span>((i, <span class="kw-2">mut </span>ch)) = iter.next() {
             <span class="kw">if </span>!ch.is_ascii_digit() {
-                <span class="kw">let </span>n = duration[start..i].parse::&lt;i64&gt;().unwrap();
+                <span class="kw">let </span>n = duration[start..i]
+                    .parse::&lt;i64&gt;()
+                    .expect(<span class="string">&quot;expected an integer in the duration string&quot;</span>);
 
                 <span class="kw">loop </span>{
                     <span class="kw">if </span>ch.is_ascii_alphabetic() {
@@ -829,7 +915,9 @@
                     <span class="string">&quot;h&quot; </span>=&gt; nsecs += n * NS_HOUR,
                     <span class="string">&quot;d&quot; </span>=&gt; days += n,
                     <span class="string">&quot;w&quot; </span>=&gt; weeks += n,
-                    <span class="string">&quot;mo&quot; </span>=&gt; months += n,
+                    <span class="string">&quot;mo&quot; </span>=&gt; {
+                        months += n
+                    }
                     <span class="string">&quot;y&quot; </span>=&gt; months += n * <span class="number">12</span>,
                     <span class="comment">// we will read indexes as nanoseconds
                     </span><span class="string">&quot;i&quot; </span>=&gt; {
@@ -848,6 +936,7 @@
             months: months.abs(),
             negative,
             parsed_int,
+            saturating,
         }
     }
 
@@ -914,6 +1003,7 @@
             nsecs,
             negative,
             parsed_int: <span class="bool-val">false</span>,
+            saturating: <span class="bool-val">false</span>,
         }
     }
 
@@ -927,6 +1017,7 @@
             nsecs: <span class="number">0</span>,
             negative,
             parsed_int: <span class="bool-val">false</span>,
+            saturating: <span class="bool-val">false</span>,
         }
     }
 
@@ -940,6 +1031,7 @@
             nsecs: <span class="number">0</span>,
             negative,
             parsed_int: <span class="bool-val">false</span>,
+            saturating: <span class="bool-val">false</span>,
         }
     }
 
@@ -953,6 +1045,7 @@
             nsecs: <span class="number">0</span>,
             negative,
             parsed_int: <span class="bool-val">false</span>,
+            saturating: <span class="bool-val">false</span>,
         }
     }
 
@@ -1018,47 +1111,92 @@
     </span><span class="kw">pub fn </span>truncate_impl&lt;F, G, J&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         t: i64,
+        tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;,
         nsecs_to_unit: F,
         timestamp_to_datetime: G,
         datetime_to_timestamp: J,
-    ) -&gt; i64
+    ) -&gt; PolarsResult&lt;i64&gt;
     <span class="kw">where
         </span>F: Fn(i64) -&gt; i64,
         G: Fn(i64) -&gt; NaiveDateTime,
         J: Fn(NaiveDateTime) -&gt; i64,
     {
         <span class="kw">match </span>(<span class="self">self</span>.months, <span class="self">self</span>.weeks, <span class="self">self</span>.days, <span class="self">self</span>.nsecs) {
-            (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;duration may not be zero&quot;</span>),
+            (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>) =&gt; <span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;duration cannot be zero&quot;</span>),
             <span class="comment">// truncate by ns/us/ms
             </span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="kw">_</span>) =&gt; {
+                <span class="kw">let </span>t = <span class="kw">match </span>tz {
+                    <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
+                    </span><span class="prelude-val">Some</span>(tz) =&gt; {
+                        datetime_to_timestamp(unlocalize_datetime(timestamp_to_datetime(t), tz))
+                    }
+                    <span class="kw">_ </span>=&gt; t,
+                };
                 <span class="kw">let </span>duration = nsecs_to_unit(<span class="self">self</span>.nsecs);
                 <span class="kw">let </span><span class="kw-2">mut </span>remainder = t % duration;
                 <span class="kw">if </span>remainder &lt; <span class="number">0 </span>{
                     remainder += duration
                 }
-                t - remainder
+                <span class="kw">match </span>tz {
+                    <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
+                    </span><span class="prelude-val">Some</span>(tz) =&gt; <span class="prelude-val">Ok</span>(datetime_to_timestamp(localize_datetime(
+                        timestamp_to_datetime(t - remainder),
+                        tz,
+                    )<span class="question-mark">?</span>)),
+                    <span class="kw">_ </span>=&gt; <span class="prelude-val">Ok</span>(t - remainder),
+                }
             }
             <span class="comment">// truncate by weeks
             </span>(<span class="number">0</span>, <span class="kw">_</span>, <span class="number">0</span>, <span class="number">0</span>) =&gt; {
-                <span class="kw">let </span>dt = timestamp_to_datetime(t).date();
+                <span class="kw">let </span>dt = <span class="kw">match </span>tz {
+                    <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
+                    </span><span class="prelude-val">Some</span>(tz) =&gt; unlocalize_datetime(timestamp_to_datetime(t), tz).date(),
+                    <span class="kw">_ </span>=&gt; timestamp_to_datetime(t).date(),
+                };
                 <span class="kw">let </span>week_timestamp = dt.week(Weekday::Mon);
                 <span class="kw">let </span>first_day_of_week =
                     week_timestamp.first_day() - chrono::Duration::weeks(<span class="self">self</span>.weeks - <span class="number">1</span>);
-
-                datetime_to_timestamp(first_day_of_week.and_time(NaiveTime::default()))
+                <span class="kw">match </span>tz {
+                    <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
+                    </span><span class="prelude-val">Some</span>(tz) =&gt; <span class="prelude-val">Ok</span>(datetime_to_timestamp(localize_datetime(
+                        first_day_of_week.and_time(NaiveTime::default()),
+                        tz,
+                    )<span class="question-mark">?</span>)),
+                    <span class="kw">_ </span>=&gt; <span class="prelude-val">Ok</span>(datetime_to_timestamp(
+                        first_day_of_week.and_time(NaiveTime::default()),
+                    )),
+                }
             }
             <span class="comment">// truncate by days
             </span>(<span class="number">0</span>, <span class="number">0</span>, <span class="kw">_</span>, <span class="number">0</span>) =&gt; {
+                <span class="kw">let </span>t = <span class="kw">match </span>tz {
+                    <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
+                    </span><span class="prelude-val">Some</span>(tz) =&gt; {
+                        datetime_to_timestamp(unlocalize_datetime(timestamp_to_datetime(t), tz))
+                    }
+                    <span class="kw">_ </span>=&gt; t,
+                };
                 <span class="kw">let </span>duration = <span class="self">self</span>.days * nsecs_to_unit(NS_DAY);
                 <span class="kw">let </span><span class="kw-2">mut </span>remainder = t % duration;
                 <span class="kw">if </span>remainder &lt; <span class="number">0 </span>{
                     remainder += duration
                 }
-                t - remainder
+                <span class="kw">match </span>tz {
+                    <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
+                    </span><span class="prelude-val">Some</span>(tz) =&gt; <span class="prelude-val">Ok</span>(datetime_to_timestamp(localize_datetime(
+                        timestamp_to_datetime(t - remainder),
+                        tz,
+                    )<span class="question-mark">?</span>)),
+                    <span class="kw">_ </span>=&gt; <span class="prelude-val">Ok</span>(t - remainder),
+                }
             }
             <span class="comment">// truncate by months
             </span>(<span class="kw">_</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>) =&gt; {
-                <span class="kw">let </span>ts = timestamp_to_datetime(t);
+                <span class="kw">let </span>ts = <span class="kw">match </span>tz {
+                    <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
+                    </span><span class="prelude-val">Some</span>(tz) =&gt; unlocalize_datetime(timestamp_to_datetime(t), tz),
+                    <span class="kw">_ </span>=&gt; timestamp_to_datetime(t),
+                };
                 <span class="kw">let </span>(year, month) = (ts.year(), ts.month());
 
                 <span class="comment">// determine the total number of months and truncate
@@ -1070,18 +1208,27 @@
                 <span class="comment">// recreate a new time from the year and month combination
                 </span><span class="kw">let </span>(year, month) = ((total / <span class="number">12</span>), ((total % <span class="number">12</span>) + <span class="number">1</span>) <span class="kw">as </span>u32);
 
-                <span class="kw">let </span>dt = new_datetime(year, month, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);
-                datetime_to_timestamp(dt)
+                <span class="kw">let </span>dt = new_datetime(year, month, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>).ok_or(<span class="macro">polars_err!</span>(
+                    ComputeError: <span class="macro">format!</span>(<span class="string">&quot;date &#39;{}-{}-1&#39; does not exist&quot;</span>, year, month)
+                ))<span class="question-mark">?</span>;
+                <span class="kw">match </span>tz {
+                    <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
+                    </span><span class="prelude-val">Some</span>(tz) =&gt; <span class="prelude-val">Ok</span>(datetime_to_timestamp(localize_datetime(dt, tz)<span class="question-mark">?</span>)),
+                    <span class="kw">_ </span>=&gt; <span class="prelude-val">Ok</span>(datetime_to_timestamp(dt)),
+                }
             }
-            <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;duration may not mix month, weeks and nanosecond units&quot;</span>),
+            <span class="kw">_ </span>=&gt; {
+                <span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;duration may not mix month, weeks and nanosecond units&quot;</span>)
+            }
         }
     }
 
     <span class="comment">// Truncate the given ns timestamp by the window boundary.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>truncate_ns(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64) -&gt; i64 {
+    </span><span class="kw">pub fn </span>truncate_ns(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;) -&gt; PolarsResult&lt;i64&gt; {
         <span class="self">self</span>.truncate_impl(
             t,
+            tz,
             |nsecs| nsecs,
             timestamp_ns_to_datetime,
             datetime_to_timestamp_ns,
@@ -1090,9 +1237,10 @@
 
     <span class="comment">// Truncate the given ns timestamp by the window boundary.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>truncate_us(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64) -&gt; i64 {
+    </span><span class="kw">pub fn </span>truncate_us(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;) -&gt; PolarsResult&lt;i64&gt; {
         <span class="self">self</span>.truncate_impl(
             t,
+            tz,
             |nsecs| nsecs / <span class="number">1000</span>,
             timestamp_us_to_datetime,
             datetime_to_timestamp_us,
@@ -1101,9 +1249,10 @@
 
     <span class="comment">// Truncate the given ms timestamp by the window boundary.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>truncate_ms(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64) -&gt; i64 {
+    </span><span class="kw">pub fn </span>truncate_ms(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;) -&gt; PolarsResult&lt;i64&gt; {
         <span class="self">self</span>.truncate_impl(
             t,
+            tz,
             |nsecs| nsecs / <span class="number">1_000_000</span>,
             timestamp_ms_to_datetime,
             datetime_to_timestamp_ms,
@@ -1113,7 +1262,7 @@
     <span class="kw">fn </span>add_impl_month_week_or_day&lt;F, G, J&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         t: i64,
-        tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>TimeZoneTrait&gt;,
+        tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;,
         nsecs_to_unit: F,
         timestamp_to_datetime: G,
         datetime_to_timestamp: J,
@@ -1156,14 +1305,18 @@
                 month += <span class="number">12</span>;
             }
 
-            <span class="comment">// Normalize the day if we are past the end of the month.
-            </span><span class="kw">let </span><span class="kw-2">mut </span>last_day_of_month = last_day_of_month(month);
-            <span class="kw">if </span>month == (chrono::Month::February.number_from_month() <span class="kw">as </span>i32) &amp;&amp; is_leap_year(year) {
-                last_day_of_month += <span class="number">1</span>;
-            }
+            <span class="kw">if </span>d.saturating {
+                <span class="comment">// Normalize the day if we are past the end of the month.
+                </span><span class="kw">let </span><span class="kw-2">mut </span>last_day_of_month = last_day_of_month(month);
+                <span class="kw">if </span>month == (chrono::Month::February.number_from_month() <span class="kw">as </span>i32)
+                    &amp;&amp; is_leap_year(year)
+                {
+                    last_day_of_month += <span class="number">1</span>;
+                }
 
-            <span class="kw">if </span>day &gt; last_day_of_month {
-                day = last_day_of_month
+                <span class="kw">if </span>day &gt; last_day_of_month {
+                    day = last_day_of_month
+                }
             }
 
             <span class="comment">// Retrieve the original time and construct a data
@@ -1172,7 +1325,17 @@
             <span class="kw">let </span>minute = ts.minute();
             <span class="kw">let </span>sec = ts.second();
             <span class="kw">let </span>nsec = ts.nanosecond();
-            <span class="kw">let </span>dt = new_datetime(year, month <span class="kw">as </span>u32, day, hour, minute, sec, nsec);
+            <span class="kw">let </span>dt = new_datetime(year, month <span class="kw">as </span>u32, day, hour, minute, sec, nsec).ok_or(
+                <span class="macro">polars_err!</span>(
+                    ComputeError: <span class="macro">format!</span>(
+                        <span class="string">&quot;cannot advance &#39;{}&#39; by {} month(s). \
+                         If you were trying to get the last day of each month, you may want to try `.dt.month_end` \
+                         or append \&quot;_saturating\&quot; to your duration string.&quot;</span>,
+                         ts,
+                         <span class="kw">if </span>d.negative {-d.months} <span class="kw">else </span>{d.months}
+                    )
+                ),
+            )<span class="question-mark">?</span>;
             new_t = <span class="kw">match </span>tz {
                 <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
                 </span><span class="prelude-val">Some</span>(tz) =&gt; datetime_to_timestamp(localize_datetime(dt, tz)<span class="question-mark">?</span>),
@@ -1213,7 +1376,7 @@
         <span class="prelude-val">Ok</span>(new_t)
     }
 
-    <span class="kw">pub fn </span>add_ns(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>TimeZoneTrait&gt;) -&gt; PolarsResult&lt;i64&gt; {
+    <span class="kw">pub fn </span>add_ns(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;) -&gt; PolarsResult&lt;i64&gt; {
         <span class="kw">let </span>d = <span class="self">self</span>;
         <span class="kw">let </span>new_t = <span class="self">self</span>.add_impl_month_week_or_day(
             t,
@@ -1226,7 +1389,7 @@
         <span class="prelude-val">Ok</span>(new_t<span class="question-mark">? </span>+ nsecs)
     }
 
-    <span class="kw">pub fn </span>add_us(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>TimeZoneTrait&gt;) -&gt; PolarsResult&lt;i64&gt; {
+    <span class="kw">pub fn </span>add_us(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;) -&gt; PolarsResult&lt;i64&gt; {
         <span class="kw">let </span>d = <span class="self">self</span>;
         <span class="kw">let </span>new_t = <span class="self">self</span>.add_impl_month_week_or_day(
             t,
@@ -1239,7 +1402,7 @@
         <span class="prelude-val">Ok</span>(new_t<span class="question-mark">? </span>+ nsecs / <span class="number">1_000</span>)
     }
 
-    <span class="kw">pub fn </span>add_ms(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>TimeZoneTrait&gt;) -&gt; PolarsResult&lt;i64&gt; {
+    <span class="kw">pub fn </span>add_ms(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;) -&gt; PolarsResult&lt;i64&gt; {
         <span class="kw">let </span>d = <span class="self">self</span>;
         <span class="kw">let </span>new_t = <span class="self">self</span>.add_impl_month_week_or_day(
             t,
@@ -1277,11 +1440,10 @@
     min: u32,
     sec: u32,
     nano: u32,
-) -&gt; NaiveDateTime {
-    <span class="kw">let </span>date = NaiveDate::from_ymd_opt(year, month, days).unwrap();
-    <span class="kw">let </span>time = NaiveTime::from_hms_nano_opt(hour, min, sec, nano).unwrap();
-
-    NaiveDateTime::new(date, time)
+) -&gt; <span class="prelude-ty">Option</span>&lt;NaiveDateTime&gt; {
+    <span class="kw">let </span>date = NaiveDate::from_ymd_opt(year, month, days)<span class="question-mark">?</span>;
+    <span class="kw">let </span>time = NaiveTime::from_hms_nano_opt(hour, min, sec, nano)<span class="question-mark">?</span>;
+    <span class="prelude-val">Some</span>(NaiveDateTime::new(date, time))
 }
 
 <span class="attr">#[cfg(test)]
@@ -1307,7 +1469,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_add_ns() {
-        <span class="kw">use </span><span class="kw">crate</span>::NO_TIMEZONE;
+        <span class="kw">use </span>polars_arrow::time_zone::NO_TIMEZONE;
         <span class="kw">let </span>t = <span class="number">1</span>;
         <span class="kw">let </span>seven_days = Duration::parse(<span class="string">&quot;7d&quot;</span>);
         <span class="kw">let </span>one_week = Duration::parse(<span class="string">&quot;1w&quot;</span>);
@@ -1330,5 +1492,4 @@
         );
     }
 }
-</code></pre></div>
-</section></main><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="polars_time" data-themes="" data-resource-suffix="" data-rustdoc-version="1.70.0-nightly (39f2657d1 2023-03-09)" data-search-js="search-8a59a8356673ec1f.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" ></div></body></html>
+</code></pre></div></section></main></body></html>

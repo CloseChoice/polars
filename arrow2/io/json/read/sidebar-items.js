@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["deserialize","deserialize_records","infer","infer_records_schema"]};
