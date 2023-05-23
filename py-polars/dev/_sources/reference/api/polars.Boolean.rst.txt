@@ -15,9 +15,17 @@
    
       ~Boolean.__init__
       ~Boolean.base_type
+      ~Boolean.is_
+      ~Boolean.is_not
    
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Boolean.is_nested
    
    

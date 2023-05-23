@@ -15,6 +15,8 @@
    
       ~List.__init__
       ~List.base_type
+      ~List.is_
+      ~List.is_not
    
    
 
@@ -25,5 +27,6 @@
    .. autosummary::
    
       ~List.inner
+      ~List.is_nested
    
    

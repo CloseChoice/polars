@@ -15,9 +15,17 @@
    
       ~Binary.__init__
       ~Binary.base_type
+      ~Binary.is_
+      ~Binary.is_not
    
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Binary.is_nested
    
    

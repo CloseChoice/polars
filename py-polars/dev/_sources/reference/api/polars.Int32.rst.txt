@@ -15,9 +15,17 @@
    
       ~Int32.__init__
       ~Int32.base_type
+      ~Int32.is_
+      ~Int32.is_not
    
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Int32.is_nested
    
    

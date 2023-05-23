@@ -15,6 +15,8 @@
    
       ~Datetime.__init__
       ~Datetime.base_type
+      ~Datetime.is_
+      ~Datetime.is_not
    
    
 
@@ -24,7 +26,8 @@
 
    .. autosummary::
    
-      ~Datetime.tu
-      ~Datetime.tz
+      ~Datetime.is_nested
+      ~Datetime.time_unit
+      ~Datetime.time_zone
    
    

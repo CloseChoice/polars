@@ -1,6 +1,0 @@
-﻿polars.SQLContext.query
-=======================
-
-.. currentmodule:: polars
-
-.. automethod:: SQLContext.query

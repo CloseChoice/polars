@@ -15,9 +15,17 @@
    
       ~DataType.__init__
       ~DataType.base_type
+      ~DataType.is_
+      ~DataType.is_not
    
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~DataType.is_nested
    
    

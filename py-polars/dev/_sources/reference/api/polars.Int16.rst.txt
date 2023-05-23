@@ -15,9 +15,17 @@
    
       ~Int16.__init__
       ~Int16.base_type
+      ~Int16.is_
+      ~Int16.is_not
    
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Int16.is_nested
    
    

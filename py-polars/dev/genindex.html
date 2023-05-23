@@ -18,31 +18,26 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
-    <link rel="icon" sizes="32x32" type="image/png" href="https://raw.githubusercontent.com/pola-rs/polars-static/master/icons/favicon-32x32.png" />
-    <link rel="apple-touch-icon" sizes="180x180" type="image/png" href="https://raw.githubusercontent.com/pola-rs/polars-static/master/icons/touchicon-180x180.png" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" />
     <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/clipboard.min.js"></script>
@@ -406,6 +401,7 @@ document.write(`
  | <a href="#U"><strong>U</strong></a>
  | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
+ | <a href="#X"><strong>X</strong></a>
  | <a href="#Y"><strong>Y</strong></a>
  | <a href="#Z"><strong>Z</strong></a>
  
@@ -415,9 +411,15 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/dataframe/api/polars.DataFrame.__dataframe__.html#polars.DataFrame.__dataframe__">__dataframe__() (polars.DataFrame method)</a>
 </li>
-      <li><a href="reference/api/polars.Binary.html#polars.Binary.__init__">__init__() (polars.Binary method)</a>
+      <li><a href="reference/sql.html#polars.SQLContext.__enter__">__enter__() (polars.SQLContext method)</a>
+</li>
+      <li><a href="reference/sql.html#polars.SQLContext.__exit__">__exit__() (polars.SQLContext method)</a>
+</li>
+      <li><a href="reference/api/polars.Array.html#polars.Array.__init__">__init__() (polars.Array method)</a>
 
       <ul>
+        <li><a href="reference/api/polars.Binary.html#polars.Binary.__init__">(polars.Binary method)</a>
+</li>
         <li><a href="reference/api/polars.Boolean.html#polars.Boolean.__init__">(polars.Boolean method)</a>
 </li>
         <li><a href="reference/api/polars.Categorical.html#polars.Categorical.__init__">(polars.Categorical method)</a>
@@ -450,6 +452,8 @@ document.write(`
 </li>
         <li><a href="reference/api/polars.Object.html#polars.Object.__init__">(polars.Object method)</a>
 </li>
+        <li><a href="reference/sql.html#polars.SQLContext.__init__">(polars.SQLContext method)</a>
+</li>
         <li><a href="reference/api/polars.StringCache.html#polars.StringCache.__init__">(polars.StringCache method)</a>
 </li>
         <li><a href="reference/api/polars.Struct.html#polars.Struct.__init__">(polars.Struct method)</a>
@@ -473,7 +477,7 @@ document.write(`
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/dataframe/api/polars.internals.dataframe.groupby.GroupBy.__iter__.html#polars.internals.dataframe.groupby.GroupBy.__iter__">__iter__() (polars.internals.dataframe.groupby.GroupBy method)</a>
+      <li><a href="reference/dataframe/api/polars.dataframe.groupby.GroupBy.__iter__.html#polars.dataframe.groupby.GroupBy.__iter__">__iter__() (polars.dataframe.groupby.GroupBy method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -489,10 +493,12 @@ document.write(`
       </ul></li>
       <li><a href="reference/api/polars.Config.activate_decimals.html#polars.Config.activate_decimals">activate_decimals() (polars.Config class method)</a>
 </li>
-      <li><a href="reference/dataframe/api/polars.internals.dataframe.groupby.GroupBy.agg.html#polars.internals.dataframe.groupby.GroupBy.agg">agg() (polars.internals.dataframe.groupby.GroupBy method)</a>
+      <li><a href="reference/expressions/api/polars.Expr.add.html#polars.Expr.add">add() (polars.Expr method)</a>
+</li>
+      <li><a href="reference/dataframe/api/polars.dataframe.groupby.GroupBy.agg.html#polars.dataframe.groupby.GroupBy.agg">agg() (polars.dataframe.groupby.GroupBy method)</a>
 
       <ul>
-        <li><a href="reference/lazyframe/api/polars.internals.lazyframe.groupby.LazyGroupBy.agg.html#polars.internals.lazyframe.groupby.LazyGroupBy.agg">(polars.internals.lazyframe.groupby.LazyGroupBy method)</a>
+        <li><a href="reference/lazyframe/api/polars.lazyframe.groupby.LazyGroupBy.agg.html#polars.lazyframe.groupby.LazyGroupBy.agg">(polars.lazyframe.groupby.LazyGroupBy method)</a>
 </li>
       </ul></li>
       <li><a href="reference/expressions/api/polars.Expr.agg_groups.html#polars.Expr.agg_groups">agg_groups() (polars.Expr method)</a>
@@ -508,15 +514,17 @@ document.write(`
       <li><a href="reference/expressions/api/polars.all.html#polars.all">all() (in module polars)</a>
 
       <ul>
+        <li><a href="reference/dataframe/api/polars.dataframe.groupby.GroupBy.all.html#polars.dataframe.groupby.GroupBy.all">(polars.dataframe.groupby.GroupBy method)</a>
+</li>
         <li><a href="reference/expressions/api/polars.Expr.all.html#polars.Expr.all">(polars.Expr method)</a>
 </li>
-        <li><a href="reference/dataframe/api/polars.internals.dataframe.groupby.GroupBy.all.html#polars.internals.dataframe.groupby.GroupBy.all">(polars.internals.dataframe.groupby.GroupBy method)</a>
-</li>
-        <li><a href="reference/lazyframe/api/polars.internals.lazyframe.groupby.LazyGroupBy.all.html#polars.internals.lazyframe.groupby.LazyGroupBy.all">(polars.internals.lazyframe.groupby.LazyGroupBy method)</a>
+        <li><a href="reference/lazyframe/api/polars.lazyframe.groupby.LazyGroupBy.all.html#polars.lazyframe.groupby.LazyGroupBy.all">(polars.lazyframe.groupby.LazyGroupBy method)</a>
 </li>
         <li><a href="reference/series/api/polars.Series.all.html#polars.Series.all">(polars.Series method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/expressions/api/polars.Expr.and_.html#polars.Expr.and_">and_() (polars.Expr method)</a>
+</li>
       <li><a href="reference/expressions/api/polars.any.html#polars.any">any() (in module polars)</a>
 
       <ul>
@@ -536,13 +544,19 @@ document.write(`
       <ul>
         <li><a href="reference/dataframe/api/polars.DataFrame.apply.html#polars.DataFrame.apply">(polars.DataFrame method)</a>
 </li>
+        <li><a href="reference/dataframe/api/polars.dataframe.groupby.GroupBy.apply.html#polars.dataframe.groupby.GroupBy.apply">(polars.dataframe.groupby.GroupBy method)</a>
+</li>
         <li><a href="reference/expressions/api/polars.Expr.apply.html#polars.Expr.apply">(polars.Expr method)</a>
 </li>
-        <li><a href="reference/dataframe/api/polars.internals.dataframe.groupby.GroupBy.apply.html#polars.internals.dataframe.groupby.GroupBy.apply">(polars.internals.dataframe.groupby.GroupBy method)</a>
-</li>
-        <li><a href="reference/lazyframe/api/polars.internals.lazyframe.groupby.LazyGroupBy.apply.html#polars.internals.lazyframe.groupby.LazyGroupBy.apply">(polars.internals.lazyframe.groupby.LazyGroupBy method)</a>
+        <li><a href="reference/lazyframe/api/polars.lazyframe.groupby.LazyGroupBy.apply.html#polars.lazyframe.groupby.LazyGroupBy.apply">(polars.lazyframe.groupby.LazyGroupBy method)</a>
 </li>
         <li><a href="reference/series/api/polars.Series.apply.html#polars.Series.apply">(polars.Series method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/expressions/api/polars.approx_unique.html#polars.approx_unique">approx_unique() (in module polars)</a>
+
+      <ul>
+        <li><a href="reference/expressions/api/polars.Expr.approx_unique.html#polars.Expr.approx_unique">(polars.Expr method)</a>
 </li>
       </ul></li>
       <li><a href="reference/expressions/api/polars.arange.html#polars.arange">arange() (in module polars)</a>
@@ -553,14 +567,14 @@ document.write(`
         <li><a href="reference/series/api/polars.Series.arccos.html#polars.Series.arccos">(polars.Series method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/expressions/api/polars.Expr.arccosh.html#polars.Expr.arccosh">arccosh() (polars.Expr method)</a>
 
       <ul>
         <li><a href="reference/series/api/polars.Series.arccosh.html#polars.Series.arccosh">(polars.Series method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/expressions/api/polars.Expr.arcsin.html#polars.Expr.arcsin">arcsin() (polars.Expr method)</a>
 
       <ul>
@@ -627,13 +641,9 @@ document.write(`
       </ul></li>
       <li><a href="reference/api/polars.arg_where.html#polars.arg_where">arg_where() (in module polars)</a>
 </li>
-      <li><a href="reference/expressions/api/polars.Expr.argsort.html#polars.Expr.argsort">argsort() (polars.Expr method)</a>
-
-      <ul>
-        <li><a href="reference/series/api/polars.Series.argsort.html#polars.Series.argsort">(polars.Series method)</a>
-</li>
-      </ul></li>
       <li><a href="reference/series/api/polars.Series.arr.html#polars.Series.arr">arr (polars.Series attribute)</a>
+</li>
+      <li><a href="reference/api/polars.Array.html#polars.Array">Array (class in polars)</a>
 </li>
       <li><a href="reference/api/polars.exceptions.ArrowError.html#polars.exceptions.ArrowError">ArrowError</a>
 </li>
@@ -653,10 +663,20 @@ document.write(`
 </li>
       <li><a href="reference/api/polars.Binary.html#polars.Binary">Binary (class in polars)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/api/polars.Boolean.html#polars.Boolean">Boolean (class in polars)</a>
 </li>
+      <li><a href="reference/dataframe/api/polars.DataFrame.bottom_k.html#polars.DataFrame.bottom_k">bottom_k() (polars.DataFrame method)</a>
+
+      <ul>
+        <li><a href="reference/expressions/api/polars.Expr.bottom_k.html#polars.Expr.bottom_k">(polars.Expr method)</a>
+</li>
+        <li><a href="reference/lazyframe/api/polars.LazyFrame.bottom_k.html#polars.LazyFrame.bottom_k">(polars.LazyFrame method)</a>
+</li>
+        <li><a href="reference/series/api/polars.Series.bottom_k.html#polars.Series.bottom_k">(polars.Series method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/api/polars.build_info.html#polars.build_info">build_info() (in module polars)</a>
 </li>
   </ul></td>
@@ -665,8 +685,12 @@ document.write(`
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/lazyframe/api/polars.LazyFrame.cache.html#polars.LazyFrame.cache">cache() (polars.LazyFrame method)</a>
+      <li><a href="reference/expressions/api/polars.Expr.cache.html#polars.Expr.cache">cache() (polars.Expr method)</a>
+
+      <ul>
+        <li><a href="reference/lazyframe/api/polars.LazyFrame.cache.html#polars.LazyFrame.cache">(polars.LazyFrame method)</a>
 </li>
+      </ul></li>
       <li><a href="reference/expressions/api/polars.Expr.cast.html#polars.Expr.cast">cast() (polars.Expr method)</a>
 
       <ul>
@@ -812,11 +836,11 @@ document.write(`
       <li><a href="reference/expressions/api/polars.count.html#polars.count">count() (in module polars)</a>
 
       <ul>
+        <li><a href="reference/dataframe/api/polars.dataframe.groupby.GroupBy.count.html#polars.dataframe.groupby.GroupBy.count">(polars.dataframe.groupby.GroupBy method)</a>
+</li>
         <li><a href="reference/expressions/api/polars.Expr.count.html#polars.Expr.count">(polars.Expr method)</a>
 </li>
-        <li><a href="reference/dataframe/api/polars.internals.dataframe.groupby.GroupBy.count.html#polars.internals.dataframe.groupby.GroupBy.count">(polars.internals.dataframe.groupby.GroupBy method)</a>
-</li>
-        <li><a href="reference/lazyframe/api/polars.internals.lazyframe.groupby.LazyGroupBy.count.html#polars.internals.lazyframe.groupby.LazyGroupBy.count">(polars.internals.lazyframe.groupby.LazyGroupBy method)</a>
+        <li><a href="reference/lazyframe/api/polars.lazyframe.groupby.LazyGroupBy.count.html#polars.lazyframe.groupby.LazyGroupBy.count">(polars.lazyframe.groupby.LazyGroupBy method)</a>
 </li>
       </ul></li>
       <li><a href="reference/expressions/api/polars.Expr.arr.count_match.html#polars.Expr.arr.count_match">count_match() (polars.Expr.arr method)</a>
@@ -830,6 +854,8 @@ document.write(`
 </li>
       </ul></li>
       <li><a href="reference/expressions/api/polars.cov.html#polars.cov">cov() (in module polars)</a>
+</li>
+      <li><a href="reference/api/polars.testing.parametric.create_list_strategy.html#polars.testing.parametric.create_list_strategy">create_list_strategy() (in module polars.testing.parametric)</a>
 </li>
       <li><a href="reference/expressions/api/polars.Expr.cumcount.html#polars.Expr.cumcount">cumcount() (polars.Expr method)</a>
 </li>
@@ -888,13 +914,25 @@ document.write(`
       <li><a href="reference/api/polars.Date.html#polars.Date">Date (class in polars)</a>
 </li>
       <li><a href="reference/expressions/api/polars.date.html#polars.date">date() (in module polars)</a>
+
+      <ul>
+        <li><a href="reference/expressions/api/polars.Expr.dt.date.html#polars.Expr.dt.date">(polars.Expr.dt method)</a>
 </li>
+        <li><a href="reference/series/api/polars.Series.dt.date.html#polars.Series.dt.date">(polars.Series.dt method)</a>
+</li>
+      </ul></li>
       <li><a href="reference/api/polars.date_range.html#polars.date_range">date_range() (in module polars)</a>
 </li>
       <li><a href="reference/api/polars.Datetime.html#polars.Datetime">Datetime (class in polars)</a>
 </li>
       <li><a href="reference/expressions/api/polars.datetime.html#polars.datetime">datetime() (in module polars)</a>
+
+      <ul>
+        <li><a href="reference/expressions/api/polars.Expr.dt.datetime.html#polars.Expr.dt.datetime">(polars.Expr.dt method)</a>
 </li>
+        <li><a href="reference/series/api/polars.Series.dt.datetime.html#polars.Series.dt.datetime">(polars.Series.dt method)</a>
+</li>
+      </ul></li>
       <li><a href="reference/expressions/api/polars.Expr.dt.day.html#polars.Expr.dt.day">day() (polars.Expr.dt method)</a>
 
       <ul>
@@ -925,6 +963,8 @@ document.write(`
         <li><a href="reference/series/api/polars.Series.describe.html#polars.Series.describe">(polars.Series method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/expressions/api/polars.Expr.diff.html#polars.Expr.diff">diff() (polars.Expr method)</a>
 
       <ul>
@@ -935,8 +975,6 @@ document.write(`
         <li><a href="reference/series/api/polars.Series.arr.diff.html#polars.Series.arr.diff">(polars.Series.arr method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/expressions/api/polars.Expr.dot.html#polars.Expr.dot">dot() (polars.Expr method)</a>
 
       <ul>
@@ -991,6 +1029,8 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/expressions/api/polars.element.html#polars.element">element() (in module polars)</a>
 </li>
+      <li><a href="reference/api/polars.enable_string_cache.html#polars.enable_string_cache">enable_string_cache() (in module polars)</a>
+</li>
       <li><a href="reference/expressions/api/polars.Expr.bin.encode.html#polars.Expr.bin.encode">encode() (polars.Expr.bin method)</a>
 
       <ul>
@@ -1023,6 +1063,12 @@ document.write(`
         <li><a href="reference/series/api/polars.Series.dt.epoch.html#polars.Series.dt.epoch">(polars.Series.dt method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/expressions/api/polars.Expr.eq.html#polars.Expr.eq">eq() (polars.Expr method)</a>
+
+      <ul>
+        <li><a href="reference/expressions/api/polars.Expr.meta.eq.html#polars.Expr.meta.eq">(polars.Expr.meta method)</a>
+</li>
+      </ul></li>
       <li><a href="reference/dataframe/api/polars.DataFrame.estimated_size.html#polars.DataFrame.estimated_size">estimated_size() (polars.DataFrame method)</a>
 
       <ul>
@@ -1047,14 +1093,14 @@ document.write(`
         <li><a href="reference/series/api/polars.Series.ewm_std.html#polars.Series.ewm_std">(polars.Series method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/expressions/api/polars.Expr.ewm_var.html#polars.Expr.ewm_var">ewm_var() (polars.Expr method)</a>
 
       <ul>
         <li><a href="reference/series/api/polars.Series.ewm_var.html#polars.Series.ewm_var">(polars.Series method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/expressions/api/polars.exclude.html#polars.exclude">exclude() (in module polars)</a>
 
       <ul>
@@ -1160,15 +1206,15 @@ document.write(`
       <li><a href="reference/expressions/api/polars.first.html#polars.first">first() (in module polars)</a>
 
       <ul>
+        <li><a href="reference/dataframe/api/polars.dataframe.groupby.GroupBy.first.html#polars.dataframe.groupby.GroupBy.first">(polars.dataframe.groupby.GroupBy method)</a>
+</li>
         <li><a href="reference/expressions/api/polars.Expr.first.html#polars.Expr.first">(polars.Expr method)</a>
 </li>
         <li><a href="reference/expressions/api/polars.Expr.arr.first.html#polars.Expr.arr.first">(polars.Expr.arr method)</a>
 </li>
-        <li><a href="reference/dataframe/api/polars.internals.dataframe.groupby.GroupBy.first.html#polars.internals.dataframe.groupby.GroupBy.first">(polars.internals.dataframe.groupby.GroupBy method)</a>
-</li>
-        <li><a href="reference/lazyframe/api/polars.internals.lazyframe.groupby.LazyGroupBy.first.html#polars.internals.lazyframe.groupby.LazyGroupBy.first">(polars.internals.lazyframe.groupby.LazyGroupBy method)</a>
-</li>
         <li><a href="reference/lazyframe/api/polars.LazyFrame.first.html#polars.LazyFrame.first">(polars.LazyFrame method)</a>
+</li>
+        <li><a href="reference/lazyframe/api/polars.lazyframe.groupby.LazyGroupBy.first.html#polars.lazyframe.groupby.LazyGroupBy.first">(polars.lazyframe.groupby.LazyGroupBy method)</a>
 </li>
         <li><a href="reference/series/api/polars.Series.arr.first.html#polars.Series.arr.first">(polars.Series.arr method)</a>
 </li>
@@ -1189,6 +1235,8 @@ document.write(`
         <li><a href="reference/series/api/polars.Series.floor.html#polars.Series.floor">(polars.Series method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/expressions/api/polars.Expr.floordiv.html#polars.Expr.floordiv">floordiv() (polars.Expr method)</a>
+</li>
       <li><a href="reference/expressions/api/polars.fold.html#polars.fold">fold() (in module polars)</a>
 
       <ul>
@@ -1219,12 +1267,16 @@ document.write(`
 </li>
       <li><a href="reference/api/polars.from_records.html#polars.from_records">from_records() (in module polars)</a>
 </li>
+      <li><a href="reference/api/polars.from_repr.html#polars.from_repr">from_repr() (in module polars)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/expressions/api/polars.Expr.ge.html#polars.Expr.ge">ge() (polars.Expr method)</a>
+</li>
       <li><a href="reference/expressions/api/polars.Expr.arr.get.html#polars.Expr.arr.get">get() (polars.Expr.arr method)</a>
 
       <ul>
@@ -1265,6 +1317,8 @@ document.write(`
       </ul></li>
       <li><a href="reference/expressions/api/polars.groups.html#polars.groups">groups() (in module polars)</a>
 </li>
+      <li><a href="reference/expressions/api/polars.Expr.gt.html#polars.Expr.gt">gt() (polars.Expr method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -1288,15 +1342,15 @@ document.write(`
       <ul>
         <li><a href="reference/dataframe/api/polars.DataFrame.head.html#polars.DataFrame.head">(polars.DataFrame method)</a>
 </li>
+        <li><a href="reference/dataframe/api/polars.dataframe.groupby.GroupBy.head.html#polars.dataframe.groupby.GroupBy.head">(polars.dataframe.groupby.GroupBy method)</a>
+</li>
         <li><a href="reference/expressions/api/polars.Expr.head.html#polars.Expr.head">(polars.Expr method)</a>
 </li>
         <li><a href="reference/expressions/api/polars.Expr.arr.head.html#polars.Expr.arr.head">(polars.Expr.arr method)</a>
 </li>
-        <li><a href="reference/dataframe/api/polars.internals.dataframe.groupby.GroupBy.head.html#polars.internals.dataframe.groupby.GroupBy.head">(polars.internals.dataframe.groupby.GroupBy method)</a>
-</li>
-        <li><a href="reference/lazyframe/api/polars.internals.lazyframe.groupby.LazyGroupBy.head.html#polars.internals.lazyframe.groupby.LazyGroupBy.head">(polars.internals.lazyframe.groupby.LazyGroupBy method)</a>
-</li>
         <li><a href="reference/lazyframe/api/polars.LazyFrame.head.html#polars.LazyFrame.head">(polars.LazyFrame method)</a>
+</li>
+        <li><a href="reference/lazyframe/api/polars.lazyframe.groupby.LazyGroupBy.head.html#polars.lazyframe.groupby.LazyGroupBy.head">(polars.lazyframe.groupby.LazyGroupBy method)</a>
 </li>
         <li><a href="reference/series/api/polars.Series.head.html#polars.Series.head">(polars.Series method)</a>
 </li>
@@ -1306,6 +1360,8 @@ document.write(`
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/dataframe/api/polars.DataFrame.height.html#polars.DataFrame.height">height (polars.DataFrame property)</a>
+</li>
+      <li><a href="reference/series/api/polars.Series.hist.html#polars.Series.hist">hist() (polars.Series method)</a>
 </li>
       <li><a href="reference/expressions/api/polars.Expr.dt.hour.html#polars.Expr.dt.hour">hour() (polars.Expr.dt method)</a>
 
@@ -1327,6 +1383,12 @@ document.write(`
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/expressions/api/polars.Expr.implode.html#polars.Expr.implode">implode() (polars.Expr method)</a>
+
+      <ul>
+        <li><a href="reference/series/api/polars.Series.implode.html#polars.Series.implode">(polars.Series method)</a>
+</li>
+      </ul></li>
       <li><a href="reference/series/api/polars.Series.inner_dtype.html#polars.Series.inner_dtype">inner_dtype (polars.Series attribute)</a>
 </li>
       <li><a href="reference/dataframe/api/polars.DataFrame.insert_at_idx.html#polars.DataFrame.insert_at_idx">insert_at_idx() (polars.DataFrame method)</a>
@@ -1393,18 +1455,26 @@ document.write(`
       </ul></li>
       <li><a href="reference/series/api/polars.Series.is_float.html#polars.Series.is_float">is_float() (polars.Series method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/expressions/api/polars.Expr.is_in.html#polars.Expr.is_in">is_in() (polars.Expr method)</a>
 
       <ul>
         <li><a href="reference/series/api/polars.Series.is_in.html#polars.Series.is_in">(polars.Series method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/expressions/api/polars.Expr.is_infinite.html#polars.Expr.is_infinite">is_infinite() (polars.Expr method)</a>
 
       <ul>
         <li><a href="reference/series/api/polars.Series.is_infinite.html#polars.Series.is_infinite">(polars.Series method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/series/api/polars.Series.is_integer.html#polars.Series.is_integer">is_integer() (polars.Series method)</a>
+</li>
+      <li><a href="reference/expressions/api/polars.Expr.dt.is_leap_year.html#polars.Expr.dt.is_leap_year">is_leap_year() (polars.Expr.dt method)</a>
+
+      <ul>
+        <li><a href="reference/series/api/polars.Series.dt.is_leap_year.html#polars.Series.dt.is_leap_year">(polars.Series.dt method)</a>
 </li>
       </ul></li>
       <li><a href="reference/expressions/api/polars.Expr.is_nan.html#polars.Expr.is_nan">is_nan() (polars.Expr method)</a>
@@ -1525,16 +1595,16 @@ document.write(`
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/expressions/api/polars.Expr.last.html#polars.Expr.last">last() (polars.Expr method)</a>
+      <li><a href="reference/dataframe/api/polars.dataframe.groupby.GroupBy.last.html#polars.dataframe.groupby.GroupBy.last">last() (polars.dataframe.groupby.GroupBy method)</a>
 
       <ul>
+        <li><a href="reference/expressions/api/polars.Expr.last.html#polars.Expr.last">(polars.Expr method)</a>
+</li>
         <li><a href="reference/expressions/api/polars.Expr.arr.last.html#polars.Expr.arr.last">(polars.Expr.arr method)</a>
 </li>
-        <li><a href="reference/dataframe/api/polars.internals.dataframe.groupby.GroupBy.last.html#polars.internals.dataframe.groupby.GroupBy.last">(polars.internals.dataframe.groupby.GroupBy method)</a>
-</li>
-        <li><a href="reference/lazyframe/api/polars.internals.lazyframe.groupby.LazyGroupBy.last.html#polars.internals.lazyframe.groupby.LazyGroupBy.last">(polars.internals.lazyframe.groupby.LazyGroupBy method)</a>
-</li>
         <li><a href="reference/lazyframe/api/polars.LazyFrame.last.html#polars.LazyFrame.last">(polars.LazyFrame method)</a>
+</li>
+        <li><a href="reference/lazyframe/api/polars.lazyframe.groupby.LazyGroupBy.last.html#polars.lazyframe.groupby.LazyGroupBy.last">(polars.lazyframe.groupby.LazyGroupBy method)</a>
 </li>
         <li><a href="reference/series/api/polars.Series.arr.last.html#polars.Series.arr.last">(polars.Series.arr method)</a>
 </li>
@@ -1545,6 +1615,8 @@ document.write(`
         <li><a href="reference/lazyframe/api/polars.LazyFrame.lazy.html#polars.LazyFrame.lazy">(polars.LazyFrame method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/expressions/api/polars.Expr.le.html#polars.Expr.le">le() (polars.Expr method)</a>
+</li>
       <li><a href="reference/expressions/api/polars.Expr.len.html#polars.Expr.len">len() (polars.Expr method)</a>
 
       <ul>
@@ -1576,11 +1648,7 @@ document.write(`
       <li><a href="reference/api/polars.List.html#polars.List">List (class in polars)</a>
 </li>
       <li><a href="reference/expressions/api/polars.list.html#polars.list">list() (in module polars)</a>
-
-      <ul>
-        <li><a href="reference/expressions/api/polars.Expr.list.html#polars.Expr.list">(polars.Expr method)</a>
 </li>
-      </ul></li>
       <li><a href="reference/expressions/api/polars.lit.html#polars.lit">lit() (in module polars)</a>
 </li>
       <li><a href="reference/expressions/api/polars.Expr.str.ljust.html#polars.Expr.str.ljust">ljust() (polars.Expr.str method)</a>
@@ -1590,6 +1658,8 @@ document.write(`
 </li>
       </ul></li>
       <li><a href="reference/api/polars.Config.load.html#polars.Config.load">load() (polars.Config class method)</a>
+</li>
+      <li><a href="reference/api/polars.testing.parametric.load_profile.html#polars.testing.parametric.load_profile">load_profile() (in module polars.testing.parametric)</a>
 </li>
       <li><a href="reference/expressions/api/polars.Expr.log.html#polars.Expr.log">log() (polars.Expr method)</a>
 
@@ -1601,6 +1671,12 @@ document.write(`
 
       <ul>
         <li><a href="reference/series/api/polars.Series.log10.html#polars.Series.log10">(polars.Series method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/expressions/api/polars.Expr.log1p.html#polars.Expr.log1p">log1p() (polars.Expr method)</a>
+
+      <ul>
+        <li><a href="reference/series/api/polars.Series.log1p.html#polars.Series.log1p">(polars.Series method)</a>
 </li>
       </ul></li>
       <li><a href="reference/expressions/api/polars.Expr.lower_bound.html#polars.Expr.lower_bound">lower_bound() (polars.Expr method)</a>
@@ -1615,6 +1691,8 @@ document.write(`
         <li><a href="reference/series/api/polars.Series.str.lstrip.html#polars.Series.str.lstrip">(polars.Series.str method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/expressions/api/polars.Expr.lt.html#polars.Expr.lt">lt() (polars.Expr method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -1642,15 +1720,15 @@ document.write(`
       <ul>
         <li><a href="reference/dataframe/api/polars.DataFrame.max.html#polars.DataFrame.max">(polars.DataFrame method)</a>
 </li>
+        <li><a href="reference/dataframe/api/polars.dataframe.groupby.GroupBy.max.html#polars.dataframe.groupby.GroupBy.max">(polars.dataframe.groupby.GroupBy method)</a>
+</li>
         <li><a href="reference/expressions/api/polars.Expr.max.html#polars.Expr.max">(polars.Expr method)</a>
 </li>
         <li><a href="reference/expressions/api/polars.Expr.arr.max.html#polars.Expr.arr.max">(polars.Expr.arr method)</a>
 </li>
-        <li><a href="reference/dataframe/api/polars.internals.dataframe.groupby.GroupBy.max.html#polars.internals.dataframe.groupby.GroupBy.max">(polars.internals.dataframe.groupby.GroupBy method)</a>
-</li>
-        <li><a href="reference/lazyframe/api/polars.internals.lazyframe.groupby.LazyGroupBy.max.html#polars.internals.lazyframe.groupby.LazyGroupBy.max">(polars.internals.lazyframe.groupby.LazyGroupBy method)</a>
-</li>
         <li><a href="reference/lazyframe/api/polars.LazyFrame.max.html#polars.LazyFrame.max">(polars.LazyFrame method)</a>
+</li>
+        <li><a href="reference/lazyframe/api/polars.lazyframe.groupby.LazyGroupBy.max.html#polars.lazyframe.groupby.LazyGroupBy.max">(polars.lazyframe.groupby.LazyGroupBy method)</a>
 </li>
         <li><a href="reference/series/api/polars.Series.max.html#polars.Series.max">(polars.Series method)</a>
 </li>
@@ -1664,15 +1742,15 @@ document.write(`
       <ul>
         <li><a href="reference/dataframe/api/polars.DataFrame.mean.html#polars.DataFrame.mean">(polars.DataFrame method)</a>
 </li>
+        <li><a href="reference/dataframe/api/polars.dataframe.groupby.GroupBy.mean.html#polars.dataframe.groupby.GroupBy.mean">(polars.dataframe.groupby.GroupBy method)</a>
+</li>
         <li><a href="reference/expressions/api/polars.Expr.mean.html#polars.Expr.mean">(polars.Expr method)</a>
 </li>
         <li><a href="reference/expressions/api/polars.Expr.arr.mean.html#polars.Expr.arr.mean">(polars.Expr.arr method)</a>
 </li>
-        <li><a href="reference/dataframe/api/polars.internals.dataframe.groupby.GroupBy.mean.html#polars.internals.dataframe.groupby.GroupBy.mean">(polars.internals.dataframe.groupby.GroupBy method)</a>
-</li>
-        <li><a href="reference/lazyframe/api/polars.internals.lazyframe.groupby.LazyGroupBy.mean.html#polars.internals.lazyframe.groupby.LazyGroupBy.mean">(polars.internals.lazyframe.groupby.LazyGroupBy method)</a>
-</li>
         <li><a href="reference/lazyframe/api/polars.LazyFrame.mean.html#polars.LazyFrame.mean">(polars.LazyFrame method)</a>
+</li>
+        <li><a href="reference/lazyframe/api/polars.lazyframe.groupby.LazyGroupBy.mean.html#polars.lazyframe.groupby.LazyGroupBy.mean">(polars.lazyframe.groupby.LazyGroupBy method)</a>
 </li>
         <li><a href="reference/series/api/polars.Series.mean.html#polars.Series.mean">(polars.Series method)</a>
 </li>
@@ -1686,27 +1764,27 @@ document.write(`
       <ul>
         <li><a href="reference/dataframe/api/polars.DataFrame.median.html#polars.DataFrame.median">(polars.DataFrame method)</a>
 </li>
+        <li><a href="reference/dataframe/api/polars.dataframe.groupby.GroupBy.median.html#polars.dataframe.groupby.GroupBy.median">(polars.dataframe.groupby.GroupBy method)</a>
+</li>
         <li><a href="reference/expressions/api/polars.Expr.median.html#polars.Expr.median">(polars.Expr method)</a>
 </li>
-        <li><a href="reference/dataframe/api/polars.internals.dataframe.groupby.GroupBy.median.html#polars.internals.dataframe.groupby.GroupBy.median">(polars.internals.dataframe.groupby.GroupBy method)</a>
-</li>
-        <li><a href="reference/lazyframe/api/polars.internals.lazyframe.groupby.LazyGroupBy.median.html#polars.internals.lazyframe.groupby.LazyGroupBy.median">(polars.internals.lazyframe.groupby.LazyGroupBy method)</a>
-</li>
         <li><a href="reference/lazyframe/api/polars.LazyFrame.median.html#polars.LazyFrame.median">(polars.LazyFrame method)</a>
+</li>
+        <li><a href="reference/lazyframe/api/polars.lazyframe.groupby.LazyGroupBy.median.html#polars.lazyframe.groupby.LazyGroupBy.median">(polars.lazyframe.groupby.LazyGroupBy method)</a>
 </li>
         <li><a href="reference/series/api/polars.Series.median.html#polars.Series.median">(polars.Series method)</a>
 </li>
         <li><a href="reference/series/api/polars.Series.dt.median.html#polars.Series.dt.median">(polars.Series.dt method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/dataframe/api/polars.DataFrame.melt.html#polars.DataFrame.melt">melt() (polars.DataFrame method)</a>
 
       <ul>
         <li><a href="reference/lazyframe/api/polars.LazyFrame.melt.html#polars.LazyFrame.melt">(polars.LazyFrame method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/dataframe/api/polars.DataFrame.merge_sorted.html#polars.DataFrame.merge_sorted">merge_sorted() (polars.DataFrame method)</a>
 
       <ul>
@@ -1742,15 +1820,15 @@ document.write(`
       <ul>
         <li><a href="reference/dataframe/api/polars.DataFrame.min.html#polars.DataFrame.min">(polars.DataFrame method)</a>
 </li>
+        <li><a href="reference/dataframe/api/polars.dataframe.groupby.GroupBy.min.html#polars.dataframe.groupby.GroupBy.min">(polars.dataframe.groupby.GroupBy method)</a>
+</li>
         <li><a href="reference/expressions/api/polars.Expr.min.html#polars.Expr.min">(polars.Expr method)</a>
 </li>
         <li><a href="reference/expressions/api/polars.Expr.arr.min.html#polars.Expr.arr.min">(polars.Expr.arr method)</a>
 </li>
-        <li><a href="reference/dataframe/api/polars.internals.dataframe.groupby.GroupBy.min.html#polars.internals.dataframe.groupby.GroupBy.min">(polars.internals.dataframe.groupby.GroupBy method)</a>
-</li>
-        <li><a href="reference/lazyframe/api/polars.internals.lazyframe.groupby.LazyGroupBy.min.html#polars.internals.lazyframe.groupby.LazyGroupBy.min">(polars.internals.lazyframe.groupby.LazyGroupBy method)</a>
-</li>
         <li><a href="reference/lazyframe/api/polars.LazyFrame.min.html#polars.LazyFrame.min">(polars.LazyFrame method)</a>
+</li>
+        <li><a href="reference/lazyframe/api/polars.lazyframe.groupby.LazyGroupBy.min.html#polars.lazyframe.groupby.LazyGroupBy.min">(polars.lazyframe.groupby.LazyGroupBy method)</a>
 </li>
         <li><a href="reference/series/api/polars.Series.min.html#polars.Series.min">(polars.Series method)</a>
 </li>
@@ -1771,6 +1849,8 @@ document.write(`
         <li><a href="reference/series/api/polars.Series.dt.minutes.html#polars.Series.dt.minutes">(polars.Series.dt method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/expressions/api/polars.Expr.mod.html#polars.Expr.mod">mod() (polars.Expr method)</a>
+</li>
       <li><a href="reference/expressions/api/polars.Expr.mode.html#polars.Expr.mode">mode() (polars.Expr method)</a>
 
       <ul>
@@ -1783,6 +1863,20 @@ document.write(`
         <li><a href="reference/series/api/polars.Series.dt.month.html#polars.Series.dt.month">(polars.Series.dt method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/expressions/api/polars.Expr.dt.month_end.html#polars.Expr.dt.month_end">month_end() (polars.Expr.dt method)</a>
+
+      <ul>
+        <li><a href="reference/series/api/polars.Series.dt.month_end.html#polars.Series.dt.month_end">(polars.Series.dt method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/expressions/api/polars.Expr.dt.month_start.html#polars.Expr.dt.month_start">month_start() (polars.Expr.dt method)</a>
+
+      <ul>
+        <li><a href="reference/series/api/polars.Series.dt.month_start.html#polars.Series.dt.month_start">(polars.Series.dt method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/expressions/api/polars.Expr.mul.html#polars.Expr.mul">mul() (polars.Expr method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -1806,11 +1900,11 @@ document.write(`
       <ul>
         <li><a href="reference/dataframe/api/polars.DataFrame.n_unique.html#polars.DataFrame.n_unique">(polars.DataFrame method)</a>
 </li>
+        <li><a href="reference/dataframe/api/polars.dataframe.groupby.GroupBy.n_unique.html#polars.dataframe.groupby.GroupBy.n_unique">(polars.dataframe.groupby.GroupBy method)</a>
+</li>
         <li><a href="reference/expressions/api/polars.Expr.n_unique.html#polars.Expr.n_unique">(polars.Expr method)</a>
 </li>
-        <li><a href="reference/dataframe/api/polars.internals.dataframe.groupby.GroupBy.n_unique.html#polars.internals.dataframe.groupby.GroupBy.n_unique">(polars.internals.dataframe.groupby.GroupBy method)</a>
-</li>
-        <li><a href="reference/lazyframe/api/polars.internals.lazyframe.groupby.LazyGroupBy.n_unique.html#polars.internals.lazyframe.groupby.LazyGroupBy.n_unique">(polars.internals.lazyframe.groupby.LazyGroupBy method)</a>
+        <li><a href="reference/lazyframe/api/polars.lazyframe.groupby.LazyGroupBy.n_unique.html#polars.lazyframe.groupby.LazyGroupBy.n_unique">(polars.lazyframe.groupby.LazyGroupBy method)</a>
 </li>
         <li><a href="reference/series/api/polars.Series.n_unique.html#polars.Series.n_unique">(polars.Series method)</a>
 </li>
@@ -1823,14 +1917,14 @@ document.write(`
         <li><a href="reference/series/api/polars.Series.nan_max.html#polars.Series.nan_max">(polars.Series method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/expressions/api/polars.Expr.nan_min.html#polars.Expr.nan_min">nan_min() (polars.Expr method)</a>
 
       <ul>
         <li><a href="reference/series/api/polars.Series.nan_min.html#polars.Series.nan_min">(polars.Series method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/expressions/api/polars.Expr.dt.nanosecond.html#polars.Expr.dt.nanosecond">nanosecond() (polars.Expr.dt method)</a>
 
       <ul>
@@ -1843,13 +1937,19 @@ document.write(`
         <li><a href="reference/series/api/polars.Series.dt.nanoseconds.html#polars.Series.dt.nanoseconds">(polars.Series.dt method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/expressions/api/polars.Expr.ne.html#polars.Expr.ne">ne() (polars.Expr method)</a>
+
+      <ul>
+        <li><a href="reference/expressions/api/polars.Expr.meta.ne.html#polars.Expr.meta.ne">(polars.Expr.meta method)</a>
+</li>
+      </ul></li>
       <li><a href="reference/series/api/polars.Series.new_from_index.html#polars.Series.new_from_index">new_from_index() (polars.Series method)</a>
 </li>
-      <li><a href="reference/api/polars.internals.batched.BatchedCsvReader.next_batches.html#polars.internals.batched.BatchedCsvReader.next_batches">next_batches() (polars.internals.batched.BatchedCsvReader method)</a>
+      <li><a href="reference/api/polars.io.csv.batched_reader.BatchedCsvReader.next_batches.html#polars.io.csv.batched_reader.BatchedCsvReader.next_batches">next_batches() (polars.io.csv.batched_reader.BatchedCsvReader method)</a>
 </li>
       <li><a href="reference/api/polars.exceptions.NoDataError.html#polars.exceptions.NoDataError">NoDataError</a>
 </li>
-      <li><a href="reference/api/polars.exceptions.NoRowsReturned.html#polars.exceptions.NoRowsReturned">NoRowsReturned</a>
+      <li><a href="reference/api/polars.exceptions.NoRowsReturnedError.html#polars.exceptions.NoRowsReturnedError">NoRowsReturnedError</a>
 </li>
       <li><a href="reference/api/polars.Null.html#polars.Null">Null (class in polars)</a>
 </li>
@@ -1857,6 +1957,8 @@ document.write(`
 
       <ul>
         <li><a href="reference/expressions/api/polars.Expr.null_count.html#polars.Expr.null_count">(polars.Expr method)</a>
+</li>
+        <li><a href="reference/lazyframe/api/polars.LazyFrame.null_count.html#polars.LazyFrame.null_count">(polars.LazyFrame method)</a>
 </li>
         <li><a href="reference/series/api/polars.Series.null_count.html#polars.Series.null_count">(polars.Series method)</a>
 </li>
@@ -1879,6 +1981,8 @@ document.write(`
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/expressions/api/polars.Expr.or_.html#polars.Expr.or_">or_() (polars.Expr method)</a>
+</li>
       <li><a href="reference/expressions/api/polars.Expr.dt.ordinal_day.html#polars.Expr.dt.ordinal_day">ordinal_day() (polars.Expr.dt method)</a>
 
       <ul>
@@ -1895,8 +1999,6 @@ document.write(`
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/api/polars.exceptions.PanicException.html#polars.exceptions.PanicException">PanicException</a>
-</li>
       <li><a href="reference/expressions/api/polars.Expr.str.parse_int.html#polars.Expr.str.parse_int">parse_int() (polars.Expr.str method)</a>
 
       <ul>
@@ -1917,15 +2019,19 @@ document.write(`
 </li>
       <li><a href="reference/expressions/api/polars.pearson_corr.html#polars.pearson_corr">pearson_corr() (in module polars)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/dataframe/api/polars.DataFrame.pipe.html#polars.DataFrame.pipe">pipe() (polars.DataFrame method)</a>
 
       <ul>
+        <li><a href="reference/expressions/api/polars.Expr.pipe.html#polars.Expr.pipe">(polars.Expr method)</a>
+</li>
         <li><a href="reference/lazyframe/api/polars.LazyFrame.pipe.html#polars.LazyFrame.pipe">(polars.LazyFrame method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/dataframe/api/polars.DataFrame.pivot.html#polars.DataFrame.pivot">pivot() (polars.DataFrame method)</a>
+</li>
+      <li><a href="reference/api/polars.exceptions.PolarsPanicError.html#polars.exceptions.PolarsPanicError">PolarsPanicError</a>
 </li>
       <li><a href="reference/expressions/api/polars.Expr.meta.pop.html#polars.Expr.meta.pop">pop() (polars.Expr.meta method)</a>
 </li>
@@ -1949,18 +2055,20 @@ document.write(`
 <h2 id="Q">Q</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/series/api/polars.Series.qcut.html#polars.Series.qcut">qcut() (polars.Series method)</a>
+</li>
       <li><a href="reference/expressions/api/polars.quantile.html#polars.quantile">quantile() (in module polars)</a>
 
       <ul>
         <li><a href="reference/dataframe/api/polars.DataFrame.quantile.html#polars.DataFrame.quantile">(polars.DataFrame method)</a>
 </li>
+        <li><a href="reference/dataframe/api/polars.dataframe.groupby.GroupBy.quantile.html#polars.dataframe.groupby.GroupBy.quantile">(polars.dataframe.groupby.GroupBy method)</a>
+</li>
         <li><a href="reference/expressions/api/polars.Expr.quantile.html#polars.Expr.quantile">(polars.Expr method)</a>
 </li>
-        <li><a href="reference/dataframe/api/polars.internals.dataframe.groupby.GroupBy.quantile.html#polars.internals.dataframe.groupby.GroupBy.quantile">(polars.internals.dataframe.groupby.GroupBy method)</a>
-</li>
-        <li><a href="reference/lazyframe/api/polars.internals.lazyframe.groupby.LazyGroupBy.quantile.html#polars.internals.lazyframe.groupby.LazyGroupBy.quantile">(polars.internals.lazyframe.groupby.LazyGroupBy method)</a>
-</li>
         <li><a href="reference/lazyframe/api/polars.LazyFrame.quantile.html#polars.LazyFrame.quantile">(polars.LazyFrame method)</a>
+</li>
+        <li><a href="reference/lazyframe/api/polars.lazyframe.groupby.LazyGroupBy.quantile.html#polars.lazyframe.groupby.LazyGroupBy.quantile">(polars.lazyframe.groupby.LazyGroupBy method)</a>
 </li>
         <li><a href="reference/series/api/polars.Series.quantile.html#polars.Series.quantile">(polars.Series method)</a>
 </li>
@@ -1973,8 +2081,6 @@ document.write(`
         <li><a href="reference/series/api/polars.Series.dt.quarter.html#polars.Series.dt.quarter">(polars.Series.dt method)</a>
 </li>
       </ul></li>
-      <li><a href="reference/api/polars.SQLContext.query.html#polars.SQLContext.query">query() (polars.SQLContext method)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -2031,7 +2137,11 @@ document.write(`
 </li>
       <li><a href="reference/api/polars.api.register_expr_namespace.html#polars.api.register_expr_namespace">register_expr_namespace() (in module polars.api)</a>
 </li>
+      <li><a href="reference/api/polars.SQLContext.register_globals.html#polars.SQLContext.register_globals">register_globals() (polars.SQLContext method)</a>
+</li>
       <li><a href="reference/api/polars.api.register_lazyframe_namespace.html#polars.api.register_lazyframe_namespace">register_lazyframe_namespace() (in module polars.api)</a>
+</li>
+      <li><a href="reference/api/polars.SQLContext.register_many.html#polars.SQLContext.register_many">register_many() (polars.SQLContext method)</a>
 </li>
       <li><a href="reference/api/polars.api.register_series_namespace.html#polars.api.register_series_namespace">register_series_namespace() (in module polars.api)</a>
 </li>
@@ -2117,6 +2227,10 @@ document.write(`
         <li><a href="reference/series/api/polars.Series.rolling_apply.html#polars.Series.rolling_apply">(polars.Series method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/expressions/api/polars.rolling_corr.html#polars.rolling_corr">rolling_corr() (in module polars)</a>
+</li>
+      <li><a href="reference/expressions/api/polars.rolling_cov.html#polars.rolling_cov">rolling_cov() (in module polars)</a>
+</li>
       <li><a href="reference/expressions/api/polars.Expr.rolling_max.html#polars.Expr.rolling_max">rolling_max() (polars.Expr method)</a>
 
       <ul>
@@ -2187,7 +2301,7 @@ document.write(`
 </li>
       <li><a href="reference/dataframe/api/polars.DataFrame.rows.html#polars.DataFrame.rows">rows() (polars.DataFrame method)</a>
 </li>
-      <li><a href="reference/api/polars.exceptions.RowsException.html#polars.exceptions.RowsException">RowsException</a>
+      <li><a href="reference/api/polars.exceptions.RowsError.html#polars.exceptions.RowsError">RowsError</a>
 </li>
       <li><a href="reference/expressions/api/polars.Expr.str.rstrip.html#polars.Expr.str.rstrip">rstrip() (polars.Expr.str method)</a>
 
@@ -2227,6 +2341,8 @@ document.write(`
 
       <ul>
         <li><a href="reference/lazyframe/api/polars.LazyFrame.schema.html#polars.LazyFrame.schema">(polars.LazyFrame property)</a>
+</li>
+        <li><a href="reference/series/api/polars.Series.struct.schema.html#polars.Series.struct.schema">(polars.Series.struct attribute)</a>
 </li>
       </ul></li>
       <li><a href="reference/api/polars.exceptions.SchemaError.html#polars.exceptions.SchemaError">SchemaError</a>
@@ -2279,12 +2395,20 @@ document.write(`
         <li><a href="reference/series/api/polars.Series.cat.set_ordering.html#polars.Series.cat.set_ordering">(polars.Series.cat method)</a>
 </li>
       </ul></li>
-      <li><a href="reference/expressions/api/polars.Expr.set_sorted.html#polars.Expr.set_sorted">set_sorted() (polars.Expr method)</a>
+      <li><a href="reference/api/polars.testing.parametric.set_profile.html#polars.testing.parametric.set_profile">set_profile() (in module polars.testing.parametric)</a>
+</li>
+      <li><a href="reference/dataframe/api/polars.DataFrame.set_sorted.html#polars.DataFrame.set_sorted">set_sorted() (polars.DataFrame method)</a>
 
       <ul>
+        <li><a href="reference/expressions/api/polars.Expr.set_sorted.html#polars.Expr.set_sorted">(polars.Expr method)</a>
+</li>
+        <li><a href="reference/lazyframe/api/polars.LazyFrame.set_sorted.html#polars.LazyFrame.set_sorted">(polars.LazyFrame method)</a>
+</li>
         <li><a href="reference/series/api/polars.Series.set_sorted.html#polars.Series.set_sorted">(polars.Series method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/api/polars.Config.set_streaming_chunk_size.html#polars.Config.set_streaming_chunk_size">set_streaming_chunk_size() (polars.Config class method)</a>
+</li>
       <li><a href="reference/api/polars.Config.set_tbl_cell_alignment.html#polars.Config.set_tbl_cell_alignment">set_tbl_cell_alignment() (polars.Config class method)</a>
 </li>
       <li><a href="reference/api/polars.Config.set_tbl_cols.html#polars.Config.set_tbl_cols">set_tbl_cols() (polars.Config class method)</a>
@@ -2357,14 +2481,14 @@ document.write(`
         <li><a href="reference/series/api/polars.Series.shrink_to_fit.html#polars.Series.shrink_to_fit">(polars.Series method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/expressions/api/polars.Expr.shuffle.html#polars.Expr.shuffle">shuffle() (polars.Expr method)</a>
 
       <ul>
         <li><a href="reference/series/api/polars.Series.shuffle.html#polars.Series.shuffle">(polars.Series method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/expressions/api/polars.Expr.sign.html#polars.Expr.sign">sign() (polars.Expr method)</a>
 
       <ul>
@@ -2507,6 +2631,8 @@ document.write(`
 </li>
       <li><a href="reference/api/polars.exceptions.StructFieldNotFoundError.html#polars.exceptions.StructFieldNotFoundError">StructFieldNotFoundError</a>
 </li>
+      <li><a href="reference/expressions/api/polars.Expr.sub.html#polars.Expr.sub">sub() (polars.Expr method)</a>
+</li>
       <li><a href="reference/expressions/api/polars.Expr.suffix.html#polars.Expr.suffix">suffix() (polars.Expr method)</a>
 </li>
       <li><a href="reference/expressions/api/polars.sum.html#polars.sum">sum() (in module polars)</a>
@@ -2514,15 +2640,15 @@ document.write(`
       <ul>
         <li><a href="reference/dataframe/api/polars.DataFrame.sum.html#polars.DataFrame.sum">(polars.DataFrame method)</a>
 </li>
+        <li><a href="reference/dataframe/api/polars.dataframe.groupby.GroupBy.sum.html#polars.dataframe.groupby.GroupBy.sum">(polars.dataframe.groupby.GroupBy method)</a>
+</li>
         <li><a href="reference/expressions/api/polars.Expr.sum.html#polars.Expr.sum">(polars.Expr method)</a>
 </li>
         <li><a href="reference/expressions/api/polars.Expr.arr.sum.html#polars.Expr.arr.sum">(polars.Expr.arr method)</a>
 </li>
-        <li><a href="reference/dataframe/api/polars.internals.dataframe.groupby.GroupBy.sum.html#polars.internals.dataframe.groupby.GroupBy.sum">(polars.internals.dataframe.groupby.GroupBy method)</a>
-</li>
-        <li><a href="reference/lazyframe/api/polars.internals.lazyframe.groupby.LazyGroupBy.sum.html#polars.internals.lazyframe.groupby.LazyGroupBy.sum">(polars.internals.lazyframe.groupby.LazyGroupBy method)</a>
-</li>
         <li><a href="reference/lazyframe/api/polars.LazyFrame.sum.html#polars.LazyFrame.sum">(polars.LazyFrame method)</a>
+</li>
+        <li><a href="reference/lazyframe/api/polars.lazyframe.groupby.LazyGroupBy.sum.html#polars.lazyframe.groupby.LazyGroupBy.sum">(polars.lazyframe.groupby.LazyGroupBy method)</a>
 </li>
         <li><a href="reference/series/api/polars.Series.sum.html#polars.Series.sum">(polars.Series method)</a>
 </li>
@@ -2535,20 +2661,22 @@ document.write(`
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/api/polars.SQLContext.tables.html#polars.SQLContext.tables">tables() (polars.SQLContext method)</a>
+</li>
       <li><a href="reference/expressions/api/polars.tail.html#polars.tail">tail() (in module polars)</a>
 
       <ul>
         <li><a href="reference/dataframe/api/polars.DataFrame.tail.html#polars.DataFrame.tail">(polars.DataFrame method)</a>
 </li>
+        <li><a href="reference/dataframe/api/polars.dataframe.groupby.GroupBy.tail.html#polars.dataframe.groupby.GroupBy.tail">(polars.dataframe.groupby.GroupBy method)</a>
+</li>
         <li><a href="reference/expressions/api/polars.Expr.tail.html#polars.Expr.tail">(polars.Expr method)</a>
 </li>
         <li><a href="reference/expressions/api/polars.Expr.arr.tail.html#polars.Expr.arr.tail">(polars.Expr.arr method)</a>
 </li>
-        <li><a href="reference/dataframe/api/polars.internals.dataframe.groupby.GroupBy.tail.html#polars.internals.dataframe.groupby.GroupBy.tail">(polars.internals.dataframe.groupby.GroupBy method)</a>
-</li>
-        <li><a href="reference/lazyframe/api/polars.internals.lazyframe.groupby.LazyGroupBy.tail.html#polars.internals.lazyframe.groupby.LazyGroupBy.tail">(polars.internals.lazyframe.groupby.LazyGroupBy method)</a>
-</li>
         <li><a href="reference/lazyframe/api/polars.LazyFrame.tail.html#polars.LazyFrame.tail">(polars.LazyFrame method)</a>
+</li>
+        <li><a href="reference/lazyframe/api/polars.lazyframe.groupby.LazyGroupBy.tail.html#polars.lazyframe.groupby.LazyGroupBy.tail">(polars.lazyframe.groupby.LazyGroupBy method)</a>
 </li>
         <li><a href="reference/series/api/polars.Series.tail.html#polars.Series.tail">(polars.Series method)</a>
 </li>
@@ -2591,6 +2719,16 @@ document.write(`
 </li>
       <li><a href="reference/api/polars.Time.html#polars.Time">Time (class in polars)</a>
 </li>
+      <li><a href="reference/expressions/api/polars.time.html#polars.time">time() (in module polars)</a>
+
+      <ul>
+        <li><a href="reference/expressions/api/polars.Expr.dt.time.html#polars.Expr.dt.time">(polars.Expr.dt method)</a>
+</li>
+        <li><a href="reference/series/api/polars.Series.dt.time.html#polars.Series.dt.time">(polars.Series.dt method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/api/polars.time_range.html#polars.time_range">time_range() (in module polars)</a>
+</li>
       <li><a href="reference/series/api/polars.Series.time_unit.html#polars.Series.time_unit">time_unit (polars.Series attribute)</a>
 </li>
       <li><a href="reference/expressions/api/polars.Expr.dt.timestamp.html#polars.Expr.dt.timestamp">timestamp() (polars.Expr.dt method)</a>
@@ -2603,6 +2741,18 @@ document.write(`
 
       <ul>
         <li><a href="reference/series/api/polars.Series.to_arrow.html#polars.Series.to_arrow">(polars.Series method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/expressions/api/polars.Expr.str.to_date.html#polars.Expr.str.to_date">to_date() (polars.Expr.str method)</a>
+
+      <ul>
+        <li><a href="reference/series/api/polars.Series.str.to_date.html#polars.Series.str.to_date">(polars.Series.str method)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/expressions/api/polars.Expr.str.to_datetime.html#polars.Expr.str.to_datetime">to_datetime() (polars.Expr.str method)</a>
+
+      <ul>
+        <li><a href="reference/series/api/polars.Series.str.to_datetime.html#polars.Series.str.to_datetime">(polars.Series.str method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -2619,6 +2769,12 @@ document.write(`
       </ul></li>
       <li><a href="reference/series/api/polars.Series.to_frame.html#polars.Series.to_frame">to_frame() (polars.Series method)</a>
 </li>
+      <li><a href="reference/dataframe/api/polars.DataFrame.to_init_repr.html#polars.DataFrame.to_init_repr">to_init_repr() (polars.DataFrame method)</a>
+
+      <ul>
+        <li><a href="reference/series/api/polars.Series.to_init_repr.html#polars.Series.to_init_repr">(polars.Series method)</a>
+</li>
+      </ul></li>
       <li><a href="reference/series/api/polars.Series.to_list.html#polars.Series.to_list">to_list() (polars.Series method)</a>
 </li>
       <li><a href="reference/expressions/api/polars.Expr.str.to_lowercase.html#polars.Expr.str.to_lowercase">to_lowercase() (polars.Expr.str method)</a>
@@ -2647,6 +2803,12 @@ document.write(`
       </ul></li>
       <li><a href="reference/dataframe/api/polars.DataFrame.to_series.html#polars.DataFrame.to_series">to_series() (polars.DataFrame method)</a>
 </li>
+      <li><a href="reference/expressions/api/polars.Expr.dt.to_string.html#polars.Expr.dt.to_string">to_string() (polars.Expr.dt method)</a>
+
+      <ul>
+        <li><a href="reference/series/api/polars.Series.dt.to_string.html#polars.Series.dt.to_string">(polars.Series.dt method)</a>
+</li>
+      </ul></li>
       <li><a href="reference/dataframe/api/polars.DataFrame.to_struct.html#polars.DataFrame.to_struct">to_struct() (polars.DataFrame method)</a>
 
       <ul>
@@ -2655,23 +2817,33 @@ document.write(`
         <li><a href="reference/series/api/polars.Series.arr.to_struct.html#polars.Series.arr.to_struct">(polars.Series.arr method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/expressions/api/polars.Expr.str.to_time.html#polars.Expr.str.to_time">to_time() (polars.Expr.str method)</a>
+
+      <ul>
+        <li><a href="reference/series/api/polars.Series.str.to_time.html#polars.Series.str.to_time">(polars.Series.str method)</a>
+</li>
+      </ul></li>
       <li><a href="reference/expressions/api/polars.Expr.str.to_uppercase.html#polars.Expr.str.to_uppercase">to_uppercase() (polars.Expr.str method)</a>
 
       <ul>
         <li><a href="reference/series/api/polars.Series.str.to_uppercase.html#polars.Series.str.to_uppercase">(polars.Series.str method)</a>
 </li>
       </ul></li>
-      <li><a href="reference/api/polars.toggle_string_cache.html#polars.toggle_string_cache">toggle_string_cache() (in module polars)</a>
+      <li><a href="reference/api/polars.exceptions.TooManyRowsReturnedError.html#polars.exceptions.TooManyRowsReturnedError">TooManyRowsReturnedError</a>
 </li>
-      <li><a href="reference/api/polars.exceptions.TooManyRowsReturned.html#polars.exceptions.TooManyRowsReturned">TooManyRowsReturned</a>
-</li>
-      <li><a href="reference/expressions/api/polars.Expr.top_k.html#polars.Expr.top_k">top_k() (polars.Expr method)</a>
+      <li><a href="reference/dataframe/api/polars.DataFrame.top_k.html#polars.DataFrame.top_k">top_k() (polars.DataFrame method)</a>
 
       <ul>
+        <li><a href="reference/expressions/api/polars.Expr.top_k.html#polars.Expr.top_k">(polars.Expr method)</a>
+</li>
+        <li><a href="reference/lazyframe/api/polars.LazyFrame.top_k.html#polars.LazyFrame.top_k">(polars.LazyFrame method)</a>
+</li>
         <li><a href="reference/series/api/polars.Series.top_k.html#polars.Series.top_k">(polars.Series method)</a>
 </li>
       </ul></li>
       <li><a href="reference/dataframe/api/polars.DataFrame.transpose.html#polars.DataFrame.transpose">transpose() (polars.DataFrame method)</a>
+</li>
+      <li><a href="reference/expressions/api/polars.Expr.truediv.html#polars.Expr.truediv">truediv() (polars.Expr method)</a>
 </li>
       <li><a href="reference/expressions/api/polars.Expr.dt.truncate.html#polars.Expr.dt.truncate">truncate() (polars.Expr.dt method)</a>
 
@@ -2727,6 +2899,8 @@ document.write(`
         <li><a href="reference/series/api/polars.Series.struct.unnest.html#polars.Series.struct.unnest">(polars.Series.struct method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/api/polars.SQLContext.unregister.html#polars.SQLContext.unregister">unregister() (polars.SQLContext method)</a>
+</li>
       <li><a href="reference/dataframe/api/polars.DataFrame.unstack.html#polars.DataFrame.unstack">unstack() (polars.DataFrame method)</a>
 </li>
       <li><a href="reference/dataframe/api/polars.DataFrame.update.html#polars.DataFrame.update">update() (polars.DataFrame method)</a>
@@ -2831,6 +3005,8 @@ document.write(`
 </li>
       <li><a href="reference/api/polars.DataFrame.write_database.html#polars.DataFrame.write_database">write_database() (polars.DataFrame method)</a>
 </li>
+      <li><a href="reference/api/polars.DataFrame.write_delta.html#polars.DataFrame.write_delta">write_delta() (polars.DataFrame method)</a>
+</li>
       <li><a href="reference/api/polars.DataFrame.write_excel.html#polars.DataFrame.write_excel">write_excel() (polars.DataFrame method)</a>
 </li>
       <li><a href="reference/api/polars.DataFrame.write_ipc.html#polars.DataFrame.write_ipc">write_ipc() (polars.DataFrame method)</a>
@@ -2844,6 +3020,14 @@ document.write(`
       <li><a href="reference/api/polars.DataFrame.write_ndjson.html#polars.DataFrame.write_ndjson">write_ndjson() (polars.DataFrame method)</a>
 </li>
       <li><a href="reference/api/polars.DataFrame.write_parquet.html#polars.DataFrame.write_parquet">write_parquet() (polars.DataFrame method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="X">X</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/expressions/api/polars.Expr.xor.html#polars.Expr.xor">xor() (polars.Expr method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -2885,9 +3069,15 @@ document.write(`
               
               
                 <footer class="bd-footer-article">
-                  <!-- Previous / next buttons -->
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
+</div></div>
+  
 </div>
+
                 </footer>
               
             </div>
@@ -2897,7 +3087,7 @@ document.write(`
             
           </div>
           <footer class="bd-footer-content">
-            <div class="bd-footer-content__inner"></div>
+            
           </footer>
         
       </main>
@@ -2905,8 +3095,8 @@ document.write(`
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d"></script>
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -2924,7 +3114,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://sphinx-doc.org/">Sphinx</a> 5.3.0.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.2.1.
     <br/>
   </p>
 </div>
@@ -2935,7 +3125,7 @@ document.write(`
     <div class="footer-items__end">
       
         <div class="footer-item"><p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.13.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.13.3.
 </p></div>
       
     </div>

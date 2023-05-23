@@ -15,9 +15,17 @@
    
       ~Float64.__init__
       ~Float64.base_type
+      ~Float64.is_
+      ~Float64.is_not
    
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Float64.is_nested
    
    

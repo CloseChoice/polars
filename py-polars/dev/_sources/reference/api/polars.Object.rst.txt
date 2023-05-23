@@ -15,9 +15,17 @@
    
       ~Object.__init__
       ~Object.base_type
+      ~Object.is_
+      ~Object.is_not
    
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Object.is_nested
    
    

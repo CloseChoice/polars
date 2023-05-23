@@ -15,9 +15,17 @@
    
       ~Date.__init__
       ~Date.base_type
+      ~Date.is_
+      ~Date.is_not
    
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Date.is_nested
    
    

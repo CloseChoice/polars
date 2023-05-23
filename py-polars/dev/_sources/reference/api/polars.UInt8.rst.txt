@@ -15,9 +15,17 @@
    
       ~UInt8.__init__
       ~UInt8.base_type
+      ~UInt8.is_
+      ~UInt8.is_not
    
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~UInt8.is_nested
    
    

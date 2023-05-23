@@ -15,9 +15,17 @@
    
       ~Time.__init__
       ~Time.base_type
+      ~Time.is_
+      ~Time.is_not
    
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Time.is_nested
    
    

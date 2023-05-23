@@ -15,9 +15,17 @@
    
       ~Unknown.__init__
       ~Unknown.base_type
+      ~Unknown.is_
+      ~Unknown.is_not
    
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Unknown.is_nested
    
    

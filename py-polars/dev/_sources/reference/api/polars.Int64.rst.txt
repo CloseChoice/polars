@@ -15,9 +15,17 @@
    
       ~Int64.__init__
       ~Int64.base_type
+      ~Int64.is_
+      ~Int64.is_not
    
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Int64.is_nested
    
    
