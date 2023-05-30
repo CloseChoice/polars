@@ -1898,8 +1898,6 @@
 <a href="#1898" id="1898">1898</a>
 <a href="#1899" id="1899">1899</a>
 <a href="#1900" id="1900">1900</a>
-<a href="#1901" id="1901">1901</a>
-<a href="#1902" id="1902">1902</a>
 </pre></div><pre class="rust"><code><span class="attr">#![allow(ambiguous_glob_reexports)]
 </span><span class="doccomment">//! Domain specific language for the Lazy API.
 </span><span class="attr">#[cfg(feature = <span class="string">&quot;dtype-categorical&quot;</span>)]
@@ -1908,6 +1906,8 @@
 </span><span class="kw">pub use </span>cat::<span class="kw-2">*</span>;
 <span class="kw">mod </span>arithmetic;
 <span class="kw">mod </span>arity;
+<span class="attr">#[cfg(feature = <span class="string">&quot;dtype-array&quot;</span>)]
+</span><span class="kw">mod </span>array;
 <span class="kw">pub mod </span>binary;
 <span class="attr">#[cfg(feature = <span class="string">&quot;temporal&quot;</span>)]
 </span><span class="kw">pub mod </span>dt;
@@ -2005,9 +2005,19 @@
         binary_expr(<span class="self">self</span>, Operator::Eq, other.into())
     }
 
+    <span class="doccomment">/// Compare `Expr` with other `Expr` on equality where `None == None`
+    </span><span class="kw">pub fn </span>eq_missing&lt;E: Into&lt;Expr&gt;&gt;(<span class="self">self</span>, other: E) -&gt; Expr {
+        binary_expr(<span class="self">self</span>, Operator::EqValidity, other.into())
+    }
+
     <span class="doccomment">/// Compare `Expr` with other `Expr` on non-equality
     </span><span class="kw">pub fn </span>neq&lt;E: Into&lt;Expr&gt;&gt;(<span class="self">self</span>, other: E) -&gt; Expr {
         binary_expr(<span class="self">self</span>, Operator::NotEq, other.into())
+    }
+
+    <span class="doccomment">/// Compare `Expr` with other `Expr` on non-equality where `None == None`
+    </span><span class="kw">pub fn </span>neq_missing&lt;E: Into&lt;Expr&gt;&gt;(<span class="self">self</span>, other: E) -&gt; Expr {
+        binary_expr(<span class="self">self</span>, Operator::NotEqValidity, other.into())
     }
 
     <span class="doccomment">/// Check if `Expr` &lt; `Expr`
@@ -2156,34 +2166,7 @@
 
     <span class="doccomment">/// Explode the utf8/ list column
     </span><span class="kw">pub fn </span>explode(<span class="self">self</span>) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>has_filter = has_expr(<span class="kw-2">&amp;</span><span class="self">self</span>, |e| <span class="macro">matches!</span>(e, Expr::Filter { .. }));
-
-        <span class="comment">// if we explode right after a window function we don&#39;t self join, but just flatten
-        // the expression
-        </span><span class="kw">if let </span>Expr::Window {
-            function,
-            partition_by,
-            order_by,
-            <span class="kw-2">mut </span>options,
-        } = <span class="self">self
-        </span>{
-            <span class="kw">if </span>has_filter {
-                <span class="macro">panic!</span>(<span class="string">&quot;A Filter of a window function is not allowed in combination with explode/flatten.\
-                The resulting column may not fit the DataFrame/ or the groups
-                &quot;</span>)
-            }
-
-            options.explode = <span class="bool-val">true</span>;
-
-            Expr::Explode(Box::new(Expr::Window {
-                function,
-                partition_by,
-                order_by,
-                options,
-            }))
-        } <span class="kw">else </span>{
-            Expr::Explode(Box::new(<span class="self">self</span>))
-        }
+        Expr::Explode(Box::new(<span class="self">self</span>))
     }
 
     <span class="doccomment">/// Slice the Series.
@@ -2419,12 +2402,8 @@
             output_type,
             options: FunctionOptions {
                 collect_groups: ApplyOptions::ApplyFlat,
-                input_wildcard_expansion: <span class="bool-val">false</span>,
-                auto_explode: <span class="bool-val">false</span>,
                 fmt_str: <span class="string">&quot;map&quot;</span>,
-                cast_to_supertypes: <span class="bool-val">false</span>,
-                allow_rename: <span class="bool-val">false</span>,
-                pass_name_to_apply: <span class="bool-val">false</span>,
+                ..Default::default()
             },
         }
     }
@@ -2435,10 +2414,6 @@
             function: function_expr,
             options: FunctionOptions {
                 collect_groups: ApplyOptions::ApplyFlat,
-                input_wildcard_expansion: <span class="bool-val">false</span>,
-                auto_explode: <span class="bool-val">false</span>,
-                cast_to_supertypes: <span class="bool-val">false</span>,
-                allow_rename: <span class="bool-val">false</span>,
                 ..Default::default()
             },
         }
@@ -2823,6 +2798,14 @@
     /// ╰────────┴────────╯
     /// ```
     </span><span class="kw">pub fn </span>over&lt;E: AsRef&lt;[IE]&gt;, IE: Into&lt;Expr&gt; + Clone&gt;(<span class="self">self</span>, partition_by: E) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.over_with_options(partition_by, Default::default())
+    }
+
+    <span class="kw">pub fn </span>over_with_options&lt;E: AsRef&lt;[IE]&gt;, IE: Into&lt;Expr&gt; + Clone&gt;(
+        <span class="self">self</span>,
+        partition_by: E,
+        options: WindowOptions,
+    ) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>partition_by = partition_by
             .as_ref()
             .iter()
@@ -2832,7 +2815,7 @@
             function: Box::new(<span class="self">self</span>),
             partition_by,
             order_by: <span class="prelude-val">None</span>,
-            options: WindowOptions { explode: <span class="bool-val">false </span>},
+            options,
         }
     }
 
@@ -2984,7 +2967,7 @@
             <span class="kw">let </span>by = <span class="kw-2">&amp;</span>s[<span class="number">1</span>];
             <span class="kw">let </span>s = <span class="kw-2">&amp;</span>s[<span class="number">0</span>];
             <span class="kw">let </span>by = by.cast(<span class="kw-2">&amp;</span>IDX_DTYPE)<span class="question-mark">?</span>;
-            <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(s.repeat_by(by.idx()<span class="question-mark">?</span>).into_series()))
+            <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(s.repeat_by(by.idx()<span class="question-mark">?</span>)<span class="question-mark">?</span>.into_series()))
         };
 
         <span class="self">self</span>.apply_many(
@@ -3680,18 +3663,31 @@
     </span><span class="kw">pub fn </span>dt(<span class="self">self</span>) -&gt; dt::DateLikeNameSpace {
         dt::DateLikeNameSpace(<span class="self">self</span>)
     }
-    <span class="kw">pub fn </span>arr(<span class="self">self</span>) -&gt; list::ListNameSpace {
+
+    <span class="kw">pub fn </span>list(<span class="self">self</span>) -&gt; list::ListNameSpace {
         list::ListNameSpace(<span class="self">self</span>)
     }
-    <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-categorical&quot;</span>)]
+
+    <span class="doccomment">/// Get the [`ArrayNameSpace`]
+    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dtype-array&quot;</span>)]
+    </span><span class="kw">pub fn </span>arr(<span class="self">self</span>) -&gt; array::ArrayNameSpace {
+        array::ArrayNameSpace(<span class="self">self</span>)
+    }
+
+    <span class="doccomment">/// Get the [`CategoricalNameSpace`]
+    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dtype-categorical&quot;</span>)]
     </span><span class="kw">pub fn </span>cat(<span class="self">self</span>) -&gt; cat::CategoricalNameSpace {
         cat::CategoricalNameSpace(<span class="self">self</span>)
     }
-    <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-struct&quot;</span>)]
+
+    <span class="doccomment">/// Get the [`StructNameSpace`]
+    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dtype-struct&quot;</span>)]
     </span><span class="kw">pub fn </span>struct_(<span class="self">self</span>) -&gt; struct_::StructNameSpace {
         struct_::StructNameSpace(<span class="self">self</span>)
     }
-    <span class="attr">#[cfg(feature = <span class="string">&quot;meta&quot;</span>)]
+
+    <span class="doccomment">/// Get the [`MetaNameSpace`]
+    </span><span class="attr">#[cfg(feature = <span class="string">&quot;meta&quot;</span>)]
     </span><span class="kw">pub fn </span>meta(<span class="self">self</span>) -&gt; meta::MetaNameSpace {
         meta::MetaNameSpace(<span class="self">self</span>)
     }

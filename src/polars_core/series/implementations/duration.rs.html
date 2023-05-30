@@ -475,6 +475,7 @@
 <a href="#475" id="475">475</a>
 <a href="#476" id="476">476</a>
 <a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::borrow::Cow;
 <span class="kw">use </span>std::ops::{Deref, DerefMut};
 
@@ -934,16 +935,17 @@
         <span class="self">self</span>.<span class="number">0</span>.is_in(other)
     }
     <span class="attr">#[cfg(feature = <span class="string">&quot;repeat_by&quot;</span>)]
-    </span><span class="kw">fn </span>repeat_by(<span class="kw-2">&amp;</span><span class="self">self</span>, by: <span class="kw-2">&amp;</span>IdxCa) -&gt; ListChunked {
-        <span class="self">self</span>.<span class="number">0
-            </span>.repeat_by(by)
-            .cast(<span class="kw-2">&amp;</span>DataType::List(Box::new(DataType::Duration(
+    </span><span class="kw">fn </span>repeat_by(<span class="kw-2">&amp;</span><span class="self">self</span>, by: <span class="kw-2">&amp;</span>IdxCa) -&gt; PolarsResult&lt;ListChunked&gt; {
+        <span class="prelude-val">Ok</span>(<span class="self">self
+            </span>.<span class="number">0
+            </span>.repeat_by(by)<span class="question-mark">?
+            </span>.cast(<span class="kw-2">&amp;</span>DataType::List(Box::new(DataType::Duration(
                 <span class="self">self</span>.<span class="number">0</span>.time_unit(),
             ))))
             .unwrap()
             .list()
             .unwrap()
-            .clone()
+            .clone())
     }
     <span class="attr">#[cfg(feature = <span class="string">&quot;mode&quot;</span>)]
     </span><span class="kw">fn </span>mode(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; PolarsResult&lt;Series&gt; {

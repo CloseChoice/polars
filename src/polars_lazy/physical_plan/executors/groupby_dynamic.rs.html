@@ -109,7 +109,22 @@
 <a href="#109" id="109">109</a>
 <a href="#110" id="110">110</a>
 <a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
+<a href="#120" id="120">120</a>
+<a href="#121" id="121">121</a>
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
 </pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">&quot;dynamic_groupby&quot;</span>)]
+</span><span class="kw">use </span>polars_core::frame::groupby::GroupBy;
+<span class="attr">#[cfg(feature = <span class="string">&quot;dynamic_groupby&quot;</span>)]
 </span><span class="kw">use </span>polars_time::DynamicGroupOptions;
 
 <span class="kw">use super</span>::<span class="kw-2">*</span>;
@@ -125,6 +140,7 @@
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) options: DynamicGroupOptions,
     <span class="kw">pub</span>(<span class="kw">crate</span>) input_schema: SchemaRef,
     <span class="kw">pub</span>(<span class="kw">crate</span>) slice: <span class="prelude-ty">Option</span>&lt;(i64, usize)&gt;,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) apply: <span class="prelude-ty">Option</span>&lt;Arc&lt;<span class="kw">dyn </span>DataFrameUdf&gt;&gt;,
 }
 
 <span class="kw">impl </span>GroupByDynamicExec {
@@ -143,6 +159,16 @@
             .collect::&lt;PolarsResult&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;&gt;()<span class="question-mark">?</span>;
 
         <span class="kw">let </span>(<span class="kw-2">mut </span>time_key, <span class="kw-2">mut </span>keys, groups) = df.groupby_dynamic(keys, <span class="kw-2">&amp;</span><span class="self">self</span>.options)<span class="question-mark">?</span>;
+
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(f) = <span class="kw-2">&amp;</span><span class="self">self</span>.apply {
+            <span class="kw">let </span>gb = GroupBy::new(<span class="kw-2">&amp;</span>df, <span class="macro">vec!</span>[], groups, <span class="prelude-val">None</span>);
+            <span class="kw">let </span>out = gb.apply(<span class="kw">move </span>|df| f.call_udf(df))<span class="question-mark">?</span>;
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="kw">if let </span><span class="prelude-val">Some</span>((offset, len)) = <span class="self">self</span>.slice {
+                out.slice(offset, len)
+            } <span class="kw">else </span>{
+                out
+            });
+        }
 
         <span class="kw">let </span><span class="kw-2">mut </span>groups = <span class="kw-2">&amp;</span>groups;
         <span class="attr">#[allow(unused_assignments)]

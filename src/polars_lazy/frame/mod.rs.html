@@ -1464,6 +1464,15 @@
 <a href="#1464" id="1464">1464</a>
 <a href="#1465" id="1465">1465</a>
 <a href="#1466" id="1466">1466</a>
+<a href="#1467" id="1467">1467</a>
+<a href="#1468" id="1468">1468</a>
+<a href="#1469" id="1469">1469</a>
+<a href="#1470" id="1470">1470</a>
+<a href="#1471" id="1471">1471</a>
+<a href="#1472" id="1472">1472</a>
+<a href="#1473" id="1473">1473</a>
+<a href="#1474" id="1474">1474</a>
+<a href="#1475" id="1475">1475</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Lazy variant of a [DataFrame](polars_core::frame::DataFrame).
 </span><span class="attr">#[cfg(feature = <span class="string">&quot;csv&quot;</span>)]
 </span><span class="kw">mod </span>csv;
@@ -1639,12 +1648,12 @@
         <span class="self">self
     </span>}
 
-    <span class="doccomment">/// Describe the logical plan.
+    <span class="doccomment">/// Explain the naive logical plan.
     </span><span class="kw">pub fn </span>describe_plan(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
         <span class="self">self</span>.logical_plan.describe()
     }
 
-    <span class="doccomment">/// Describe the optimized logical plan.
+    <span class="doccomment">/// Explain the optimized logical plan.
     </span><span class="kw">pub fn </span>describe_optimized_plan(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; PolarsResult&lt;String&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>expr_arena = Arena::with_capacity(<span class="number">64</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>lp_arena = Arena::with_capacity(<span class="number">64</span>);
@@ -1656,6 +1665,15 @@
         )<span class="question-mark">?</span>;
         <span class="kw">let </span>logical_plan = node_to_lp(lp_top, <span class="kw-2">&amp;</span>expr_arena, <span class="kw-2">&amp;mut </span>lp_arena);
         <span class="prelude-val">Ok</span>(logical_plan.describe())
+    }
+
+    <span class="doccomment">/// Explain the logical plan.
+    </span><span class="kw">pub fn </span>explain(<span class="kw-2">&amp;</span><span class="self">self</span>, optimized: bool) -&gt; PolarsResult&lt;String&gt; {
+        <span class="kw">if </span>optimized {
+            <span class="self">self</span>.describe_optimized_plan()
+        } <span class="kw">else </span>{
+            <span class="prelude-val">Ok</span>(<span class="self">self</span>.describe_plan())
+        }
     }
 
     <span class="doccomment">/// Add a sort operation to the logical plan.
@@ -2802,8 +2820,8 @@
     {
         <span class="attr">#[cfg(feature = <span class="string">&quot;dynamic_groupby&quot;</span>)]
         </span><span class="kw">let </span>options = GroupbyOptions {
-            dynamic: <span class="prelude-val">None</span>,
-            rolling: <span class="prelude-val">None</span>,
+            dynamic: <span class="self">self</span>.dynamic_options,
+            rolling: <span class="self">self</span>.rolling_options,
             slice: <span class="prelude-val">None</span>,
         };
 
@@ -2886,8 +2904,8 @@
     </span>}
 
     <span class="doccomment">/// Force parallel table evaluation.
-    </span><span class="kw">pub fn </span>force_parallel(<span class="kw-2">mut </span><span class="self">self</span>, allow: bool) -&gt; <span class="self">Self </span>{
-        <span class="self">self</span>.allow_parallel = allow;
+    </span><span class="kw">pub fn </span>force_parallel(<span class="kw-2">mut </span><span class="self">self</span>, force: bool) -&gt; <span class="self">Self </span>{
+        <span class="self">self</span>.force_parallel = force;
         <span class="self">self
     </span>}
 

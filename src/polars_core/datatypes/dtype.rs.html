@@ -358,6 +358,7 @@
 <a href="#358" id="358">358</a>
 <a href="#359" id="359">359</a>
 <a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
 </pre></div><pre class="rust"><code><span class="kw">use super</span>::<span class="kw-2">*</span>;
 
 <span class="kw">pub type </span>TimeZone = String;
@@ -471,11 +472,12 @@
     }
 
     <span class="kw">pub fn </span>inner_dtype(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>DataType&gt; {
-        <span class="kw">if let </span>DataType::List(inner) = <span class="self">self </span>{
-            <span class="prelude-val">Some</span>(inner)
-        } <span class="kw">else </span>{
-            <span class="prelude-val">None
-        </span>}
+        <span class="kw">match </span><span class="self">self </span>{
+            DataType::List(inner) =&gt; <span class="prelude-val">Some</span>(inner),
+            <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-array&quot;</span>)]
+            </span>DataType::Array(inner, <span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>(inner),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+        }
     }
 
     <span class="doccomment">/// Convert to the physical data type
@@ -664,7 +666,7 @@
                     (<span class="kw">_</span>, <span class="prelude-val">None</span>) =&gt; f.write_str(<span class="string">&quot;decimal[?]&quot;</span>), <span class="comment">// shouldn&#39;t happen
                     </span>(<span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(scale)) =&gt; f.write_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;decimal[{scale}]&quot;</span>)),
                     (<span class="prelude-val">Some</span>(precision), <span class="prelude-val">Some</span>(scale)) =&gt; {
-                        f.write_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;decimal[.{precision},{scale}]&quot;</span>))
+                        f.write_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;decimal[{precision},{scale}]&quot;</span>))
                     }
                 };
             }

@@ -197,17 +197,8 @@
 <a href="#197" id="197">197</a>
 <a href="#198" id="198">198</a>
 <a href="#199" id="199">199</a>
-<a href="#200" id="200">200</a>
-<a href="#201" id="201">201</a>
-<a href="#202" id="202">202</a>
-<a href="#203" id="203">203</a>
-<a href="#204" id="204">204</a>
-<a href="#205" id="205">205</a>
-<a href="#206" id="206">206</a>
-<a href="#207" id="207">207</a>
-<a href="#208" id="208">208</a>
 </pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-</span><span class="kw">use </span>arrow::temporal_conversions::parse_offset;
+</span><span class="kw">use </span>chrono_tz::Tz;
 <span class="kw">use </span>polars_core::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>polars_core::utils::ensure_sorted_arg;
 <span class="kw">use </span>polars_ops::prelude::<span class="kw-2">*</span>;
@@ -318,7 +309,7 @@
     stable: bool,
 ) -&gt; PolarsResult&lt;DataFrame&gt; {
     <span class="kw">let </span>s = source.column(index_column)<span class="question-mark">?</span>;
-    ensure_sorted_arg(s, <span class="string">&quot;upsample&quot;</span>);
+    ensure_sorted_arg(s, <span class="string">&quot;upsample&quot;</span>)<span class="question-mark">?</span>;
     <span class="kw">if </span><span class="macro">matches!</span>(s.dtype(), DataType::Date) {
         <span class="kw">let </span><span class="kw-2">mut </span>df = source.clone();
         df.try_apply(index_column, |s| {
@@ -365,25 +356,16 @@
                 (<span class="prelude-val">Some</span>(first), <span class="prelude-val">Some</span>(last)) =&gt; {
                     <span class="kw">let </span>(first, last) = <span class="kw">match </span>tz {
                         <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-                        </span><span class="prelude-val">Some</span>(tz) =&gt; <span class="kw">match </span>tz.parse::&lt;chrono_tz::Tz&gt;() {
-                            <span class="prelude-val">Ok</span>(tz) =&gt; (
-                                unlocalize_timestamp(first, <span class="kw-2">*</span>tu, tz),
-                                unlocalize_timestamp(last, <span class="kw-2">*</span>tu, tz),
-                            ),
-                            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">match </span>parse_offset(tz) {
-                                <span class="prelude-val">Ok</span>(tz) =&gt; (
-                                    unlocalize_timestamp(first, <span class="kw-2">*</span>tu, tz),
-                                    unlocalize_timestamp(last, <span class="kw-2">*</span>tu, tz),
-                                ),
-                                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">unreachable!</span>(),
-                            },
-                        },
+                        </span><span class="prelude-val">Some</span>(tz) =&gt; (
+                            unlocalize_timestamp(first, <span class="kw-2">*</span>tu, tz.parse::&lt;Tz&gt;().unwrap()),
+                            unlocalize_timestamp(last, <span class="kw-2">*</span>tu, tz.parse::&lt;Tz&gt;().unwrap()),
+                        ),
                         <span class="kw">_ </span>=&gt; (first, last),
                     };
                     <span class="kw">let </span>first = <span class="kw">match </span>tu {
-                        TimeUnit::Nanoseconds =&gt; offset.add_ns(first, NO_TIMEZONE)<span class="question-mark">?</span>,
-                        TimeUnit::Microseconds =&gt; offset.add_us(first, NO_TIMEZONE)<span class="question-mark">?</span>,
-                        TimeUnit::Milliseconds =&gt; offset.add_ms(first, NO_TIMEZONE)<span class="question-mark">?</span>,
+                        TimeUnit::Nanoseconds =&gt; offset.add_ns(first, <span class="prelude-val">None</span>)<span class="question-mark">?</span>,
+                        TimeUnit::Microseconds =&gt; offset.add_us(first, <span class="prelude-val">None</span>)<span class="question-mark">?</span>,
+                        TimeUnit::Milliseconds =&gt; offset.add_ms(first, <span class="prelude-val">None</span>)<span class="question-mark">?</span>,
                     };
                     <span class="kw">let </span>range = date_range_impl(
                         index_col_name,

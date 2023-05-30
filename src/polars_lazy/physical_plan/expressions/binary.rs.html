@@ -481,6 +481,8 @@
 <a href="#481" id="481">481</a>
 <a href="#482" id="482">482</a>
 <a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::sync::Arc;
 
 <span class="kw">use </span>polars_core::frame::groupby::GroupsProxy;
@@ -556,6 +558,8 @@
         Operator::Or =&gt; left.bitor(right),
         Operator::Xor =&gt; left.bitxor(right),
         Operator::Modulus =&gt; <span class="prelude-val">Ok</span>(left % right),
+        Operator::EqValidity =&gt; left.equal_missing(right).map(|ca| ca.into_series()),
+        Operator::NotEqValidity =&gt; left.not_equal_missing(right).map(|ca| ca.into_series()),
     }
 }
 

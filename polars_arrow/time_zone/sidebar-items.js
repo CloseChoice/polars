@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["NO_TIMEZONE"],"trait":["PolarsTimeZone"]};
+window.SIDEBAR_ITEMS = {"enum":["Tz"]};

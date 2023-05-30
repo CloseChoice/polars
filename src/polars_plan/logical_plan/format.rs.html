@@ -432,14 +432,32 @@
 <a href="#432" id="432">432</a>
 <a href="#433" id="433">433</a>
 <a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::borrow::Cow;
 <span class="kw">use </span>std::fmt;
-<span class="kw">use </span>std::fmt::{Debug, Display, Formatter};
+<span class="kw">use </span>std::fmt::{Debug, Display, Formatter, Write};
 <span class="kw">use </span>std::path::Path;
 
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
-<span class="kw">fn </span>write_scan&lt;P: Display&gt;(
+<span class="attr">#[allow(clippy::too_many_arguments)]
+</span><span class="kw">fn </span>write_scan&lt;P: Display&gt;(
     f: <span class="kw-2">&amp;mut </span>Formatter,
     name: <span class="kw-2">&amp;</span>str,
     path: <span class="kw-2">&amp;</span>Path,
@@ -447,6 +465,7 @@
     n_columns: i64,
     total_columns: usize,
     predicate: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;P&gt;,
+    n_rows: <span class="prelude-ty">Option</span>&lt;usize&gt;,
 ) -&gt; fmt::Result {
     <span class="kw">if </span>indent != <span class="number">0 </span>{
         <span class="macro">writeln!</span>(f)<span class="question-mark">?</span>;
@@ -463,6 +482,9 @@
     }
     <span class="kw">if let </span><span class="prelude-val">Some</span>(predicate) = predicate {
         <span class="macro">write!</span>(f, <span class="string">&quot;\n{:indent$}SELECTION: {predicate}&quot;</span>, <span class="string">&quot;&quot;</span>)<span class="question-mark">?</span>;
+    }
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(n_rows) = n_rows {
+        <span class="macro">write!</span>(f, <span class="string">&quot;\n{:indent$}N_ROWS: {n_rows}&quot;</span>, <span class="string">&quot;&quot;</span>)<span class="question-mark">?</span>;
     }
     <span class="prelude-val">Ok</span>(())
 }
@@ -492,6 +514,7 @@
                     n_columns,
                     total_columns,
                     <span class="kw-2">&amp;</span>options.predicate,
+                    options.n_rows,
                 )
             }
             AnonymousScan {
@@ -513,15 +536,23 @@
                     n_columns,
                     file_info.schema.len(),
                     predicate,
+                    options.n_rows,
                 )
             }
-            Union { inputs, .. } =&gt; {
-                <span class="macro">write!</span>(f, <span class="string">&quot;{:indent$}UNION:&quot;</span>, <span class="string">&quot;&quot;</span>)<span class="question-mark">?</span>;
+            Union { inputs, options } =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>name = String::new();
+                <span class="kw">let </span>name = <span class="kw">if let </span><span class="prelude-val">Some</span>(slice) = options.slice {
+                    <span class="macro">write!</span>(name, <span class="string">&quot;SLICED UNION: {:?}&quot;</span>, slice)<span class="question-mark">?</span>;
+                    name.as_str()
+                } <span class="kw">else </span>{
+                    <span class="string">&quot;UNION&quot;
+                </span>};
+                <span class="macro">write!</span>(f, <span class="string">&quot;{:indent$}{}&quot;</span>, <span class="string">&quot;&quot;</span>, name)<span class="question-mark">?</span>;
                 <span class="kw">for </span>(i, plan) <span class="kw">in </span>inputs.iter().enumerate() {
                     <span class="macro">write!</span>(f, <span class="string">&quot;\n{:indent$}PLAN {i}:&quot;</span>, <span class="string">&quot;&quot;</span>)<span class="question-mark">?</span>;
                     plan._format(f, sub_indent)<span class="question-mark">?</span>;
                 }
-                <span class="macro">write!</span>(f, <span class="string">&quot;\n{:indent$}END UNION&quot;</span>, <span class="string">&quot;&quot;</span>)
+                <span class="macro">write!</span>(f, <span class="string">&quot;\n{:indent$}END {}&quot;</span>, <span class="string">&quot;&quot;</span>, name)
             }
             Cache { input, id, count } =&gt; {
                 <span class="macro">write!</span>(f, <span class="string">&quot;{:indent$}CACHE[id: {:x}, count: {}]&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="kw-2">*</span>id, <span class="kw-2">*</span>count)<span class="question-mark">?</span>;
@@ -548,6 +579,7 @@
                     n_columns,
                     file_info.schema.len(),
                     predicate,
+                    options.n_rows,
                 )
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;ipc&quot;</span>)]
@@ -571,6 +603,7 @@
                     n_columns,
                     file_info.schema.len(),
                     predicate,
+                    options.n_rows,
                 )
             }
             Selection { predicate, input } =&gt; {
@@ -598,6 +631,7 @@
                     n_columns,
                     file_info.schema.len(),
                     predicate,
+                    options.n_rows,
                 )
             }
             DataFrameScan {

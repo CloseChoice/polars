@@ -779,7 +779,7 @@
                 IsIn::is_in(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, other)
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;repeat_by&quot;</span>)]
-            </span><span class="kw">fn </span>repeat_by(<span class="kw-2">&amp;</span><span class="self">self</span>, by: <span class="kw-2">&amp;</span>IdxCa) -&gt; ListChunked {
+            </span><span class="kw">fn </span>repeat_by(<span class="kw-2">&amp;</span><span class="self">self</span>, by: <span class="kw-2">&amp;</span>IdxCa) -&gt; PolarsResult&lt;ListChunked&gt; {
                 RepeatBy::repeat_by(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, by)
             }
 

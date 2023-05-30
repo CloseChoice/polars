@@ -65,28 +65,11 @@
 <a href="#65" id="65">65</a>
 <a href="#66" id="66">66</a>
 <a href="#67" id="67">67</a>
-<a href="#68" id="68">68</a>
-<a href="#69" id="69">69</a>
-<a href="#70" id="70">70</a>
-<a href="#71" id="71">71</a>
-<a href="#72" id="72">72</a>
-<a href="#73" id="73">73</a>
-<a href="#74" id="74">74</a>
-<a href="#75" id="75">75</a>
-<a href="#76" id="76">76</a>
-<a href="#77" id="77">77</a>
-<a href="#78" id="78">78</a>
-<a href="#79" id="79">79</a>
-<a href="#80" id="80">80</a>
-<a href="#81" id="81">81</a>
-<a href="#82" id="82">82</a>
-<a href="#83" id="83">83</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::convert::TryFrom;
 
-<span class="kw">use </span>arrow::bitmap::MutableBitmap;
-<span class="kw">use </span>polars_arrow::array::PolarsArray;
-<span class="kw">use </span>polars_arrow::bit_util::unset_bit_raw;
+<span class="kw">use </span>polars_arrow::compute::take::bitmap::take_bitmap_unchecked;
 <span class="kw">use </span>polars_arrow::compute::take::take_value_indices_from_list;
+<span class="kw">use </span>polars_arrow::utils::combine_validities_and;
 
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 
@@ -137,28 +120,13 @@
 
     <span class="kw">let </span>taken = taken.array_ref(<span class="number">0</span>).clone();
 
-    <span class="kw">let </span>validity =
-        <span class="comment">// if null count &gt; 0
-        </span><span class="kw">if </span>values.has_validity() || indices.has_validity() {
-            <span class="comment">// determine null buffer, which are a function of `values` and `indices`
-            </span><span class="kw">let </span><span class="kw-2">mut </span>validity = MutableBitmap::with_capacity(indices.len());
-            <span class="kw">let </span>validity_ptr = validity.as_slice().as_ptr() <span class="kw">as </span><span class="kw-2">*mut </span>u8;
-            validity.extend_constant(indices.len(), <span class="bool-val">true</span>);
+    <span class="kw">let </span>validity = <span class="kw">if let </span><span class="prelude-val">Some</span>(validity) = values.validity() {
+        <span class="kw">let </span>validity = take_bitmap_unchecked(validity, indices.values().as_slice());
+        combine_validities_and(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>validity), indices.validity())
+    } <span class="kw">else </span>{
+        indices.validity().cloned()
+    };
 
-            {
-                offsets.as_slice().windows(<span class="number">2</span>).enumerate().for_each(
-                    |(i, window): (usize, <span class="kw-2">&amp;</span>[i64])| {
-                        <span class="kw">if </span>window[<span class="number">0</span>] == window[<span class="number">1</span>] {
-                            <span class="comment">// offsets are equal, slot is null
-                            </span>unset_bit_raw(validity_ptr, i);
-                        }
-                    },
-                );
-            }
-            <span class="prelude-val">Some</span>(validity.into())
-        } <span class="kw">else </span>{
-            <span class="prelude-val">None
-        </span>};
     <span class="kw">let </span>dtype = ListArray::&lt;i64&gt;::default_datatype(taken.data_type().clone());
     <span class="comment">// Safety:
     // offsets are monotonically increasing

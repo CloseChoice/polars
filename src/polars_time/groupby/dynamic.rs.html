@@ -892,11 +892,51 @@
 <a href="#892" id="892">892</a>
 <a href="#893" id="893">893</a>
 <a href="#894" id="894">894</a>
-</pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-</span><span class="kw">use </span>arrow::temporal_conversions::parse_offset;
-<span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-</span><span class="kw">use </span>chrono_tz::Tz;
-<span class="kw">use </span>polars_arrow::time_zone::PolarsTimeZone;
+<a href="#895" id="895">895</a>
+<a href="#896" id="896">896</a>
+<a href="#897" id="897">897</a>
+<a href="#898" id="898">898</a>
+<a href="#899" id="899">899</a>
+<a href="#900" id="900">900</a>
+<a href="#901" id="901">901</a>
+<a href="#902" id="902">902</a>
+<a href="#903" id="903">903</a>
+<a href="#904" id="904">904</a>
+<a href="#905" id="905">905</a>
+<a href="#906" id="906">906</a>
+<a href="#907" id="907">907</a>
+<a href="#908" id="908">908</a>
+<a href="#909" id="909">909</a>
+<a href="#910" id="910">910</a>
+<a href="#911" id="911">911</a>
+<a href="#912" id="912">912</a>
+<a href="#913" id="913">913</a>
+<a href="#914" id="914">914</a>
+<a href="#915" id="915">915</a>
+<a href="#916" id="916">916</a>
+<a href="#917" id="917">917</a>
+<a href="#918" id="918">918</a>
+<a href="#919" id="919">919</a>
+<a href="#920" id="920">920</a>
+<a href="#921" id="921">921</a>
+<a href="#922" id="922">922</a>
+<a href="#923" id="923">923</a>
+<a href="#924" id="924">924</a>
+<a href="#925" id="925">925</a>
+<a href="#926" id="926">926</a>
+<a href="#927" id="927">927</a>
+<a href="#928" id="928">928</a>
+<a href="#929" id="929">929</a>
+<a href="#930" id="930">930</a>
+<a href="#931" id="931">931</a>
+<a href="#932" id="932">932</a>
+<a href="#933" id="933">933</a>
+<a href="#934" id="934">934</a>
+<a href="#935" id="935">935</a>
+<a href="#936" id="936">936</a>
+<a href="#937" id="937">937</a>
+<a href="#938" id="938">938</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span>polars_arrow::time_zone::Tz;
 <span class="kw">use </span>polars_arrow::utils::CustomIterTools;
 <span class="kw">use </span>polars_core::export::rayon::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>polars_core::frame::groupby::GroupsProxy;
@@ -905,6 +945,7 @@
 <span class="kw">use </span>polars_core::utils::ensure_sorted_arg;
 <span class="kw">use </span>polars_core::utils::flatten::flatten_par;
 <span class="kw">use </span>polars_core::POOL;
+<span class="kw">use </span>polars_utils::slice::SortedSlice;
 <span class="attr">#[cfg(feature = <span class="string">&quot;serde&quot;</span>)]
 </span><span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>smartstring::alias::String <span class="kw">as </span>SmartString;
@@ -927,10 +968,14 @@
     </span><span class="kw">pub </span>offset: Duration,
     <span class="doccomment">/// truncate the time column values to the window
     </span><span class="kw">pub </span>truncate: bool,
-    <span class="comment">// add the boundaries to the dataframe
+    <span class="doccomment">/// add the boundaries to the dataframe
     </span><span class="kw">pub </span>include_boundaries: bool,
     <span class="kw">pub </span>closed_window: ClosedWindow,
     <span class="kw">pub </span>start_by: StartBy,
+    <span class="doccomment">/// In cases sortedness cannot be checked by
+    /// the sorted flag, traverse the data to
+    /// check sortedness
+    </span><span class="kw">pub </span>check_sorted: bool,
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>DynamicGroupOptions {
@@ -944,6 +989,7 @@
             include_boundaries: <span class="bool-val">false</span>,
             closed_window: ClosedWindow::Left,
             start_by: Default::default(),
+            check_sorted: <span class="bool-val">true</span>,
         }
     }
 }
@@ -957,6 +1003,10 @@
     </span><span class="kw">pub </span>period: Duration,
     <span class="kw">pub </span>offset: Duration,
     <span class="kw">pub </span>closed_window: ClosedWindow,
+    <span class="doccomment">/// In cases sortedness cannot be checked by
+    /// the sorted flag, traverse the data to
+    /// check sortedness
+    </span><span class="kw">pub </span>check_sorted: bool,
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>RollingGroupOptions {
@@ -966,8 +1016,14 @@
             period: Duration::new(<span class="number">1</span>),
             offset: Duration::new(<span class="number">1</span>),
             closed_window: ClosedWindow::Left,
+            check_sorted: <span class="bool-val">true</span>,
         }
     }
+}
+
+<span class="kw">fn </span>check_sortedness_slice(v: <span class="kw-2">&amp;</span>[i64]) -&gt; PolarsResult&lt;()&gt; {
+    <span class="macro">polars_ensure!</span>(v.is_sorted_ascending(), ComputeError: <span class="string">&quot;input data is not sorted&quot;</span>);
+    <span class="prelude-val">Ok</span>(())
 }
 
 <span class="kw">const </span>LB_NAME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;_lower_boundary&quot;</span>;
@@ -1012,9 +1068,10 @@
         options: <span class="kw-2">&amp;</span>RollingGroupOptions,
     ) -&gt; PolarsResult&lt;(Series, Vec&lt;Series&gt;, GroupsProxy)&gt; {
         <span class="kw">let </span>time = <span class="self">self</span>.<span class="number">0</span>.column(<span class="kw-2">&amp;</span>options.index_column)<span class="question-mark">?</span>.clone();
-        <span class="kw">if </span>by.is_empty() &amp;&amp; !options.period.parsed_int {
+        <span class="kw">if </span>by.is_empty() {
             <span class="comment">// if by is given, the column must be sorted in the &#39;by&#39; arg, which we can not check now
-            </span>ensure_sorted_arg(<span class="kw-2">&amp;</span>time, <span class="string">&quot;groupby_rolling&quot;</span>);
+            // this will be checked when the groups are materialized
+            </span>ensure_sorted_arg(<span class="kw-2">&amp;</span>time, <span class="string">&quot;groupby_rolling&quot;</span>)<span class="question-mark">?</span>;
         }
         <span class="kw">let </span>time_type = time.dtype();
 
@@ -1036,7 +1093,7 @@
                     by,
                     options,
                     TimeUnit::Nanoseconds,
-                    NO_TIMEZONE.copied(),
+                    <span class="prelude-val">None</span>,
                     <span class="kw-2">&amp;</span>time_type,
                 )<span class="question-mark">?</span>;
                 <span class="kw">let </span>out = out.cast(<span class="kw-2">&amp;</span>Int64).unwrap().cast(<span class="kw-2">&amp;</span>Int32).unwrap();
@@ -1050,7 +1107,7 @@
                     by,
                     options,
                     TimeUnit::Nanoseconds,
-                    NO_TIMEZONE.copied(),
+                    <span class="prelude-val">None</span>,
                     <span class="kw-2">&amp;</span>time_type,
                 )<span class="question-mark">?</span>;
                 <span class="kw">let </span>out = out.cast(<span class="kw-2">&amp;</span>Int64).unwrap();
@@ -1064,14 +1121,10 @@
         };
         <span class="kw">match </span>tz {
             <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-            </span><span class="prelude-val">Some</span>(tz) =&gt; <span class="kw">match </span>tz.parse::&lt;Tz&gt;() {
-                <span class="prelude-val">Ok</span>(tz) =&gt; <span class="self">self</span>.impl_groupby_rolling(dt, by, options, tu, <span class="prelude-val">Some</span>(tz), time_type),
-                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">match </span>parse_offset(<span class="kw-2">&amp;</span>tz) {
-                    <span class="prelude-val">Ok</span>(tz) =&gt; <span class="self">self</span>.impl_groupby_rolling(dt, by, options, tu, <span class="prelude-val">Some</span>(tz), time_type),
-                    <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">unreachable!</span>(),
-                },
-            },
-            <span class="kw">_ </span>=&gt; <span class="self">self</span>.impl_groupby_rolling(dt, by, options, tu, NO_TIMEZONE.copied(), time_type),
+            </span><span class="prelude-val">Some</span>(tz) =&gt; {
+                <span class="self">self</span>.impl_groupby_rolling(dt, by, options, tu, tz.parse::&lt;Tz&gt;().ok(), time_type)
+            }
+            <span class="kw">_ </span>=&gt; <span class="self">self</span>.impl_groupby_rolling(dt, by, options, tu, <span class="prelude-val">None</span>, time_type),
         }
     }
 
@@ -1091,9 +1144,10 @@
         }
 
         <span class="kw">let </span>time = <span class="self">self</span>.<span class="number">0</span>.column(<span class="kw-2">&amp;</span>options.index_column)<span class="question-mark">?</span>.rechunk();
-        <span class="kw">if </span>by.is_empty() &amp;&amp; !options.period.parsed_int {
+        <span class="kw">if </span>by.is_empty() {
             <span class="comment">// if by is given, the column must be sorted in the &#39;by&#39; arg, which we can not check now
-            </span>ensure_sorted_arg(<span class="kw-2">&amp;</span>time, <span class="string">&quot;groupby_dynamic&quot;</span>);
+            // this will be checked when the groups are materialized
+            </span>ensure_sorted_arg(<span class="kw-2">&amp;</span>time, <span class="string">&quot;groupby_dynamic&quot;</span>)<span class="question-mark">?</span>;
         }
         <span class="kw">let </span>time_type = time.dtype();
 
@@ -1203,10 +1257,10 @@
                 options.start_by,
             );
             update_bounds(lower, upper);
-            GroupsProxy::Slice {
+            PolarsResult::Ok(GroupsProxy::Slice {
                 groups,
                 rolling: <span class="bool-val">false</span>,
-            }
+            })
         } <span class="kw">else </span>{
             <span class="kw">let </span>groups = <span class="self">self
                 </span>.<span class="number">0
@@ -1217,13 +1271,17 @@
             </span><span class="kw">if </span>include_lower_bound {
                 POOL.install(|| <span class="kw">match </span>groups {
                     GroupsProxy::Idx(groups) =&gt; {
-                        <span class="kw">let </span><span class="kw-2">mut </span>ir = groups
+                        <span class="kw">let </span>ir = groups
                             .par_iter()
                             .map(|base_g| {
                                 <span class="kw">let </span>dt = <span class="kw">unsafe </span>{ dt.take_unchecked(base_g.<span class="number">1</span>.into()) };
-
                                 <span class="kw">let </span>vals = dt.downcast_iter().next().unwrap();
                                 <span class="kw">let </span>ts = vals.values().as_slice();
+                                <span class="kw">if </span>options.check_sorted
+                                    &amp;&amp; !<span class="macro">matches!</span>(dt.is_sorted_flag(), IsSorted::Ascending)
+                                {
+                                    check_sortedness_slice(ts)<span class="question-mark">?
+                                </span>}
                                 <span class="kw">let </span>(sub_groups, lower, upper) = groupby_windows(
                                     w,
                                     ts,
@@ -1235,17 +1293,21 @@
                                     options.start_by,
                                 );
 
-                                (lower, upper, update_subgroups_idx(<span class="kw-2">&amp;</span>sub_groups, base_g))
+                                <span class="prelude-val">Ok</span>((lower, upper, update_subgroups_idx(<span class="kw-2">&amp;</span>sub_groups, base_g)))
                             })
-                            .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
+                            .collect::&lt;PolarsResult&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;&gt;()<span class="question-mark">?</span>;
 
-                        ir.iter_mut().for_each(|(lower, upper, <span class="kw">_</span>)| {
-                            <span class="kw">let </span>lower = std::mem::take(lower);
-                            <span class="kw">let </span>upper = std::mem::take(upper);
-                            update_bounds(lower, upper)
+                        <span class="comment">// flatten in 2 stages
+                        // first flatten the groups
+                        </span><span class="kw">let </span><span class="kw-2">mut </span>groups = Vec::with_capacity(ir.len());
+
+                        ir.into_iter().for_each(|(lower, upper, g)| {
+                            update_bounds(lower, upper);
+                            groups.push(g);
                         });
 
-                        GroupsProxy::Idx(ir.into_iter().flat_map(|(<span class="kw">_</span>, <span class="kw">_</span>, groups)| groups).collect())
+                        <span class="comment">// then parallelize the flatten in the `from` impl
+                        </span><span class="prelude-val">Ok</span>(GroupsProxy::Idx(GroupsIdx::from(groups)))
                     }
                     GroupsProxy::Slice { groups, .. } =&gt; {
                         <span class="kw">let </span><span class="kw-2">mut </span>ir = groups
@@ -1268,16 +1330,21 @@
                             })
                             .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
 
-                        ir.iter_mut().for_each(|(lower, upper, <span class="kw">_</span>)| {
+                        <span class="kw">let </span><span class="kw-2">mut </span>capacity = <span class="number">0</span>;
+                        ir.iter_mut().for_each(|(lower, upper, g)| {
                             <span class="kw">let </span>lower = std::mem::take(lower);
                             <span class="kw">let </span>upper = std::mem::take(upper);
-                            update_bounds(lower, upper)
+                            update_bounds(lower, upper);
+                            capacity += g.len();
                         });
 
-                        GroupsProxy::Slice {
-                            groups: ir.into_iter().flat_map(|(<span class="kw">_</span>, <span class="kw">_</span>, groups)| groups).collect(),
+                        <span class="kw">let </span><span class="kw-2">mut </span>groups = Vec::with_capacity(capacity);
+                        ir.iter().for_each(|(<span class="kw">_</span>, <span class="kw">_</span>, g)| groups.extend_from_slice(g));
+
+                        <span class="prelude-val">Ok</span>(GroupsProxy::Slice {
+                            groups,
                             rolling: <span class="bool-val">false</span>,
-                        }
+                        })
                     }
                 })
             } <span class="kw">else </span>{
@@ -1285,10 +1352,15 @@
                     GroupsProxy::Idx(groups) =&gt; {
                         <span class="kw">let </span>groupsidx = groups
                             .par_iter()
-                            .flat_map(|base_g| {
+                            .map(|base_g| {
                                 <span class="kw">let </span>dt = <span class="kw">unsafe </span>{ dt.take_unchecked(base_g.<span class="number">1</span>.into()) };
                                 <span class="kw">let </span>vals = dt.downcast_iter().next().unwrap();
                                 <span class="kw">let </span>ts = vals.values().as_slice();
+                                <span class="kw">if </span>options.check_sorted
+                                    &amp;&amp; !<span class="macro">matches!</span>(dt.is_sorted_flag(), IsSorted::Ascending)
+                                {
+                                    check_sortedness_slice(ts)<span class="question-mark">?
+                                </span>}
                                 <span class="kw">let </span>(sub_groups, <span class="kw">_</span>, <span class="kw">_</span>) = groupby_windows(
                                     w,
                                     ts,
@@ -1299,15 +1371,15 @@
                                     include_upper_bound,
                                     options.start_by,
                                 );
-                                update_subgroups_idx(<span class="kw-2">&amp;</span>sub_groups, base_g)
+                                <span class="prelude-val">Ok</span>(update_subgroups_idx(<span class="kw-2">&amp;</span>sub_groups, base_g))
                             })
-                            .collect();
-                        GroupsProxy::Idx(groupsidx)
+                            .collect::&lt;PolarsResult&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;&gt;()<span class="question-mark">?</span>;
+                        <span class="prelude-val">Ok</span>(GroupsProxy::Idx(GroupsIdx::from(groupsidx)))
                     }
                     GroupsProxy::Slice { groups, .. } =&gt; {
                         <span class="kw">let </span>groups = groups
                             .par_iter()
-                            .flat_map(|base_g| {
+                            .map(|base_g| {
                                 <span class="kw">let </span>dt = dt.slice(base_g[<span class="number">0</span>] <span class="kw">as </span>i64, base_g[<span class="number">1</span>] <span class="kw">as </span>usize);
                                 <span class="kw">let </span>vals = dt.downcast_iter().next().unwrap();
                                 <span class="kw">let </span>ts = vals.values().as_slice();
@@ -1323,15 +1395,18 @@
                                 );
                                 update_subgroups_slice(<span class="kw-2">&amp;</span>sub_groups, <span class="kw-2">*</span>base_g)
                             })
-                            .collect();
-                        GroupsProxy::Slice {
+                            .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
+
+                        <span class="kw">let </span>groups = flatten_par(<span class="kw-2">&amp;</span>groups);
+
+                        <span class="prelude-val">Ok</span>(GroupsProxy::Slice {
                             groups,
                             rolling: <span class="bool-val">false</span>,
-                        }
+                        })
                     }
                 })
             }
-        };
+        }<span class="question-mark">?</span>;
         <span class="comment">// note that if &#39;by&#39; is empty we can be sure that the index column, the lower column and the
         // upper column remain/are sorted
 
@@ -1380,15 +1455,15 @@
         by: Vec&lt;Series&gt;,
         options: <span class="kw-2">&amp;</span>RollingGroupOptions,
         tu: TimeUnit,
-        tz: <span class="prelude-ty">Option</span>&lt;<span class="kw">impl </span>PolarsTimeZone&gt;,
+        tz: <span class="prelude-ty">Option</span>&lt;Tz&gt;,
         time_type: <span class="kw-2">&amp;</span>DataType,
     ) -&gt; PolarsResult&lt;(Series, Vec&lt;Series&gt;, GroupsProxy)&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>dt = dt.rechunk();
-        <span class="comment">// a requirement for the index
-        // so we can set this such that downstream code has this info
-        </span>dt.set_sorted_flag(IsSorted::Ascending);
 
         <span class="kw">let </span>groups = <span class="kw">if </span>by.is_empty() {
+            <span class="comment">// a requirement for the index
+            // so we can set this such that downstream code has this info
+            </span>dt.set_sorted_flag(IsSorted::Ascending);
             <span class="kw">let </span>dt = dt.datetime().unwrap();
             <span class="kw">let </span>vals = dt.downcast_iter().next().unwrap();
             <span class="kw">let </span>ts = vals.values().as_slice();
@@ -1425,13 +1500,19 @@
                             <span class="kw">let </span>dt = <span class="kw">unsafe </span>{ dt_local.take_unchecked(base_g.<span class="number">1</span>.into()) };
                             <span class="kw">let </span>vals = dt.downcast_iter().next().unwrap();
                             <span class="kw">let </span>ts = vals.values().as_slice();
+                            <span class="kw">if </span>options.check_sorted
+                                &amp;&amp; !<span class="macro">matches!</span>(dt.is_sorted_flag(), IsSorted::Ascending)
+                            {
+                                check_sortedness_slice(ts)<span class="question-mark">?
+                            </span>}
+
                             <span class="kw">let </span>sub_groups = groupby_values(
                                 options.period,
                                 options.offset,
                                 ts,
                                 options.closed_window,
                                 tu,
-                                tz.clone(),
+                                tz,
                             )<span class="question-mark">?</span>;
                             <span class="prelude-val">Ok</span>(update_subgroups_idx(<span class="kw-2">&amp;</span>sub_groups, base_g))
                         })
@@ -1452,7 +1533,7 @@
                                 ts,
                                 options.closed_window,
                                 tu,
-                                tz.clone(),
+                                tz,
                             )<span class="question-mark">?</span>;
                             <span class="prelude-val">Ok</span>(update_subgroups_slice(<span class="kw-2">&amp;</span>sub_groups, <span class="kw-2">*</span>base_g))
                         })
@@ -1519,7 +1600,7 @@
             TimeUnit::Microseconds,
             TimeUnit::Milliseconds,
         ] {
-            <span class="kw">let </span>date = Utf8Chunked::new(
+            <span class="kw">let </span><span class="kw-2">mut </span>date = Utf8Chunked::new(
                 <span class="string">&quot;dt&quot;</span>,
                 [
                     <span class="string">&quot;2020-01-01 13:45:48&quot;</span>,
@@ -1530,8 +1611,9 @@
                     <span class="string">&quot;2020-01-08 23:16:43&quot;</span>,
                 ],
             )
-            .as_datetime(<span class="prelude-val">None</span>, tu, <span class="bool-val">false</span>, <span class="bool-val">false</span>, <span class="bool-val">false</span>, <span class="prelude-val">None</span>)<span class="question-mark">?
+            .as_datetime(<span class="prelude-val">None</span>, tu, <span class="bool-val">false</span>, <span class="bool-val">false</span>, <span class="prelude-val">None</span>)<span class="question-mark">?
             </span>.into_series();
+            date.set_sorted_flag(IsSorted::Ascending);
             <span class="kw">let </span>a = Series::new(<span class="string">&quot;a&quot;</span>, [<span class="number">3</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">9</span>, <span class="number">2</span>, <span class="number">1</span>]);
             <span class="kw">let </span>df = DataFrame::new(<span class="macro">vec!</span>[date, a.clone()])<span class="question-mark">?</span>;
 
@@ -1543,6 +1625,7 @@
                         period: Duration::parse(<span class="string">&quot;2d&quot;</span>),
                         offset: Duration::parse(<span class="string">&quot;-2d&quot;</span>),
                         closed_window: ClosedWindow::Right,
+                        ..Default::default()
                     },
                 )
                 .unwrap();
@@ -1557,7 +1640,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_rolling_groupby_aggs() -&gt; PolarsResult&lt;()&gt; {
-        <span class="kw">let </span>date = Utf8Chunked::new(
+        <span class="kw">let </span><span class="kw-2">mut </span>date = Utf8Chunked::new(
             <span class="string">&quot;dt&quot;</span>,
             [
                 <span class="string">&quot;2020-01-01 13:45:48&quot;</span>,
@@ -1568,8 +1651,10 @@
                 <span class="string">&quot;2020-01-08 23:16:43&quot;</span>,
             ],
         )
-        .as_datetime(<span class="prelude-val">None</span>, TimeUnit::Milliseconds, <span class="bool-val">false</span>, <span class="bool-val">false</span>, <span class="bool-val">false</span>, <span class="prelude-val">None</span>)<span class="question-mark">?
+        .as_datetime(<span class="prelude-val">None</span>, TimeUnit::Milliseconds, <span class="bool-val">false</span>, <span class="bool-val">false</span>, <span class="prelude-val">None</span>)<span class="question-mark">?
         </span>.into_series();
+        date.set_sorted_flag(IsSorted::Ascending);
+
         <span class="kw">let </span>a = Series::new(<span class="string">&quot;a&quot;</span>, [<span class="number">3</span>, <span class="number">7</span>, <span class="number">5</span>, <span class="number">9</span>, <span class="number">2</span>, <span class="number">1</span>]);
         <span class="kw">let </span>df = DataFrame::new(<span class="macro">vec!</span>[date, a.clone()])<span class="question-mark">?</span>;
 
@@ -1581,6 +1666,7 @@
                     period: Duration::parse(<span class="string">&quot;2d&quot;</span>),
                     offset: Duration::parse(<span class="string">&quot;-2d&quot;</span>),
                     closed_window: ClosedWindow::Right,
+                    ..Default::default()
                 },
             )
             .unwrap();
@@ -1662,6 +1748,7 @@
                     include_boundaries: <span class="bool-val">true</span>,
                     closed_window: ClosedWindow::Both,
                     start_by: Default::default(),
+                    ..Default::default()
                 },
             )
             .unwrap();
@@ -1776,6 +1863,7 @@
                     include_boundaries: <span class="bool-val">true</span>,
                     closed_window: ClosedWindow::Both,
                     start_by: Default::default(),
+                    ..Default::default()
                 },
             )
             .unwrap();

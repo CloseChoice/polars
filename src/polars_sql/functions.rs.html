@@ -632,12 +632,21 @@
 <a href="#632" id="632">632</a>
 <a href="#633" id="633">633</a>
 <a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
+<a href="#636" id="636">636</a>
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>polars_core::prelude::{polars_bail, polars_err, PolarsError, PolarsResult};
 <span class="kw">use </span>polars_lazy::dsl::Expr;
 <span class="kw">use </span>polars_plan::dsl::count;
 <span class="kw">use </span>sqlparser::ast::{
     Expr <span class="kw">as </span>SqlExpr, Function <span class="kw">as </span>SQLFunction, FunctionArg, FunctionArgExpr, Value <span class="kw">as </span>SqlValue,
-    WindowSpec,
+    WindowSpec, WindowType,
 };
 
 <span class="kw">use </span><span class="kw">crate</span>::sql_expr::parse_sql_expr;
@@ -1037,15 +1046,15 @@
             <span class="comment">// ----
             // Array functions
             // ----
-            </span>ArrayContains =&gt; <span class="self">self</span>.visit_binary::&lt;Expr&gt;(|e, s| e.arr().contains(s)),
-            ArrayGet =&gt; <span class="self">self</span>.visit_binary(|e, i| e.arr().get(i)),
-            ArrayLength =&gt; <span class="self">self</span>.visit_unary(|e| e.arr().lengths()),
-            ArrayMax =&gt; <span class="self">self</span>.visit_unary(|e| e.arr().max()),
-            ArrayMean =&gt; <span class="self">self</span>.visit_unary(|e| e.arr().mean()),
-            ArrayMin =&gt; <span class="self">self</span>.visit_unary(|e| e.arr().min()),
-            ArrayReverse =&gt; <span class="self">self</span>.visit_unary(|e| e.arr().reverse()),
-            ArraySum =&gt; <span class="self">self</span>.visit_unary(|e| e.arr().sum()),
-            ArrayUnique =&gt; <span class="self">self</span>.visit_unary(|e| e.arr().unique()),
+            </span>ArrayContains =&gt; <span class="self">self</span>.visit_binary::&lt;Expr&gt;(|e, s| e.list().contains(s)),
+            ArrayGet =&gt; <span class="self">self</span>.visit_binary(|e, i| e.list().get(i)),
+            ArrayLength =&gt; <span class="self">self</span>.visit_unary(|e| e.list().lengths()),
+            ArrayMax =&gt; <span class="self">self</span>.visit_unary(|e| e.list().max()),
+            ArrayMean =&gt; <span class="self">self</span>.visit_unary(|e| e.list().mean()),
+            ArrayMin =&gt; <span class="self">self</span>.visit_unary(|e| e.list().min()),
+            ArrayReverse =&gt; <span class="self">self</span>.visit_unary(|e| e.list().reverse()),
+            ArraySum =&gt; <span class="self">self</span>.visit_unary(|e| e.list().sum()),
+            ArrayUnique =&gt; <span class="self">self</span>.visit_unary(|e| e.list().unique()),
             Explode =&gt; <span class="self">self</span>.visit_unary(|e| e.explode()),
         }
     }
@@ -1066,7 +1075,13 @@
         cumulative_f: <span class="kw">impl </span>Fn(Expr, bool) -&gt; Expr,
     ) -&gt; PolarsResult&lt;Expr&gt; {
         <span class="kw">match </span><span class="self">self</span>.func.over.as_ref() {
-            <span class="prelude-val">Some</span>(spec) =&gt; <span class="self">self</span>.apply_cumulative_window(f, cumulative_f, spec),
+            <span class="prelude-val">Some</span>(WindowType::WindowSpec(spec)) =&gt; {
+                <span class="self">self</span>.apply_cumulative_window(f, cumulative_f, spec)
+            }
+            <span class="prelude-val">Some</span>(WindowType::NamedWindow(named_window)) =&gt; <span class="macro">polars_bail!</span>(
+                InvalidOperation: <span class="string">&quot;Named windows are not supported yet. Got {:?}&quot;</span>,
+                named_window
+            ),
             <span class="kw">_ </span>=&gt; <span class="self">self</span>.visit_unary(f),
         }
     }
@@ -1168,10 +1183,10 @@
     <span class="kw">fn </span>apply_window_spec(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         expr: Expr,
-        window_spec: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;WindowSpec&gt;,
+        window_type: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;WindowType&gt;,
     ) -&gt; PolarsResult&lt;Expr&gt; {
-        <span class="prelude-val">Ok</span>(<span class="kw">match </span><span class="kw-2">&amp;</span>window_spec {
-            <span class="prelude-val">Some</span>(window_spec) =&gt; {
+        <span class="prelude-val">Ok</span>(<span class="kw">match </span><span class="kw-2">&amp;</span>window_type {
+            <span class="prelude-val">Some</span>(WindowType::WindowSpec(window_spec)) =&gt; {
                 <span class="kw">if </span>window_spec.partition_by.is_empty() {
                     <span class="kw">let </span>exprs = window_spec
                         .order_by
@@ -1194,8 +1209,11 @@
                         .collect::&lt;PolarsResult&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;&gt;()<span class="question-mark">?</span>;
                     expr.over(partition_by)
                 }
-                <span class="comment">// Order by and Row range may not be supported at the moment
-            </span>}
+            }
+            <span class="prelude-val">Some</span>(WindowType::NamedWindow(named_window)) =&gt; <span class="macro">polars_bail!</span>(
+                InvalidOperation: <span class="string">&quot;Named windows are not supported yet. Got: {:?}&quot;</span>,
+                named_window
+            ),
             <span class="prelude-val">None </span>=&gt; expr,
         })
     }

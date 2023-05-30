@@ -620,6 +620,8 @@
 <a href="#620" id="620">620</a>
 <a href="#621" id="621">621</a>
 <a href="#622" id="622">622</a>
+<a href="#623" id="623">623</a>
+<a href="#624" id="624">624</a>
 </pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">&quot;dtype-struct&quot;</span>)]
 </span><span class="kw">use </span>polars_utils::slice::GetSaferUnchecked;
 <span class="kw">use </span>polars_utils::unreachable_unchecked_release;
@@ -748,9 +750,11 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>add_fallible(<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: <span class="kw-2">&amp;</span>AnyValue&lt;<span class="lifetime">&#39;a</span>&gt;) -&gt; PolarsResult&lt;()&gt; {
         <span class="self">self</span>.add(val.clone()).ok_or_else(|| {
             <span class="macro">polars_err!</span>(
-                ComputeError: <span class="string">&quot;could not append {:?} to the builder; make sure that all rows \
-                have the same schema or consider increasing `schema_inference_length`&quot;
-            </span>)
+                ComputeError: <span class="string">&quot;could not append value: {} of type: {} to the builder; make sure that all rows \
+                have the same schema or consider increasing `schema_inference_length`\n\
+                \n\
+                it might also be that a value overflows the data-type&#39;s capacity&quot;</span>, val, val.dtype()
+            )
         })
     }
 

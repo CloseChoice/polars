@@ -759,6 +759,14 @@
 <a href="#759" id="759">759</a>
 <a href="#760" id="760">760</a>
 <a href="#761" id="761">761</a>
+<a href="#762" id="762">762</a>
+<a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
+<a href="#765" id="765">765</a>
+<a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
+<a href="#768" id="768">768</a>
+<a href="#769" id="769">769</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Traits for miscellaneous operations on ChunkedArray
 </span><span class="kw">use </span>arrow::offset::OffsetsBuffer;
 <span class="kw">use </span>polars_arrow::prelude::QuantileInterpolOptions;
@@ -781,6 +789,8 @@
 </span><span class="kw">mod </span>concat_str;
 <span class="attr">#[cfg(feature = <span class="string">&quot;cum_agg&quot;</span>)]
 </span><span class="kw">mod </span>cum_agg;
+<span class="attr">#[cfg(feature = <span class="string">&quot;dtype-decimal&quot;</span>)]
+</span><span class="kw">mod </span>decimal;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>downcast;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>explode;
 <span class="kw">mod </span>extend;
@@ -1186,8 +1196,14 @@
     <span class="doccomment">/// Check for equality.
     </span><span class="kw">fn </span>equal(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: Rhs) -&gt; <span class="self">Self</span>::Item;
 
+    <span class="doccomment">/// Check for equality where `None == None`.
+    </span><span class="kw">fn </span>equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: Rhs) -&gt; <span class="self">Self</span>::Item;
+
     <span class="doccomment">/// Check for inequality.
     </span><span class="kw">fn </span>not_equal(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: Rhs) -&gt; <span class="self">Self</span>::Item;
+
+    <span class="doccomment">/// Check for inequality where `None == None`.
+    </span><span class="kw">fn </span>not_equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: Rhs) -&gt; <span class="self">Self</span>::Item;
 
     <span class="doccomment">/// Greater than comparison.
     </span><span class="kw">fn </span>gt(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: Rhs) -&gt; <span class="self">Self</span>::Item;
@@ -1490,7 +1506,7 @@
 </span><span class="attr">#[cfg(feature = <span class="string">&quot;repeat_by&quot;</span>)]
 </span><span class="kw">pub trait </span>RepeatBy {
     <span class="doccomment">/// Repeat the values `n` times, where `n` is determined by the values in `by`.
-    </span><span class="kw">fn </span>repeat_by(<span class="kw-2">&amp;</span><span class="self">self</span>, _by: <span class="kw-2">&amp;</span>IdxCa) -&gt; ListChunked {
+    </span><span class="kw">fn </span>repeat_by(<span class="kw-2">&amp;</span><span class="self">self</span>, _by: <span class="kw-2">&amp;</span>IdxCa) -&gt; PolarsResult&lt;ListChunked&gt; {
         <span class="macro">unimplemented!</span>()
     }
 }

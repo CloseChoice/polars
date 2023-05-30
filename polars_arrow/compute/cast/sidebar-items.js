@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["cast"]};
+window.SIDEBAR_ITEMS = {"fn":["cast","cast_utf8_to_decimal"]};

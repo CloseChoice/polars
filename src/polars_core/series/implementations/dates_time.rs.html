@@ -938,24 +938,24 @@
                 <span class="self">self</span>.<span class="number">0</span>.is_in(other)
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;repeat_by&quot;</span>)]
-            </span><span class="kw">fn </span>repeat_by(<span class="kw-2">&amp;</span><span class="self">self</span>, by: <span class="kw-2">&amp;</span>IdxCa) -&gt; ListChunked {
+            </span><span class="kw">fn </span>repeat_by(<span class="kw-2">&amp;</span><span class="self">self</span>, by: <span class="kw-2">&amp;</span>IdxCa) -&gt; PolarsResult&lt;ListChunked&gt; {
                 <span class="kw">match </span><span class="self">self</span>.<span class="number">0</span>.dtype() {
-                    DataType::Date =&gt; <span class="self">self
+                    DataType::Date =&gt; <span class="prelude-val">Ok</span>(<span class="self">self
                         </span>.<span class="number">0
-                        </span>.repeat_by(by)
-                        .cast(<span class="kw-2">&amp;</span>DataType::List(Box::new(DataType::Date)))
+                        </span>.repeat_by(by)<span class="question-mark">?
+                        </span>.cast(<span class="kw-2">&amp;</span>DataType::List(Box::new(DataType::Date)))
                         .unwrap()
                         .list()
                         .unwrap()
-                        .clone(),
-                    DataType::Time =&gt; <span class="self">self
+                        .clone()),
+                    DataType::Time =&gt; <span class="prelude-val">Ok</span>(<span class="self">self
                         </span>.<span class="number">0
-                        </span>.repeat_by(by)
-                        .cast(<span class="kw-2">&amp;</span>DataType::List(Box::new(DataType::Time)))
+                        </span>.repeat_by(by)<span class="question-mark">?
+                        </span>.cast(<span class="kw-2">&amp;</span>DataType::List(Box::new(DataType::Time)))
                         .unwrap()
                         .list()
                         .unwrap()
-                        .clone(),
+                        .clone()),
                     <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
                 }
             }

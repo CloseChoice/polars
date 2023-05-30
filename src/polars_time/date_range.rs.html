@@ -112,29 +112,7 @@
 <a href="#112" id="112">112</a>
 <a href="#113" id="113">113</a>
 <a href="#114" id="114">114</a>
-<a href="#115" id="115">115</a>
-<a href="#116" id="116">116</a>
-<a href="#117" id="117">117</a>
-<a href="#118" id="118">118</a>
-<a href="#119" id="119">119</a>
-<a href="#120" id="120">120</a>
-<a href="#121" id="121">121</a>
-<a href="#122" id="122">122</a>
-<a href="#123" id="123">123</a>
-<a href="#124" id="124">124</a>
-<a href="#125" id="125">125</a>
-<a href="#126" id="126">126</a>
-<a href="#127" id="127">127</a>
-<a href="#128" id="128">128</a>
-<a href="#129" id="129">129</a>
-<a href="#130" id="130">130</a>
-<a href="#131" id="131">131</a>
-<a href="#132" id="132">132</a>
-<a href="#133" id="133">133</a>
-<a href="#134" id="134">134</a>
-</pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-</span><span class="kw">use </span>arrow::temporal_conversions::parse_offset;
-<span class="kw">use </span>chrono::{Datelike, NaiveDateTime, NaiveTime};
+</pre></div><pre class="rust"><code><span class="kw">use </span>chrono::{Datelike, NaiveDateTime, NaiveTime};
 <span class="kw">use </span>polars_core::chunked_array::temporal::time_to_time64ns;
 <span class="kw">use </span>polars_core::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>polars_core::series::IsSorted;
@@ -177,22 +155,11 @@
                 )
                 .into_datetime(tu, _tz.cloned())
             }
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">match </span>parse_offset(tz) {
-                <span class="prelude-val">Ok</span>(tz) =&gt; {
-                    <span class="kw">let </span>start = localize_timestamp(start, tu, tz);
-                    <span class="kw">let </span>stop = localize_timestamp(stop, tu, tz);
-                    Int64Chunked::new_vec(
-                        name,
-                        temporal_range_vec(start<span class="question-mark">?</span>, stop<span class="question-mark">?</span>, every, closed, tu, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>tz))<span class="question-mark">?</span>,
-                    )
-                    .into_datetime(tu, _tz.cloned())
-                }
-                <span class="kw">_ </span>=&gt; <span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;unable to parse time zone: &#39;{}&#39;&quot;</span>, tz),
-            },
+            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;unable to parse time zone: &#39;{}&#39;&quot;</span>, tz),
         },
         <span class="kw">_ </span>=&gt; Int64Chunked::new_vec(
             name,
-            temporal_range_vec(start, stop, every, closed, tu, NO_TIMEZONE)<span class="question-mark">?</span>,
+            temporal_range_vec(start, stop, every, closed, tu, <span class="prelude-val">None</span>)<span class="question-mark">?</span>,
         )
         .into_datetime(tu, <span class="prelude-val">None</span>),
     };
@@ -239,14 +206,7 @@
     }
     <span class="kw">let </span><span class="kw-2">mut </span>out = Int64Chunked::new_vec(
         name,
-        temporal_range_vec(
-            start,
-            stop,
-            every,
-            closed,
-            TimeUnit::Nanoseconds,
-            NO_TIMEZONE,
-        )<span class="question-mark">?</span>,
+        temporal_range_vec(start, stop, every, closed, TimeUnit::Nanoseconds, <span class="prelude-val">None</span>)<span class="question-mark">?</span>,
     )
     .into_time();
 

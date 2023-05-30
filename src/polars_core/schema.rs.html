@@ -404,6 +404,20 @@
 <a href="#404" id="404">404</a>
 <a href="#405" id="405">405</a>
 <a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::fmt::{Debug, Formatter};
 
 <span class="kw">use </span>indexmap::IndexMap;
@@ -789,12 +803,18 @@
 <span class="doccomment">/// This trait exists to be unify the API of polars Schema and arrows Schema
 </span><span class="attr">#[cfg(feature = <span class="string">&quot;private&quot;</span>)]
 </span><span class="kw">pub trait </span>IndexOfSchema: Debug {
-    <span class="doccomment">/// Get the index of column by name.
+    <span class="doccomment">/// Get the index of a column by name.
     </span><span class="kw">fn </span>index_of(<span class="kw-2">&amp;</span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt;;
+
+    <span class="doccomment">/// Get a vector of all column names.
+    </span><span class="kw">fn </span>get_names(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;<span class="kw-2">&amp;</span>str&gt;;
 
     <span class="kw">fn </span>try_index_of(<span class="kw-2">&amp;</span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str) -&gt; PolarsResult&lt;usize&gt; {
         <span class="self">self</span>.index_of(name).ok_or_else(|| {
-            <span class="macro">polars_err!</span>(SchemaMismatch: <span class="string">&quot;unable to get field &#39;{}&#39; from schema: {:?}&quot;</span>, name, <span class="self">self</span>)
+            <span class="macro">polars_err!</span>(
+                ColumnNotFound:
+                <span class="string">&quot;unable to find column {:?}; valid columns: {:?}&quot;</span>, name, <span class="self">self</span>.get_names(),
+            )
         })
     }
 }
@@ -803,11 +823,19 @@
     <span class="kw">fn </span>index_of(<span class="kw-2">&amp;</span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
         <span class="self">self</span>.inner.get_index_of(name)
     }
+
+    <span class="kw">fn </span>get_names(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;<span class="kw-2">&amp;</span>str&gt; {
+        <span class="self">self</span>.iter_names().map(|name| name.as_str()).collect()
+    }
 }
 
 <span class="kw">impl </span>IndexOfSchema <span class="kw">for </span>ArrowSchema {
     <span class="kw">fn </span>index_of(<span class="kw-2">&amp;</span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
         <span class="self">self</span>.fields.iter().position(|f| f.name == name)
+    }
+
+    <span class="kw">fn </span>get_names(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;<span class="kw-2">&amp;</span>str&gt; {
+        <span class="self">self</span>.fields.iter().map(|f| f.name.as_str()).collect()
     }
 }
 </code></pre></div></section></main></body></html>

@@ -334,7 +334,7 @@
         };
         <span class="self">self</span>.<span class="number">0
             </span>.map(function, GetOutput::from_type(IDX_DTYPE))
-            .with_fmt(<span class="string">&quot;arr.len&quot;</span>)
+            .with_fmt(<span class="string">&quot;list.len&quot;</span>)
     }
 
     <span class="doccomment">/// Compute the maximum of the items in every sublist.
@@ -351,7 +351,7 @@
                     }
                 }),
             )
-            .with_fmt(<span class="string">&quot;arr.max&quot;</span>)
+            .with_fmt(<span class="string">&quot;list.max&quot;</span>)
     }
 
     <span class="doccomment">/// Compute the minimum of the items in every sublist.
@@ -368,7 +368,7 @@
                     }
                 }),
             )
-            .with_fmt(<span class="string">&quot;arr.min&quot;</span>)
+            .with_fmt(<span class="string">&quot;list.min&quot;</span>)
     }
 
     <span class="doccomment">/// Compute the sum the items in every sublist.
@@ -384,7 +384,7 @@
                 |s| <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(s.list()<span class="question-mark">?</span>.lst_mean().into_series())),
                 GetOutput::from_type(DataType::Float64),
             )
-            .with_fmt(<span class="string">&quot;arr.mean&quot;</span>)
+            .with_fmt(<span class="string">&quot;list.mean&quot;</span>)
     }
 
     <span class="doccomment">/// Sort every sublist.
@@ -394,7 +394,7 @@
                 <span class="kw">move </span>|s| <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(s.list()<span class="question-mark">?</span>.lst_sort(options).into_series())),
                 GetOutput::same_type(),
             )
-            .with_fmt(<span class="string">&quot;arr.sort&quot;</span>)
+            .with_fmt(<span class="string">&quot;list.sort&quot;</span>)
     }
 
     <span class="doccomment">/// Reverse every sublist
@@ -404,7 +404,7 @@
                 <span class="kw">move </span>|s| <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(s.list()<span class="question-mark">?</span>.lst_reverse().into_series())),
                 GetOutput::same_type(),
             )
-            .with_fmt(<span class="string">&quot;arr.reverse&quot;</span>)
+            .with_fmt(<span class="string">&quot;list.reverse&quot;</span>)
     }
 
     <span class="doccomment">/// Keep only the unique values in every sublist.
@@ -414,7 +414,7 @@
                 <span class="kw">move </span>|s| <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(s.list()<span class="question-mark">?</span>.lst_unique()<span class="question-mark">?</span>.into_series())),
                 GetOutput::same_type(),
             )
-            .with_fmt(<span class="string">&quot;arr.unique&quot;</span>)
+            .with_fmt(<span class="string">&quot;list.unique&quot;</span>)
     }
 
     <span class="doccomment">/// Keep only the unique values in every sublist.
@@ -424,7 +424,7 @@
                 <span class="kw">move </span>|s| <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(s.list()<span class="question-mark">?</span>.lst_unique_stable()<span class="question-mark">?</span>.into_series())),
                 GetOutput::same_type(),
             )
-            .with_fmt(<span class="string">&quot;arr.unique_stable&quot;</span>)
+            .with_fmt(<span class="string">&quot;list.unique_stable&quot;</span>)
     }
 
     <span class="doccomment">/// Get items in every sublist by index.
@@ -471,7 +471,7 @@
                 },
                 GetOutput::from_type(DataType::Utf8),
             )
-            .with_fmt(<span class="string">&quot;arr.join&quot;</span>)
+            .with_fmt(<span class="string">&quot;list.join&quot;</span>)
     }
 
     <span class="doccomment">/// Return the index of the minimal value of every sublist
@@ -481,7 +481,7 @@
                 |s| <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(s.list()<span class="question-mark">?</span>.lst_arg_min().into_series())),
                 GetOutput::from_type(IDX_DTYPE),
             )
-            .with_fmt(<span class="string">&quot;arr.arg_min&quot;</span>)
+            .with_fmt(<span class="string">&quot;list.arg_min&quot;</span>)
     }
 
     <span class="doccomment">/// Return the index of the maximum value of every sublist
@@ -491,7 +491,7 @@
                 |s| <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(s.list()<span class="question-mark">?</span>.lst_arg_max().into_series())),
                 GetOutput::from_type(IDX_DTYPE),
             )
-            .with_fmt(<span class="string">&quot;arr.arg_max&quot;</span>)
+            .with_fmt(<span class="string">&quot;list.arg_max&quot;</span>)
     }
 
     <span class="doccomment">/// Diff every sublist.
@@ -502,7 +502,7 @@
                 <span class="kw">move </span>|s| <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(s.list()<span class="question-mark">?</span>.lst_diff(n, null_behavior)<span class="question-mark">?</span>.into_series())),
                 GetOutput::same_type(),
             )
-            .with_fmt(<span class="string">&quot;arr.diff&quot;</span>)
+            .with_fmt(<span class="string">&quot;list.diff&quot;</span>)
     }
 
     <span class="doccomment">/// Shift every sublist.
@@ -512,7 +512,7 @@
                 <span class="kw">move </span>|s| <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(s.list()<span class="question-mark">?</span>.lst_shift(periods).into_series())),
                 GetOutput::same_type(),
             )
-            .with_fmt(<span class="string">&quot;arr.shift&quot;</span>)
+            .with_fmt(<span class="string">&quot;list.shift&quot;</span>)
     }
 
     <span class="doccomment">/// Slice every sublist.
@@ -531,7 +531,7 @@
 
     <span class="doccomment">/// Get the tail of every sublist
     </span><span class="kw">pub fn </span>tail(<span class="self">self</span>, n: Expr) -&gt; Expr {
-        <span class="self">self</span>.slice(lit(<span class="number">0</span>) - n.clone().cast(DataType::Int64), n)
+        <span class="self">self</span>.slice(lit(<span class="number">0i64</span>) - n.clone().cast(DataType::Int64), n)
     }
 
     <span class="attr">#[cfg(feature = <span class="string">&quot;list_to_struct&quot;</span>)]
@@ -587,7 +587,7 @@
                     }
                 }),
             )
-            .with_fmt(<span class="string">&quot;arr.to_struct&quot;</span>)
+            .with_fmt(<span class="string">&quot;list.to_struct&quot;</span>)
     }
 
     <span class="attr">#[cfg(feature = <span class="string">&quot;is_in&quot;</span>)]

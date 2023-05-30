@@ -22,7 +22,12 @@
 <a href="#22" id="22">22</a>
 <a href="#23" id="23">23</a>
 <a href="#24" id="24">24</a>
-</pre></div><pre class="rust"><code><span class="kw">mod </span>binary;
+<a href="#25" id="25">25</a>
+<a href="#26" id="26">26</a>
+<a href="#27" id="27">27</a>
+</pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">&quot;dtype-array&quot;</span>)]
+</span><span class="kw">pub mod </span>array;
+<span class="kw">mod </span>binary;
 <span class="attr">#[cfg(feature = <span class="string">&quot;interpolate&quot;</span>)]
 </span><span class="kw">mod </span>interpolate;
 <span class="kw">pub mod </span>list;
@@ -30,6 +35,7 @@
 </span><span class="kw">pub mod </span>nan_propagating_aggregate;
 <span class="kw">mod </span>set;
 <span class="kw">mod </span>strings;
+<span class="kw">mod </span>sum;
 <span class="attr">#[cfg(feature = <span class="string">&quot;top_k&quot;</span>)]
 </span><span class="kw">mod </span>top_k;
 

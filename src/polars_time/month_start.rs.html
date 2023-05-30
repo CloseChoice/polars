@@ -97,7 +97,7 @@
 <a href="#97" id="97">97</a>
 <a href="#98" id="98">98</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>chrono::{Datelike, NaiveDate, NaiveDateTime, NaiveTime, Timelike};
-<span class="kw">use </span>polars_arrow::time_zone::{PolarsTimeZone, NO_TIMEZONE};
+<span class="kw">use </span>polars_arrow::time_zone::Tz;
 <span class="kw">use </span>polars_core::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>polars_core::utils::arrow::temporal_conversions::{
     timestamp_ms_to_datetime, timestamp_ns_to_datetime, timestamp_us_to_datetime, MILLISECONDS,
@@ -108,9 +108,9 @@
 </span><span class="kw">use </span><span class="kw">crate</span>::utils::{localize_datetime, unlocalize_datetime};
 
 <span class="comment">// roll backward to the first day of the month
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>roll_backward&lt;T: PolarsTimeZone&gt;(
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>roll_backward(
     t: i64,
-    tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>T&gt;,
+    tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Tz&gt;,
     timestamp_to_datetime: <span class="kw">fn</span>(i64) -&gt; NaiveDateTime,
     datetime_to_timestamp: <span class="kw">fn</span>(NaiveDateTime) -&gt; i64,
 ) -&gt; PolarsResult&lt;i64&gt; {
@@ -148,13 +148,13 @@
 }
 
 <span class="kw">pub trait </span>PolarsMonthStart {
-    <span class="kw">fn </span>month_start(<span class="kw-2">&amp;</span><span class="self">self</span>, time_zone: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;) -&gt; PolarsResult&lt;<span class="self">Self</span>&gt;
+    <span class="kw">fn </span>month_start(<span class="kw-2">&amp;</span><span class="self">self</span>, time_zone: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Tz&gt;) -&gt; PolarsResult&lt;<span class="self">Self</span>&gt;
     <span class="kw">where
         </span><span class="self">Self</span>: Sized;
 }
 
 <span class="kw">impl </span>PolarsMonthStart <span class="kw">for </span>DatetimeChunked {
-    <span class="kw">fn </span>month_start(<span class="kw-2">&amp;</span><span class="self">self</span>, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;) -&gt; PolarsResult&lt;<span class="self">Self</span>&gt; {
+    <span class="kw">fn </span>month_start(<span class="kw-2">&amp;</span><span class="self">self</span>, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Tz&gt;) -&gt; PolarsResult&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>timestamp_to_datetime: <span class="kw">fn</span>(i64) -&gt; NaiveDateTime;
         <span class="kw">let </span>datetime_to_timestamp: <span class="kw">fn</span>(NaiveDateTime) -&gt; i64;
         <span class="kw">match </span><span class="self">self</span>.time_unit() {
@@ -179,14 +179,14 @@
 }
 
 <span class="kw">impl </span>PolarsMonthStart <span class="kw">for </span>DateChunked {
-    <span class="kw">fn </span>month_start(<span class="kw-2">&amp;</span><span class="self">self</span>, _tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;) -&gt; PolarsResult&lt;<span class="self">Self</span>&gt; {
+    <span class="kw">fn </span>month_start(<span class="kw-2">&amp;</span><span class="self">self</span>, _tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Tz&gt;) -&gt; PolarsResult&lt;<span class="self">Self</span>&gt; {
         <span class="kw">const </span>MSECS_IN_DAY: i64 = MILLISECONDS * SECONDS_IN_DAY;
         <span class="prelude-val">Ok</span>(<span class="self">self
             </span>.<span class="number">0
             </span>.try_apply(|t| {
                 <span class="prelude-val">Ok</span>((roll_backward(
                     MSECS_IN_DAY * t <span class="kw">as </span>i64,
-                    NO_TIMEZONE,
+                    <span class="prelude-val">None</span>,
                     timestamp_ms_to_datetime,
                     datetime_to_timestamp_ms,
                 )<span class="question-mark">? </span>/ MSECS_IN_DAY) <span class="kw">as </span>i32)

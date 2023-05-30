@@ -1067,8 +1067,8 @@
         <span class="macro">polars_bail!</span>(opq = is_in, <span class="self">self</span>._dtype());
     }
     <span class="attr">#[cfg(feature = <span class="string">&quot;repeat_by&quot;</span>)]
-    </span><span class="kw">fn </span>repeat_by(<span class="kw-2">&amp;</span><span class="self">self</span>, _by: <span class="kw-2">&amp;</span>IdxCa) -&gt; ListChunked {
-        <span class="macro">invalid_operation_panic!</span>(repeat_by, <span class="self">self</span>)
+    </span><span class="kw">fn </span>repeat_by(<span class="kw-2">&amp;</span><span class="self">self</span>, _by: <span class="kw-2">&amp;</span>IdxCa) -&gt; PolarsResult&lt;ListChunked&gt; {
+        <span class="macro">polars_bail!</span>(opq = repeat_by, <span class="self">self</span>._dtype());
     }
     <span class="attr">#[cfg(feature = <span class="string">&quot;checked_arithmetic&quot;</span>)]
     </span><span class="kw">fn </span>checked_div(<span class="kw-2">&amp;</span><span class="self">self</span>, _rhs: <span class="kw-2">&amp;</span>Series) -&gt; PolarsResult&lt;Series&gt; {

@@ -559,91 +559,6 @@
 <a href="#559" id="559">559</a>
 <a href="#560" id="560">560</a>
 <a href="#561" id="561">561</a>
-<a href="#562" id="562">562</a>
-<a href="#563" id="563">563</a>
-<a href="#564" id="564">564</a>
-<a href="#565" id="565">565</a>
-<a href="#566" id="566">566</a>
-<a href="#567" id="567">567</a>
-<a href="#568" id="568">568</a>
-<a href="#569" id="569">569</a>
-<a href="#570" id="570">570</a>
-<a href="#571" id="571">571</a>
-<a href="#572" id="572">572</a>
-<a href="#573" id="573">573</a>
-<a href="#574" id="574">574</a>
-<a href="#575" id="575">575</a>
-<a href="#576" id="576">576</a>
-<a href="#577" id="577">577</a>
-<a href="#578" id="578">578</a>
-<a href="#579" id="579">579</a>
-<a href="#580" id="580">580</a>
-<a href="#581" id="581">581</a>
-<a href="#582" id="582">582</a>
-<a href="#583" id="583">583</a>
-<a href="#584" id="584">584</a>
-<a href="#585" id="585">585</a>
-<a href="#586" id="586">586</a>
-<a href="#587" id="587">587</a>
-<a href="#588" id="588">588</a>
-<a href="#589" id="589">589</a>
-<a href="#590" id="590">590</a>
-<a href="#591" id="591">591</a>
-<a href="#592" id="592">592</a>
-<a href="#593" id="593">593</a>
-<a href="#594" id="594">594</a>
-<a href="#595" id="595">595</a>
-<a href="#596" id="596">596</a>
-<a href="#597" id="597">597</a>
-<a href="#598" id="598">598</a>
-<a href="#599" id="599">599</a>
-<a href="#600" id="600">600</a>
-<a href="#601" id="601">601</a>
-<a href="#602" id="602">602</a>
-<a href="#603" id="603">603</a>
-<a href="#604" id="604">604</a>
-<a href="#605" id="605">605</a>
-<a href="#606" id="606">606</a>
-<a href="#607" id="607">607</a>
-<a href="#608" id="608">608</a>
-<a href="#609" id="609">609</a>
-<a href="#610" id="610">610</a>
-<a href="#611" id="611">611</a>
-<a href="#612" id="612">612</a>
-<a href="#613" id="613">613</a>
-<a href="#614" id="614">614</a>
-<a href="#615" id="615">615</a>
-<a href="#616" id="616">616</a>
-<a href="#617" id="617">617</a>
-<a href="#618" id="618">618</a>
-<a href="#619" id="619">619</a>
-<a href="#620" id="620">620</a>
-<a href="#621" id="621">621</a>
-<a href="#622" id="622">622</a>
-<a href="#623" id="623">623</a>
-<a href="#624" id="624">624</a>
-<a href="#625" id="625">625</a>
-<a href="#626" id="626">626</a>
-<a href="#627" id="627">627</a>
-<a href="#628" id="628">628</a>
-<a href="#629" id="629">629</a>
-<a href="#630" id="630">630</a>
-<a href="#631" id="631">631</a>
-<a href="#632" id="632">632</a>
-<a href="#633" id="633">633</a>
-<a href="#634" id="634">634</a>
-<a href="#635" id="635">635</a>
-<a href="#636" id="636">636</a>
-<a href="#637" id="637">637</a>
-<a href="#638" id="638">638</a>
-<a href="#639" id="639">639</a>
-<a href="#640" id="640">640</a>
-<a href="#641" id="641">641</a>
-<a href="#642" id="642">642</a>
-<a href="#643" id="643">643</a>
-<a href="#644" id="644">644</a>
-<a href="#645" id="645">645</a>
-<a href="#646" id="646">646</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::convert::TryFrom;
 <span class="kw">use </span>std::fmt::Write;
 
@@ -660,6 +575,7 @@
 
 <span class="kw">use super</span>::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::chunked_array::list::min_max::{list_max_function, list_min_function};
+<span class="kw">use </span><span class="kw">crate</span>::chunked_array::list::sum_mean::sum_with_nulls;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::list::sum_mean::{mean_list_numerical, sum_list_numerical};
 <span class="kw">use </span><span class="kw">crate</span>::series::ArgAgg;
 
@@ -764,115 +680,29 @@
     }
 
     <span class="kw">fn </span>lst_sum(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Series {
-        <span class="kw">fn </span>inner(ca: <span class="kw-2">&amp;</span>ListChunked, inner_dtype: <span class="kw-2">&amp;</span>DataType) -&gt; Series {
-            <span class="kw">use </span>DataType::<span class="kw-2">*</span>;
-            <span class="comment">// TODO: add fast path for smaller ints?
-            </span><span class="kw">let </span><span class="kw-2">mut </span>out = <span class="kw">match </span>inner_dtype {
-                Boolean =&gt; {
-                    <span class="kw">let </span>out: IdxCa = ca
-                        .amortized_iter()
-                        .map(|s| s.and_then(|s| s.as_ref().sum()))
-                        .collect();
-                    out.into_series()
-                }
-                UInt32 =&gt; {
-                    <span class="kw">let </span>out: UInt32Chunked = ca
-                        .amortized_iter()
-                        .map(|s| s.and_then(|s| s.as_ref().sum()))
-                        .collect();
-                    out.into_series()
-                }
-                UInt64 =&gt; {
-                    <span class="kw">let </span>out: UInt64Chunked = ca
-                        .amortized_iter()
-                        .map(|s| s.and_then(|s| s.as_ref().sum()))
-                        .collect();
-                    out.into_series()
-                }
-                Int32 =&gt; {
-                    <span class="kw">let </span>out: Int32Chunked = ca
-                        .amortized_iter()
-                        .map(|s| s.and_then(|s| s.as_ref().sum()))
-                        .collect();
-                    out.into_series()
-                }
-                Int64 =&gt; {
-                    <span class="kw">let </span>out: Int64Chunked = ca
-                        .amortized_iter()
-                        .map(|s| s.and_then(|s| s.as_ref().sum()))
-                        .collect();
-                    out.into_series()
-                }
-                Float32 =&gt; {
-                    <span class="kw">let </span>out: Float32Chunked = ca
-                        .amortized_iter()
-                        .map(|s| s.and_then(|s| s.as_ref().sum()))
-                        .collect();
-                    out.into_series()
-                }
-                Float64 =&gt; {
-                    <span class="kw">let </span>out: Float64Chunked = ca
-                        .amortized_iter()
-                        .map(|s| s.and_then(|s| s.as_ref().sum()))
-                        .collect();
-                    out.into_series()
-                }
-                <span class="comment">// slowest sum_as_series path
-                </span><span class="kw">_ </span>=&gt; ca
-                    .apply_amortized(|s| s.as_ref().sum_as_series())
-                    .explode()
-                    .unwrap()
-                    .into_series(),
-            };
-            out.rename(ca.name());
-            out
-        }
-
         <span class="kw">let </span>ca = <span class="self">self</span>.as_list();
 
         <span class="kw">if </span>has_inner_nulls(ca) {
-            <span class="kw">return </span>inner(ca, <span class="kw-2">&amp;</span>ca.inner_dtype());
+            <span class="kw">return </span>sum_with_nulls(ca, <span class="kw-2">&amp;</span>ca.inner_dtype());
         };
 
         <span class="kw">match </span>ca.inner_dtype() {
             DataType::Boolean =&gt; count_boolean_bits(ca).into_series(),
             dt <span class="kw">if </span>dt.is_numeric() =&gt; sum_list_numerical(ca, <span class="kw-2">&amp;</span>dt),
-            dt =&gt; inner(ca, <span class="kw-2">&amp;</span>dt),
+            dt =&gt; sum_with_nulls(ca, <span class="kw-2">&amp;</span>dt),
         }
     }
 
     <span class="kw">fn </span>lst_mean(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Series {
-        <span class="kw">fn </span>inner(ca: <span class="kw-2">&amp;</span>ListChunked) -&gt; Series {
-            <span class="kw">let </span><span class="kw-2">mut </span>out: Float64Chunked = ca
-                .amortized_iter()
-                .map(|s| s.and_then(|s| s.as_ref().mean()))
-                .collect();
-
-            out.rename(ca.name());
-            out.into_series()
-        }
-        <span class="kw">use </span>DataType::<span class="kw-2">*</span>;
-
         <span class="kw">let </span>ca = <span class="self">self</span>.as_list();
 
         <span class="kw">if </span>has_inner_nulls(ca) {
-            <span class="kw">return match </span>ca.inner_dtype() {
-                Float32 =&gt; {
-                    <span class="kw">let </span><span class="kw-2">mut </span>out: Float32Chunked = ca
-                        .amortized_iter()
-                        .map(|s| s.and_then(|s| s.as_ref().mean().map(|v| v <span class="kw">as </span>f32)))
-                        .collect();
-
-                    out.rename(ca.name());
-                    out.into_series()
-                }
-                <span class="kw">_ </span>=&gt; inner(ca),
-            };
+            <span class="kw">return </span>sum_mean::mean_with_nulls(ca);
         };
 
         <span class="kw">match </span>ca.inner_dtype() {
             dt <span class="kw">if </span>dt.is_numeric() =&gt; mean_list_numerical(ca, <span class="kw-2">&amp;</span>dt),
-            <span class="kw">_ </span>=&gt; inner(ca),
+            <span class="kw">_ </span>=&gt; sum_mean::mean_with_nulls(ca),
         }
     }
 

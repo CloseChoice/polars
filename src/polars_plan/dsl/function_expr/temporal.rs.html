@@ -155,60 +155,8 @@
 <a href="#155" id="155">155</a>
 <a href="#156" id="156">156</a>
 <a href="#157" id="157">157</a>
-<a href="#158" id="158">158</a>
-<a href="#159" id="159">159</a>
-<a href="#160" id="160">160</a>
-<a href="#161" id="161">161</a>
-<a href="#162" id="162">162</a>
-<a href="#163" id="163">163</a>
-<a href="#164" id="164">164</a>
-<a href="#165" id="165">165</a>
-<a href="#166" id="166">166</a>
-<a href="#167" id="167">167</a>
-<a href="#168" id="168">168</a>
-<a href="#169" id="169">169</a>
-<a href="#170" id="170">170</a>
-<a href="#171" id="171">171</a>
-<a href="#172" id="172">172</a>
-<a href="#173" id="173">173</a>
-<a href="#174" id="174">174</a>
-<a href="#175" id="175">175</a>
-<a href="#176" id="176">176</a>
-<a href="#177" id="177">177</a>
-<a href="#178" id="178">178</a>
-<a href="#179" id="179">179</a>
-<a href="#180" id="180">180</a>
-<a href="#181" id="181">181</a>
-<a href="#182" id="182">182</a>
-<a href="#183" id="183">183</a>
-<a href="#184" id="184">184</a>
-<a href="#185" id="185">185</a>
-<a href="#186" id="186">186</a>
-<a href="#187" id="187">187</a>
-<a href="#188" id="188">188</a>
-<a href="#189" id="189">189</a>
-<a href="#190" id="190">190</a>
-<a href="#191" id="191">191</a>
-<a href="#192" id="192">192</a>
-<a href="#193" id="193">193</a>
-<a href="#194" id="194">194</a>
-<a href="#195" id="195">195</a>
-<a href="#196" id="196">196</a>
-<a href="#197" id="197">197</a>
-<a href="#198" id="198">198</a>
-<a href="#199" id="199">199</a>
-<a href="#200" id="200">200</a>
-<a href="#201" id="201">201</a>
-<a href="#202" id="202">202</a>
-<a href="#203" id="203">203</a>
-<a href="#204" id="204">204</a>
-<a href="#205" id="205">205</a>
-</pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-</span><span class="kw">use </span>arrow::temporal_conversions::parse_offset;
-<span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-</span><span class="kw">use </span>chrono_tz::Tz;
-<span class="attr">#[cfg(feature = <span class="string">&quot;date_offset&quot;</span>)]
-</span><span class="kw">use </span>polars_arrow::time_zone::PolarsTimeZone;
+</pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">&quot;date_offset&quot;</span>)]
+</span><span class="kw">use </span>polars_arrow::time_zone::Tz;
 <span class="kw">use </span>polars_core::utils::arrow::temporal_conversions::SECONDS_IN_DAY;
 <span class="attr">#[cfg(feature = <span class="string">&quot;date_offset&quot;</span>)]
 </span><span class="kw">use </span>polars_time::prelude::<span class="kw-2">*</span>;
@@ -227,9 +175,7 @@
         DataType::Datetime(tu, tz) =&gt; {
             <span class="kw">let </span>ca = s.datetime().unwrap();
 
-            <span class="kw">fn </span>offset_fn&lt;T: PolarsTimeZone&gt;(
-                tu: TimeUnit,
-            ) -&gt; <span class="kw">fn</span>(<span class="kw-2">&amp;</span>Duration, i64, <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>T&gt;) -&gt; PolarsResult&lt;i64&gt; {
+            <span class="kw">fn </span>offset_fn(tu: TimeUnit) -&gt; <span class="kw">fn</span>(<span class="kw-2">&amp;</span>Duration, i64, <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Tz&gt;) -&gt; PolarsResult&lt;i64&gt; {
                 <span class="kw">match </span>tu {
                     TimeUnit::Nanoseconds =&gt; Duration::add_ns,
                     TimeUnit::Microseconds =&gt; Duration::add_us,
@@ -239,22 +185,13 @@
 
             <span class="kw">let </span>out = <span class="kw">match </span>tz {
                 <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-                </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>tz) =&gt; <span class="kw">match </span>tz.parse::&lt;Tz&gt;() {
-                    <span class="prelude-val">Ok</span>(tz) =&gt; {
-                        <span class="kw">let </span>offset_fn = offset_fn(tu);
-                        ca.<span class="number">0</span>.try_apply(|v| offset_fn(<span class="kw-2">&amp;</span>offset, v, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>tz)))
-                    }
-                    <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">match </span>parse_offset(tz) {
-                        <span class="prelude-val">Ok</span>(tz) =&gt; {
-                            <span class="kw">let </span>offset_fn = offset_fn(tu);
-                            ca.<span class="number">0</span>.try_apply(|v| offset_fn(<span class="kw-2">&amp;</span>offset, v, <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>tz)))
-                        }
-                        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">unreachable!</span>(),
-                    },
-                },
+                </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>tz) =&gt; {
+                    <span class="kw">let </span>offset_fn = offset_fn(tu);
+                    ca.<span class="number">0</span>.try_apply(|v| offset_fn(<span class="kw-2">&amp;</span>offset, v, tz.parse::&lt;Tz&gt;().ok().as_ref()))
+                }
                 <span class="kw">_ </span>=&gt; {
                     <span class="kw">let </span>offset_fn = offset_fn(tu);
-                    ca.<span class="number">0</span>.try_apply(|v| offset_fn(<span class="kw-2">&amp;</span>offset, v, NO_TIMEZONE))
+                    ca.<span class="number">0</span>.try_apply(|v| offset_fn(<span class="kw-2">&amp;</span>offset, v, <span class="prelude-val">None</span>))
                 }
             }<span class="question-mark">?</span>;
             out.cast(<span class="kw-2">&amp;</span>DataType::Datetime(tu, tz))
@@ -298,8 +235,8 @@
     name: <span class="kw-2">&amp;</span>str,
     every: Duration,
     closed: ClosedWindow,
-    tz: <span class="prelude-ty">Option</span>&lt;TimeZone&gt;,
-) -&gt; PolarsResult&lt;Series&gt; {
+    _tz: <span class="prelude-ty">Option</span>&lt;TimeZone&gt;, <span class="comment">// todo: respect _tz: https://github.com/pola-rs/polars/issues/8512
+</span>) -&gt; PolarsResult&lt;Series&gt; {
     <span class="kw">let </span>start = <span class="kw-2">&amp;</span>s[<span class="number">0</span>];
     <span class="kw">let </span>stop = <span class="kw-2">&amp;</span>s[<span class="number">1</span>];
 
@@ -313,99 +250,66 @@
     <span class="kw">let </span>rng_stop = stop.to_physical_repr();
     <span class="kw">let </span>dtype = start.dtype();
 
-    <span class="kw">if </span>start.len() == <span class="number">1 </span>&amp;&amp; stop.len() == <span class="number">1 </span>{
-        <span class="kw">let </span>rng_start = rng_start.get(<span class="number">0</span>).unwrap().extract::&lt;i64&gt;().unwrap();
-        <span class="kw">let </span>rng_stop = rng_stop.get(<span class="number">0</span>).unwrap().extract::&lt;i64&gt;().unwrap();
+    <span class="kw">let </span><span class="kw-2">mut </span>start = rng_start.cast(<span class="kw-2">&amp;</span>DataType::Int64)<span class="question-mark">?</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>stop = rng_stop.cast(<span class="kw-2">&amp;</span>DataType::Int64)<span class="question-mark">?</span>;
 
-        <span class="kw">match </span>dtype {
-            DataType::Datetime(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; {
-                <span class="kw">let </span>tu = <span class="kw">match </span>dtype {
-                    DataType::Datetime(tu, <span class="kw">_</span>) =&gt; tu,
-                    <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
-                };
-                <span class="prelude-val">Ok</span>(
-                    date_range_impl(name, rng_start, rng_stop, every, closed, <span class="kw-2">*</span>tu, tz.as_ref())<span class="question-mark">?
-                        </span>.into_series(),
-                )
-            }
-            DataType::Date =&gt; date_range_impl(
-                name,
-                rng_start * TO_MS,
-                rng_stop * TO_MS,
-                every,
-                closed,
-                TimeUnit::Milliseconds,
-                tz.as_ref(),
-            )<span class="question-mark">?
-            </span>.cast(<span class="kw-2">&amp;</span>DataType::Date),
-
-            DataType::Time =&gt; {
-                <span class="prelude-val">Ok</span>(time_range_impl(name, rng_start, rng_stop, every, closed)<span class="question-mark">?</span>.into_series())
-            }
-            <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
+    <span class="kw">let </span>(tu, tz) = <span class="kw">match </span>dtype {
+        DataType::Date =&gt; {
+            start = <span class="kw-2">&amp;</span>start * TO_MS;
+            stop = <span class="kw-2">&amp;</span>stop * TO_MS;
+            (TimeUnit::Milliseconds, <span class="prelude-val">None</span>)
         }
-    } <span class="kw">else </span>{
-        <span class="kw">let </span><span class="kw-2">mut </span>start = rng_start.cast(<span class="kw-2">&amp;</span>DataType::Int64)<span class="question-mark">?</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>stop = rng_stop.cast(<span class="kw-2">&amp;</span>DataType::Int64)<span class="question-mark">?</span>;
+        DataType::Datetime(tu, tz) =&gt; (<span class="kw-2">*</span>tu, tz.as_ref()),
+        DataType::Time =&gt; (TimeUnit::Nanoseconds, <span class="prelude-val">None</span>),
+        <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
+    };
+    <span class="kw">let </span>start = start.i64().unwrap();
+    <span class="kw">let </span>stop = stop.i64().unwrap();
 
-        <span class="kw">let </span>(tu, tz) = <span class="kw">match </span>dtype {
-            DataType::Date =&gt; {
-                start = <span class="kw-2">&amp;</span>start * TO_MS;
-                stop = <span class="kw-2">&amp;</span>stop * TO_MS;
-                (TimeUnit::Milliseconds, <span class="prelude-val">None</span>)
-            }
-            DataType::Datetime(tu, tz) =&gt; (<span class="kw-2">*</span>tu, tz.as_ref()),
-            DataType::Time =&gt; (TimeUnit::Nanoseconds, <span class="prelude-val">None</span>),
-            <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
-        };
-        <span class="kw">let </span>start = start.i64().unwrap();
-        <span class="kw">let </span>stop = stop.i64().unwrap();
-
-        <span class="kw">let </span>list = <span class="kw">match </span>dtype {
-            DataType::Date =&gt; {
-                <span class="kw">let </span><span class="kw-2">mut </span>builder = ListPrimitiveChunkedBuilder::&lt;Int32Type&gt;::new(
-                    name,
-                    start.len(),
-                    start.len() * <span class="number">5</span>,
-                    DataType::Int32,
-                );
-                <span class="kw">for </span>(start, stop) <span class="kw">in </span>start.into_iter().zip(stop.into_iter()) {
-                    <span class="kw">match </span>(start, stop) {
-                        (<span class="prelude-val">Some</span>(start), <span class="prelude-val">Some</span>(stop)) =&gt; {
-                            <span class="kw">let </span>rng = date_range_impl(<span class="string">&quot;&quot;</span>, start, stop, every, closed, tu, tz)<span class="question-mark">?</span>;
-                            <span class="kw">let </span>rng = rng.cast(<span class="kw-2">&amp;</span>DataType::Date).unwrap();
-                            <span class="kw">let </span>rng = rng.to_physical_repr();
-                            <span class="kw">let </span>rng = rng.i32().unwrap();
-                            builder.append_slice(rng.cont_slice().unwrap())
-                        }
-                        <span class="kw">_ </span>=&gt; builder.append_null(),
+    <span class="kw">let </span>list = <span class="kw">match </span>dtype {
+        DataType::Date =&gt; {
+            <span class="kw">let </span><span class="kw-2">mut </span>builder = ListPrimitiveChunkedBuilder::&lt;Int32Type&gt;::new(
+                name,
+                start.len(),
+                start.len() * <span class="number">5</span>,
+                DataType::Int32,
+            );
+            <span class="kw">for </span>(start, stop) <span class="kw">in </span>start.into_iter().zip(stop.into_iter()) {
+                <span class="kw">match </span>(start, stop) {
+                    (<span class="prelude-val">Some</span>(start), <span class="prelude-val">Some</span>(stop)) =&gt; {
+                        <span class="kw">let </span>rng = date_range_impl(<span class="string">&quot;&quot;</span>, start, stop, every, closed, tu, tz)<span class="question-mark">?</span>;
+                        <span class="kw">let </span>rng = rng.cast(<span class="kw-2">&amp;</span>DataType::Date).unwrap();
+                        <span class="kw">let </span>rng = rng.to_physical_repr();
+                        <span class="kw">let </span>rng = rng.i32().unwrap();
+                        builder.append_slice(rng.cont_slice().unwrap())
                     }
+                    <span class="kw">_ </span>=&gt; builder.append_null(),
                 }
-                builder.finish().into_series()
             }
-            DataType::Datetime(<span class="kw">_</span>, <span class="kw">_</span>) | DataType::Time =&gt; {
-                <span class="kw">let </span><span class="kw-2">mut </span>builder = ListPrimitiveChunkedBuilder::&lt;Int64Type&gt;::new(
-                    name,
-                    start.len(),
-                    start.len() * <span class="number">5</span>,
-                    DataType::Int64,
-                );
-                <span class="kw">for </span>(start, stop) <span class="kw">in </span>start.into_iter().zip(stop.into_iter()) {
-                    <span class="kw">match </span>(start, stop) {
-                        (<span class="prelude-val">Some</span>(start), <span class="prelude-val">Some</span>(stop)) =&gt; {
-                            <span class="kw">let </span>rng = date_range_impl(<span class="string">&quot;&quot;</span>, start, stop, every, closed, tu, tz)<span class="question-mark">?</span>;
-                            builder.append_slice(rng.cont_slice().unwrap())
-                        }
-                        <span class="kw">_ </span>=&gt; builder.append_null(),
+            builder.finish().into_series()
+        }
+        DataType::Datetime(<span class="kw">_</span>, <span class="kw">_</span>) | DataType::Time =&gt; {
+            <span class="kw">let </span><span class="kw-2">mut </span>builder = ListPrimitiveChunkedBuilder::&lt;Int64Type&gt;::new(
+                name,
+                start.len(),
+                start.len() * <span class="number">5</span>,
+                DataType::Int64,
+            );
+            <span class="kw">for </span>(start, stop) <span class="kw">in </span>start.into_iter().zip(stop.into_iter()) {
+                <span class="kw">match </span>(start, stop) {
+                    (<span class="prelude-val">Some</span>(start), <span class="prelude-val">Some</span>(stop)) =&gt; {
+                        <span class="kw">let </span>rng = date_range_impl(<span class="string">&quot;&quot;</span>, start, stop, every, closed, tu, tz)<span class="question-mark">?</span>;
+                        builder.append_slice(rng.cont_slice().unwrap())
                     }
+                    <span class="kw">_ </span>=&gt; builder.append_null(),
                 }
-                builder.finish().into_series()
             }
-            <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
-        };
+            builder.finish().into_series()
+        }
+        <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
+    };
 
-        <span class="kw">let </span>to_type = DataType::List(Box::new(dtype.clone()));
-        list.cast(<span class="kw-2">&amp;</span>to_type)
-    }
+    <span class="kw">let </span>to_type = DataType::List(Box::new(dtype.clone()));
+    list.cast(<span class="kw-2">&amp;</span>to_type)
 }
 </code></pre></div></section></main></body></html>

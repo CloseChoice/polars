@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["bitwise","cast","take","tile"]};
+window.SIDEBAR_ITEMS = {"mod":["bitwise","cast","decimal","take","tile"]};

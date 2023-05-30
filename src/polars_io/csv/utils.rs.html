@@ -668,17 +668,6 @@
 <a href="#668" id="668">668</a>
 <a href="#669" id="669">669</a>
 <a href="#670" id="670">670</a>
-<a href="#671" id="671">671</a>
-<a href="#672" id="672">672</a>
-<a href="#673" id="673">673</a>
-<a href="#674" id="674">674</a>
-<a href="#675" id="675">675</a>
-<a href="#676" id="676">676</a>
-<a href="#677" id="677">677</a>
-<a href="#678" id="678">678</a>
-<a href="#679" id="679">679</a>
-<a href="#680" id="680">680</a>
-<a href="#681" id="681">681</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::borrow::Cow;
 <span class="kw">use </span>std::io::Read;
 <span class="kw">use </span>std::mem::MaybeUninit;
@@ -688,7 +677,6 @@
 <span class="kw">use </span>polars_core::prelude::<span class="kw-2">*</span>;
 <span class="attr">#[cfg(feature = <span class="string">&quot;polars-time&quot;</span>)]
 </span><span class="kw">use </span>polars_time::chunkedarray::utf8::infer <span class="kw">as </span>date_infer;
-<span class="kw">use </span>polars_time::chunkedarray::utf8::PatternWithOffset;
 <span class="attr">#[cfg(feature = <span class="string">&quot;polars-time&quot;</span>)]
 </span><span class="kw">use </span>polars_time::prelude::utf8::Pattern;
 <span class="kw">use </span>regex::{Regex, RegexBuilder};
@@ -793,18 +781,13 @@
             </span>{
                 <span class="kw">match </span>date_infer::infer_pattern_single(<span class="kw-2">&amp;</span>string[<span class="number">1</span>..string.len() - <span class="number">1</span>]) {
                     <span class="prelude-val">Some</span>(pattern_with_offset) =&gt; <span class="kw">match </span>pattern_with_offset {
-                        PatternWithOffset {
-                            pattern: Pattern::DatetimeYMD | Pattern::DatetimeDMY,
-                            offset: <span class="kw">_</span>,
-                        } =&gt; DataType::Datetime(TimeUnit::Microseconds, <span class="prelude-val">None</span>),
-                        PatternWithOffset {
-                            pattern: Pattern::DateYMD | Pattern::DateDMY,
-                            offset: <span class="kw">_</span>,
-                        } =&gt; DataType::Date,
-                        PatternWithOffset {
-                            pattern: Pattern::DatetimeYMDZ,
-                            offset: <span class="kw">_</span>,
-                        } =&gt; DataType::Datetime(TimeUnit::Microseconds, <span class="prelude-val">Some</span>(<span class="string">&quot;UTC&quot;</span>.to_string())),
+                        Pattern::DatetimeYMD | Pattern::DatetimeDMY =&gt; {
+                            DataType::Datetime(TimeUnit::Microseconds, <span class="prelude-val">None</span>)
+                        }
+                        Pattern::DateYMD | Pattern::DateDMY =&gt; DataType::Date,
+                        Pattern::DatetimeYMDZ =&gt; {
+                            DataType::Datetime(TimeUnit::Microseconds, <span class="prelude-val">Some</span>(<span class="string">&quot;UTC&quot;</span>.to_string()))
+                        }
                     },
                     <span class="prelude-val">None </span>=&gt; DataType::Utf8,
                 }
@@ -829,18 +812,13 @@
         </span>{
             <span class="kw">match </span>date_infer::infer_pattern_single(string) {
                 <span class="prelude-val">Some</span>(pattern_with_offset) =&gt; <span class="kw">match </span>pattern_with_offset {
-                    PatternWithOffset {
-                        pattern: Pattern::DatetimeYMD | Pattern::DatetimeDMY,
-                        offset: <span class="kw">_</span>,
-                    } =&gt; DataType::Datetime(TimeUnit::Microseconds, <span class="prelude-val">None</span>),
-                    PatternWithOffset {
-                        pattern: Pattern::DateYMD | Pattern::DateDMY,
-                        offset: <span class="kw">_</span>,
-                    } =&gt; DataType::Date,
-                    PatternWithOffset {
-                        pattern: Pattern::DatetimeYMDZ,
-                        offset: <span class="kw">_</span>,
-                    } =&gt; DataType::Datetime(TimeUnit::Microseconds, <span class="prelude-val">Some</span>(<span class="string">&quot;UTC&quot;</span>.to_string())),
+                    Pattern::DatetimeYMD | Pattern::DatetimeDMY =&gt; {
+                        DataType::Datetime(TimeUnit::Microseconds, <span class="prelude-val">None</span>)
+                    }
+                    Pattern::DateYMD | Pattern::DateDMY =&gt; DataType::Date,
+                    Pattern::DatetimeYMDZ =&gt; {
+                        DataType::Datetime(TimeUnit::Microseconds, <span class="prelude-val">Some</span>(<span class="string">&quot;UTC&quot;</span>.to_string()))
+                    }
                 },
                 <span class="prelude-val">None </span>=&gt; DataType::Utf8,
             }

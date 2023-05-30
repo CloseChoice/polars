@@ -1394,6 +1394,9 @@
 <a href="#1394" id="1394">1394</a>
 <a href="#1395" id="1395">1395</a>
 <a href="#1396" id="1396">1396</a>
+<a href="#1397" id="1397">1397</a>
+<a href="#1398" id="1398">1398</a>
+<a href="#1399" id="1399">1399</a>
 </pre></div><pre class="rust"><code><span class="kw">mod </span>scalar;
 
 <span class="kw">use </span>std::ops::Not;
@@ -1409,7 +1412,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::series::IsSorted;
-<span class="kw">use </span><span class="kw">crate</span>::utils::{align_chunks_binary, NoNull};
+<span class="kw">use </span><span class="kw">crate</span>::utils::align_chunks_binary;
 
 <span class="kw">impl</span>&lt;T&gt; ChunkedArray&lt;T&gt;
 <span class="kw">where
@@ -1433,6 +1436,12 @@
 
         <span class="kw">unsafe </span>{ ChunkedArray::from_chunks(<span class="string">&quot;&quot;</span>, chunks) }
     }
+
+    <span class="comment">// also includes validity  in comparison
+    </span><span class="kw">pub fn </span>not_equal_and_validity(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>ChunkedArray&lt;T&gt;) -&gt; BooleanChunked {
+        <span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
+        lhs.comparison(<span class="kw-2">&amp;</span>rhs, |x, y| comparison::neq_and_validity(x, y))
+    }
 }
 
 <span class="kw">impl</span>&lt;T&gt; ChunkCompare&lt;<span class="kw-2">&amp;</span>ChunkedArray&lt;T&gt;&gt; <span class="kw">for </span>ChunkedArray&lt;T&gt;
@@ -1448,12 +1457,37 @@
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
                     <span class="self">self</span>.equal(value)
                 } <span class="kw">else </span>{
-                    <span class="self">self</span>.is_null()
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
                 }
             }
             (<span class="number">1</span>, <span class="kw">_</span>) =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
                     rhs.equal(value)
+                } <span class="kw">else </span>{
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, rhs.len())
+                }
+            }
+            <span class="kw">_ </span>=&gt; {
+                <span class="comment">// same length
+                </span><span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
+                lhs.comparison(<span class="kw-2">&amp;</span>rhs, |x, y| comparison::eq(x, y))
+            }
+        }
+    }
+
+    <span class="kw">fn </span>equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>ChunkedArray&lt;T&gt;) -&gt; BooleanChunked {
+        <span class="comment">// broadcast
+        </span><span class="kw">match </span>(<span class="self">self</span>.len(), rhs.len()) {
+            (<span class="kw">_</span>, <span class="number">1</span>) =&gt; {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
+                    <span class="self">self</span>.equal_missing(value)
+                } <span class="kw">else </span>{
+                    <span class="self">self</span>.is_null()
+                }
+            }
+            (<span class="number">1</span>, <span class="kw">_</span>) =&gt; {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
+                    rhs.equal_missing(value)
                 } <span class="kw">else </span>{
                     rhs.is_null()
                 }
@@ -1473,12 +1507,37 @@
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
                     <span class="self">self</span>.not_equal(value)
                 } <span class="kw">else </span>{
-                    <span class="self">self</span>.is_not_null()
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
                 }
             }
             (<span class="number">1</span>, <span class="kw">_</span>) =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
                     rhs.not_equal(value)
+                } <span class="kw">else </span>{
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, rhs.len())
+                }
+            }
+            <span class="kw">_ </span>=&gt; {
+                <span class="comment">// same length
+                </span><span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
+                lhs.comparison(<span class="kw-2">&amp;</span>rhs, |x, y| comparison::neq(x, y))
+            }
+        }
+    }
+
+    <span class="kw">fn </span>not_equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>ChunkedArray&lt;T&gt;) -&gt; BooleanChunked {
+        <span class="comment">// broadcast
+        </span><span class="kw">match </span>(<span class="self">self</span>.len(), rhs.len()) {
+            (<span class="kw">_</span>, <span class="number">1</span>) =&gt; {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
+                    <span class="self">self</span>.not_equal_missing(value)
+                } <span class="kw">else </span>{
+                    <span class="self">self</span>.is_not_null()
+                }
+            }
+            (<span class="number">1</span>, <span class="kw">_</span>) =&gt; {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
+                    rhs.not_equal_missing(value)
                 } <span class="kw">else </span>{
                     rhs.is_not_null()
                 }
@@ -1498,14 +1557,14 @@
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
                     <span class="self">self</span>.gt(value)
                 } <span class="kw">else </span>{
-                    BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
                 }
             }
             (<span class="number">1</span>, <span class="kw">_</span>) =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
                     rhs.lt(value)
                 } <span class="kw">else </span>{
-                    BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, rhs.len())
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, rhs.len())
                 }
             }
             <span class="kw">_ </span>=&gt; {
@@ -1523,14 +1582,14 @@
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
                     <span class="self">self</span>.gt_eq(value)
                 } <span class="kw">else </span>{
-                    BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
                 }
             }
             (<span class="number">1</span>, <span class="kw">_</span>) =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
                     rhs.lt_eq(value)
                 } <span class="kw">else </span>{
-                    BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, rhs.len())
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, rhs.len())
                 }
             }
             <span class="kw">_ </span>=&gt; {
@@ -1548,14 +1607,14 @@
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
                     <span class="self">self</span>.lt(value)
                 } <span class="kw">else </span>{
-                    BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
                 }
             }
             (<span class="number">1</span>, <span class="kw">_</span>) =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
                     rhs.gt(value)
                 } <span class="kw">else </span>{
-                    BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, rhs.len())
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, rhs.len())
                 }
             }
             <span class="kw">_ </span>=&gt; {
@@ -1573,14 +1632,14 @@
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
                     <span class="self">self</span>.lt_eq(value)
                 } <span class="kw">else </span>{
-                    BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
                 }
             }
             (<span class="number">1</span>, <span class="kw">_</span>) =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
                     rhs.gt_eq(value)
                 } <span class="kw">else </span>{
-                    BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, rhs.len())
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, rhs.len())
                 }
             }
             <span class="kw">_ </span>=&gt; {
@@ -1614,53 +1673,39 @@
         </span><span class="kw">match </span>(<span class="self">self</span>.len(), rhs.len()) {
             (<span class="kw">_</span>, <span class="number">1</span>) =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
-                    <span class="kw">match </span>value {
-                        <span class="bool-val">true </span>=&gt; {
-                            <span class="kw">if </span><span class="self">self</span>.null_count() == <span class="number">0 </span>{
-                                <span class="self">self</span>.clone()
-                            } <span class="kw">else </span>{
-                                <span class="kw">let </span>chunks = <span class="self">self
-                                    </span>.downcast_iter()
-                                    .map(|arr| {
-                                        <span class="kw">if let </span><span class="prelude-val">Some</span>(validity) = arr.validity() {
-                                            Box::new(BooleanArray::from_data_default(
-                                                arr.values() &amp; validity,
-                                                <span class="prelude-val">None</span>,
-                                            ))
-                                                <span class="kw">as </span>ArrayRef
-                                        } <span class="kw">else </span>{
-                                            Box::new(arr.clone())
-                                        }
-                                    })
-                                    .collect();
-                                <span class="kw">unsafe </span>{ BooleanChunked::from_chunks(<span class="string">&quot;&quot;</span>, chunks) }
-                            }
-                        }
-                        <span class="bool-val">false </span>=&gt; {
-                            <span class="kw">if </span><span class="self">self</span>.null_count() == <span class="number">0 </span>{
-                                <span class="self">self</span>.not()
-                            } <span class="kw">else </span>{
-                                <span class="kw">let </span>chunks = <span class="self">self
-                                    </span>.downcast_iter()
-                                    .map(|arr| {
-                                        <span class="kw">let </span>bitmap = <span class="kw">if let </span><span class="prelude-val">Some</span>(validity) = arr.validity() {
-                                            arr.values() ^ validity
-                                        } <span class="kw">else </span>{
-                                            arr.values().not()
-                                        };
-                                        Box::new(BooleanArray::from_data_default(bitmap, <span class="prelude-val">None</span>))
-                                            <span class="kw">as </span>ArrayRef
-                                    })
-                                    .collect();
-                                <span class="kw">unsafe </span>{ BooleanChunked::from_chunks(<span class="string">&quot;&quot;</span>, chunks) }
-                            }
-                        }
+                    <span class="kw">if </span>value {
+                        <span class="self">self</span>.clone()
+                    } <span class="kw">else </span>{
+                        <span class="self">self</span>.not()
+                    }
+                } <span class="kw">else </span>{
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
+                }
+            }
+            (<span class="number">1</span>, <span class="kw">_</span>) =&gt; rhs.equal(<span class="self">self</span>),
+            <span class="kw">_ </span>=&gt; {
+                <span class="comment">// same length
+                </span><span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
+                compare_bools(<span class="kw-2">&amp;</span>lhs, <span class="kw-2">&amp;</span>rhs, |lhs, rhs| comparison::eq(lhs, rhs))
+            }
+        }
+    }
+
+    <span class="kw">fn </span>equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>BooleanChunked) -&gt; BooleanChunked {
+        <span class="comment">// broadcast
+        </span><span class="kw">match </span>(<span class="self">self</span>.len(), rhs.len()) {
+            (<span class="kw">_</span>, <span class="number">1</span>) =&gt; {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
+                    <span class="kw">if </span>value {
+                        <span class="self">self</span>.clone()
+                    } <span class="kw">else </span>{
+                        <span class="self">self</span>.not()
                     }
                 } <span class="kw">else </span>{
                     <span class="self">self</span>.is_null()
                 }
             }
-            (<span class="number">1</span>, <span class="kw">_</span>) =&gt; rhs.equal(<span class="self">self</span>),
+            (<span class="number">1</span>, <span class="kw">_</span>) =&gt; rhs.equal_missing(<span class="self">self</span>),
             <span class="kw">_ </span>=&gt; {
                 <span class="comment">// same length
                 </span><span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
@@ -1674,51 +1719,39 @@
         </span><span class="kw">match </span>(<span class="self">self</span>.len(), rhs.len()) {
             (<span class="kw">_</span>, <span class="number">1</span>) =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
-                    <span class="kw">match </span>value {
-                        <span class="bool-val">true </span>=&gt; {
-                            <span class="kw">if </span><span class="self">self</span>.null_count() == <span class="number">0 </span>{
-                                <span class="self">self</span>.not()
-                            } <span class="kw">else </span>{
-                                <span class="kw">let </span>chunks = <span class="self">self
-                                    </span>.downcast_iter()
-                                    .map(|arr| {
-                                        <span class="kw">let </span>bitmap = <span class="kw">if let </span><span class="prelude-val">Some</span>(validity) = arr.validity() {
-                                            (arr.values() &amp; validity).not()
-                                        } <span class="kw">else </span>{
-                                            arr.values().not()
-                                        };
-                                        Box::new(BooleanArray::from_data_default(bitmap, <span class="prelude-val">None</span>))
-                                            <span class="kw">as </span>ArrayRef
-                                    })
-                                    .collect();
-                                <span class="kw">unsafe </span>{ BooleanChunked::from_chunks(<span class="string">&quot;&quot;</span>, chunks) }
-                            }
-                        }
-                        <span class="bool-val">false </span>=&gt; {
-                            <span class="kw">if </span><span class="self">self</span>.null_count() == <span class="number">0 </span>{
-                                <span class="self">self</span>.clone()
-                            } <span class="kw">else </span>{
-                                <span class="kw">let </span>chunks = <span class="self">self
-                                    </span>.downcast_iter()
-                                    .map(|arr| {
-                                        <span class="kw">let </span>bitmap = <span class="kw">if let </span><span class="prelude-val">Some</span>(validity) = arr.validity() {
-                                            (arr.values() ^ validity).not()
-                                        } <span class="kw">else </span>{
-                                            arr.values().clone()
-                                        };
-                                        Box::new(BooleanArray::from_data_default(bitmap, <span class="prelude-val">None</span>))
-                                            <span class="kw">as </span>ArrayRef
-                                    })
-                                    .collect();
-                                <span class="kw">unsafe </span>{ BooleanChunked::from_chunks(<span class="string">&quot;&quot;</span>, chunks) }
-                            }
-                        }
+                    <span class="kw">if </span>value {
+                        <span class="self">self</span>.not()
+                    } <span class="kw">else </span>{
+                        <span class="self">self</span>.clone()
+                    }
+                } <span class="kw">else </span>{
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
+                }
+            }
+            (<span class="number">1</span>, <span class="kw">_</span>) =&gt; rhs.not_equal(<span class="self">self</span>),
+            <span class="kw">_ </span>=&gt; {
+                <span class="comment">// same length
+                </span><span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
+                compare_bools(<span class="kw-2">&amp;</span>lhs, <span class="kw-2">&amp;</span>rhs, |lhs, rhs| comparison::neq(lhs, rhs))
+            }
+        }
+    }
+
+    <span class="kw">fn </span>not_equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>BooleanChunked) -&gt; BooleanChunked {
+        <span class="comment">// broadcast
+        </span><span class="kw">match </span>(<span class="self">self</span>.len(), rhs.len()) {
+            (<span class="kw">_</span>, <span class="number">1</span>) =&gt; {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
+                    <span class="kw">if </span>value {
+                        <span class="self">self</span>.not()
+                    } <span class="kw">else </span>{
+                        <span class="self">self</span>.clone()
                     }
                 } <span class="kw">else </span>{
                     <span class="self">self</span>.is_not_null()
                 }
             }
-            (<span class="number">1</span>, <span class="kw">_</span>) =&gt; rhs.not_equal(<span class="self">self</span>),
+            (<span class="number">1</span>, <span class="kw">_</span>) =&gt; rhs.not_equal_missing(<span class="self">self</span>),
             <span class="kw">_ </span>=&gt; {
                 <span class="comment">// same length
                 </span><span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
@@ -1739,7 +1772,7 @@
                         <span class="bool-val">false </span>=&gt; <span class="self">self</span>.clone(),
                     }
                 } <span class="kw">else </span>{
-                    BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
                 }
             }
             (<span class="number">1</span>, <span class="kw">_</span>) =&gt; {
@@ -1749,7 +1782,7 @@
                         <span class="bool-val">false </span>=&gt; BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, rhs.len()),
                     }
                 } <span class="kw">else </span>{
-                    BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, rhs.len())
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, rhs.len())
                 }
             }
             <span class="kw">_ </span>=&gt; {
@@ -1770,7 +1803,7 @@
                         <span class="bool-val">false </span>=&gt; BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">true</span>, <span class="self">self</span>.len()),
                     }
                 } <span class="kw">else </span>{
-                    BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
                 }
             }
             (<span class="number">1</span>, <span class="kw">_</span>) =&gt; {
@@ -1780,7 +1813,7 @@
                         <span class="bool-val">false </span>=&gt; rhs.not(),
                     }
                 } <span class="kw">else </span>{
-                    BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, rhs.len())
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, rhs.len())
                 }
             }
             <span class="kw">_ </span>=&gt; {
@@ -1801,7 +1834,7 @@
                         <span class="bool-val">false </span>=&gt; BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len()),
                     }
                 } <span class="kw">else </span>{
-                    BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
                 }
             }
             (<span class="number">1</span>, <span class="kw">_</span>) =&gt; {
@@ -1811,7 +1844,7 @@
                         <span class="bool-val">false </span>=&gt; rhs.clone(),
                     }
                 } <span class="kw">else </span>{
-                    BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, rhs.len())
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, rhs.len())
                 }
             }
             <span class="kw">_ </span>=&gt; {
@@ -1832,7 +1865,7 @@
                         <span class="bool-val">false </span>=&gt; BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len()),
                     }
                 } <span class="kw">else </span>{
-                    BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
                 }
             }
             (<span class="number">1</span>, <span class="kw">_</span>) =&gt; {
@@ -1842,7 +1875,7 @@
                         <span class="bool-val">false </span>=&gt; BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">true</span>, rhs.len()),
                     }
                 } <span class="kw">else </span>{
-                    BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, rhs.len())
+                    BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, rhs.len())
                 }
             }
             <span class="kw">_ </span>=&gt; {
@@ -1854,157 +1887,38 @@
     }
 }
 
-<span class="kw">impl </span>Utf8Chunked {
-    <span class="kw">fn </span>comparison(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        rhs: <span class="kw-2">&amp;</span>Utf8Chunked,
-        f: <span class="kw">impl </span>Fn(<span class="kw-2">&amp;</span>Utf8Array&lt;i64&gt;, <span class="kw-2">&amp;</span>Utf8Array&lt;i64&gt;) -&gt; BooleanArray,
-    ) -&gt; BooleanChunked {
-        <span class="kw">let </span>chunks = <span class="self">self
-            </span>.downcast_iter()
-            .zip(rhs.downcast_iter())
-            .map(|(left, right)| {
-                <span class="kw">let </span>arr = f(left, right);
-                Box::new(arr) <span class="kw">as </span>ArrayRef
-            })
-            .collect();
-        <span class="kw">unsafe </span>{ BooleanChunked::from_chunks(<span class="string">&quot;&quot;</span>, chunks) }
-    }
-}
-
 <span class="kw">impl </span>ChunkCompare&lt;<span class="kw-2">&amp;</span>Utf8Chunked&gt; <span class="kw">for </span>Utf8Chunked {
     <span class="kw">type </span>Item = BooleanChunked;
 
     <span class="kw">fn </span>equal(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>Utf8Chunked) -&gt; BooleanChunked {
-        <span class="comment">// broadcast
-        </span><span class="kw">if </span>rhs.len() == <span class="number">1 </span>{
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
-                <span class="self">self</span>.equal(value)
-            } <span class="kw">else </span>{
-                <span class="self">self</span>.is_null()
-            }
-        } <span class="kw">else if </span><span class="self">self</span>.len() == <span class="number">1 </span>{
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
-                rhs.equal(value)
-            } <span class="kw">else </span>{
-                rhs.is_null()
-            }
-        } <span class="kw">else </span>{
-            <span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
-            lhs.comparison(<span class="kw-2">&amp;</span>rhs, comparison::utf8::eq_and_validity)
-        }
+        <span class="self">self</span>.as_binary().equal(<span class="kw-2">&amp;</span>rhs.as_binary())
+    }
+
+    <span class="kw">fn </span>equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>Utf8Chunked) -&gt; BooleanChunked {
+        <span class="self">self</span>.as_binary().equal_missing(<span class="kw-2">&amp;</span>rhs.as_binary())
     }
 
     <span class="kw">fn </span>not_equal(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>Utf8Chunked) -&gt; BooleanChunked {
-        <span class="comment">// broadcast
-        </span><span class="kw">if </span>rhs.len() == <span class="number">1 </span>{
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
-                <span class="self">self</span>.not_equal(value)
-            } <span class="kw">else </span>{
-                <span class="self">self</span>.is_not_null()
-            }
-        } <span class="kw">else if </span><span class="self">self</span>.len() == <span class="number">1 </span>{
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
-                rhs.not_equal(value)
-            } <span class="kw">else </span>{
-                rhs.is_not_null()
-            }
-        } <span class="kw">else </span>{
-            <span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
-            lhs.comparison(<span class="kw-2">&amp;</span>rhs, comparison::utf8::neq_and_validity)
-        }
+        <span class="self">self</span>.as_binary().not_equal(<span class="kw-2">&amp;</span>rhs.as_binary())
+    }
+    <span class="kw">fn </span>not_equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>Utf8Chunked) -&gt; BooleanChunked {
+        <span class="self">self</span>.as_binary().not_equal_missing(<span class="kw-2">&amp;</span>rhs.as_binary())
     }
 
     <span class="kw">fn </span>gt(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>Utf8Chunked) -&gt; BooleanChunked {
-        <span class="comment">// broadcast
-        </span><span class="kw">if </span>rhs.len() == <span class="number">1 </span>{
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
-                <span class="self">self</span>.gt(value)
-            } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
-            }
-        } <span class="kw">else if </span><span class="self">self</span>.len() == <span class="number">1 </span>{
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
-                rhs.lt(value)
-            } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
-            }
-        }
-        <span class="comment">// same length
-        </span><span class="kw">else if </span><span class="self">self</span>.chunk_id().zip(rhs.chunk_id()).all(|(l, r)| l == r) {
-            <span class="self">self</span>.comparison(rhs, |l, r| comparison::gt(l, r))
-        } <span class="kw">else </span>{
-            <span class="macro">apply_operand_on_chunkedarray_by_iter!</span>(<span class="self">self</span>, rhs, &gt;)
-        }
+        <span class="self">self</span>.as_binary().gt(<span class="kw-2">&amp;</span>rhs.as_binary())
     }
 
     <span class="kw">fn </span>gt_eq(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>Utf8Chunked) -&gt; BooleanChunked {
-        <span class="comment">// broadcast
-        </span><span class="kw">if </span>rhs.len() == <span class="number">1 </span>{
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
-                <span class="self">self</span>.gt_eq(value)
-            } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
-            }
-        } <span class="kw">else if </span><span class="self">self</span>.len() == <span class="number">1 </span>{
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
-                rhs.lt_eq(value)
-            } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
-            }
-        }
-        <span class="comment">// same length
-        </span><span class="kw">else if </span><span class="self">self</span>.chunk_id().zip(rhs.chunk_id()).all(|(l, r)| l == r) {
-            <span class="self">self</span>.comparison(rhs, |l, r| comparison::gt_eq(l, r))
-        } <span class="kw">else </span>{
-            <span class="macro">apply_operand_on_chunkedarray_by_iter!</span>(<span class="self">self</span>, rhs, &gt;=)
-        }
+        <span class="self">self</span>.as_binary().gt_eq(<span class="kw-2">&amp;</span>rhs.as_binary())
     }
 
     <span class="kw">fn </span>lt(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>Utf8Chunked) -&gt; BooleanChunked {
-        <span class="comment">// broadcast
-        </span><span class="kw">if </span>rhs.len() == <span class="number">1 </span>{
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
-                <span class="self">self</span>.lt(value)
-            } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
-            }
-        } <span class="kw">else if </span><span class="self">self</span>.len() == <span class="number">1 </span>{
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
-                rhs.gt(value)
-            } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
-            }
-        }
-        <span class="comment">// same length
-        </span><span class="kw">else if </span><span class="self">self</span>.chunk_id().zip(rhs.chunk_id()).all(|(l, r)| l == r) {
-            <span class="self">self</span>.comparison(rhs, |l, r| comparison::lt(l, r))
-        } <span class="kw">else </span>{
-            <span class="macro">apply_operand_on_chunkedarray_by_iter!</span>(<span class="self">self</span>, rhs, &lt;)
-        }
+        <span class="self">self</span>.as_binary().lt(<span class="kw-2">&amp;</span>rhs.as_binary())
     }
 
     <span class="kw">fn </span>lt_eq(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>Utf8Chunked) -&gt; BooleanChunked {
-        <span class="comment">// broadcast
-        </span><span class="kw">if </span>rhs.len() == <span class="number">1 </span>{
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
-                <span class="self">self</span>.lt_eq(value)
-            } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
-            }
-        } <span class="kw">else if </span><span class="self">self</span>.len() == <span class="number">1 </span>{
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
-                rhs.gt_eq(value)
-            } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
-            }
-        }
-        <span class="comment">// same length
-        </span><span class="kw">else if </span><span class="self">self</span>.chunk_id().zip(rhs.chunk_id()).all(|(l, r)| l == r) {
-            <span class="self">self</span>.comparison(rhs, |l, r| comparison::lt_eq(l, r))
-        } <span class="kw">else </span>{
-            <span class="macro">apply_operand_on_chunkedarray_by_iter!</span>(<span class="self">self</span>, rhs, &lt;=)
-        }
+        <span class="self">self</span>.as_binary().lt_eq(<span class="kw-2">&amp;</span>rhs.as_binary())
     }
 }
 
@@ -2035,13 +1949,33 @@
             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
                 <span class="self">self</span>.equal(value)
             } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
             }
         } <span class="kw">else if </span><span class="self">self</span>.len() == <span class="number">1 </span>{
             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
                 rhs.equal(value)
             } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, rhs.len())
+            }
+        } <span class="kw">else </span>{
+            <span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
+            lhs.comparison(<span class="kw-2">&amp;</span>rhs, comparison::binary::eq)
+        }
+    }
+
+    <span class="kw">fn </span>equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>BinaryChunked) -&gt; BooleanChunked {
+        <span class="comment">// broadcast
+        </span><span class="kw">if </span>rhs.len() == <span class="number">1 </span>{
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
+                <span class="self">self</span>.equal_missing(value)
+            } <span class="kw">else </span>{
+                <span class="self">self</span>.is_null()
+            }
+        } <span class="kw">else if </span><span class="self">self</span>.len() == <span class="number">1 </span>{
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
+                rhs.equal_missing(value)
+            } <span class="kw">else </span>{
+                rhs.is_null()
             }
         } <span class="kw">else </span>{
             <span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
@@ -2055,13 +1989,33 @@
             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
                 <span class="self">self</span>.not_equal(value)
             } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
             }
         } <span class="kw">else if </span><span class="self">self</span>.len() == <span class="number">1 </span>{
             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
                 rhs.not_equal(value)
             } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, rhs.len())
+            }
+        } <span class="kw">else </span>{
+            <span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
+            lhs.comparison(<span class="kw-2">&amp;</span>rhs, comparison::binary::neq)
+        }
+    }
+
+    <span class="kw">fn </span>not_equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>BinaryChunked) -&gt; BooleanChunked {
+        <span class="comment">// broadcast
+        </span><span class="kw">if </span>rhs.len() == <span class="number">1 </span>{
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
+                <span class="self">self</span>.not_equal_missing(value)
+            } <span class="kw">else </span>{
+                <span class="self">self</span>.is_not_null()
+            }
+        } <span class="kw">else if </span><span class="self">self</span>.len() == <span class="number">1 </span>{
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
+                rhs.not_equal_missing(value)
+            } <span class="kw">else </span>{
+                rhs.is_not_null()
             }
         } <span class="kw">else </span>{
             <span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
@@ -2075,20 +2029,17 @@
             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
                 <span class="self">self</span>.gt(value)
             } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
             }
         } <span class="kw">else if </span><span class="self">self</span>.len() == <span class="number">1 </span>{
             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
                 rhs.lt(value)
             } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
             }
-        }
-        <span class="comment">// same length
-        </span><span class="kw">else if </span><span class="self">self</span>.chunk_id().zip(rhs.chunk_id()).all(|(l, r)| l == r) {
-            <span class="self">self</span>.comparison(rhs, |l, r| comparison::gt(l, r))
         } <span class="kw">else </span>{
-            <span class="macro">apply_operand_on_chunkedarray_by_iter!</span>(<span class="self">self</span>, rhs, &gt;)
+            <span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
+            lhs.comparison(<span class="kw-2">&amp;</span>rhs, |l, r| comparison::gt(l, r))
         }
     }
 
@@ -2098,20 +2049,17 @@
             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
                 <span class="self">self</span>.gt_eq(value)
             } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
             }
         } <span class="kw">else if </span><span class="self">self</span>.len() == <span class="number">1 </span>{
             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
                 rhs.lt_eq(value)
             } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
             }
-        }
-        <span class="comment">// same length
-        </span><span class="kw">else if </span><span class="self">self</span>.chunk_id().zip(rhs.chunk_id()).all(|(l, r)| l == r) {
-            <span class="self">self</span>.comparison(rhs, |l, r| comparison::gt_eq(l, r))
         } <span class="kw">else </span>{
-            <span class="macro">apply_operand_on_chunkedarray_by_iter!</span>(<span class="self">self</span>, rhs, &gt;=)
+            <span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
+            lhs.comparison(<span class="kw-2">&amp;</span>rhs, |l, r| comparison::gt_eq(l, r))
         }
     }
 
@@ -2121,20 +2069,17 @@
             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
                 <span class="self">self</span>.lt(value)
             } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
             }
         } <span class="kw">else if </span><span class="self">self</span>.len() == <span class="number">1 </span>{
             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
                 rhs.gt(value)
             } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
             }
-        }
-        <span class="comment">// same length
-        </span><span class="kw">else if </span><span class="self">self</span>.chunk_id().zip(rhs.chunk_id()).all(|(l, r)| l == r) {
-            <span class="self">self</span>.comparison(rhs, |l, r| comparison::lt(l, r))
         } <span class="kw">else </span>{
-            <span class="macro">apply_operand_on_chunkedarray_by_iter!</span>(<span class="self">self</span>, rhs, &lt;)
+            <span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
+            lhs.comparison(<span class="kw-2">&amp;</span>rhs, |l, r| comparison::lt(l, r))
         }
     }
 
@@ -2144,20 +2089,17 @@
             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = rhs.get(<span class="number">0</span>) {
                 <span class="self">self</span>.lt_eq(value)
             } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
             }
         } <span class="kw">else if </span><span class="self">self</span>.len() == <span class="number">1 </span>{
             <span class="kw">if let </span><span class="prelude-val">Some</span>(value) = <span class="self">self</span>.get(<span class="number">0</span>) {
                 rhs.gt_eq(value)
             } <span class="kw">else </span>{
-                BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+                BooleanChunked::full_null(<span class="string">&quot;&quot;</span>, <span class="self">self</span>.len())
             }
-        }
-        <span class="comment">// same length
-        </span><span class="kw">else if </span><span class="self">self</span>.chunk_id().zip(rhs.chunk_id()).all(|(l, r)| l == r) {
-            <span class="self">self</span>.comparison(rhs, |l, r| comparison::lt_eq(l, r))
         } <span class="kw">else </span>{
-            <span class="macro">apply_operand_on_chunkedarray_by_iter!</span>(<span class="self">self</span>, rhs, &lt;=)
+            <span class="kw">let </span>(lhs, rhs) = align_chunks_binary(<span class="self">self</span>, rhs);
+            lhs.comparison(<span class="kw-2">&amp;</span>rhs, |l, r| comparison::lt_eq(l, r))
         }
     }
 }
@@ -2165,9 +2107,18 @@
 <span class="kw">impl </span>ChunkCompare&lt;<span class="kw-2">&amp;</span>str&gt; <span class="kw">for </span>Utf8Chunked {
     <span class="kw">type </span>Item = BooleanChunked;
     <span class="kw">fn </span>equal(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>str) -&gt; BooleanChunked {
+        <span class="self">self</span>.utf8_compare_scalar(rhs, |l, rhs| comparison::eq_scalar(l, rhs))
+    }
+
+    <span class="kw">fn </span>equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>str) -&gt; BooleanChunked {
         <span class="self">self</span>.utf8_compare_scalar(rhs, |l, rhs| comparison::eq_scalar_and_validity(l, rhs))
     }
+
     <span class="kw">fn </span>not_equal(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>str) -&gt; BooleanChunked {
+        <span class="self">self</span>.utf8_compare_scalar(rhs, |l, rhs| comparison::neq_scalar(l, rhs))
+    }
+
+    <span class="kw">fn </span>not_equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>str) -&gt; BooleanChunked {
         <span class="self">self</span>.utf8_compare_scalar(rhs, |l, rhs| comparison::neq_scalar_and_validity(l, rhs))
     }
 
@@ -2194,8 +2145,18 @@
         <span class="self">self</span>.amortized_iter()
             .zip(rhs.amortized_iter())
             .map(|(left, right)| <span class="kw">match </span>(left, right) {
-                (<span class="prelude-val">None</span>, <span class="prelude-val">None</span>) =&gt; <span class="bool-val">true</span>,
+                (<span class="prelude-val">Some</span>(l), <span class="prelude-val">Some</span>(r)) =&gt; <span class="prelude-val">Some</span>(l.as_ref().series_equal_missing(r.as_ref())),
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+            })
+            .collect_trusted()
+    }
+
+    <span class="kw">fn </span>equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>ListChunked) -&gt; BooleanChunked {
+        <span class="self">self</span>.amortized_iter()
+            .zip(rhs.amortized_iter())
+            .map(|(left, right)| <span class="kw">match </span>(left, right) {
                 (<span class="prelude-val">Some</span>(l), <span class="prelude-val">Some</span>(r)) =&gt; l.as_ref().series_equal_missing(r.as_ref()),
+                (<span class="prelude-val">None</span>, <span class="prelude-val">None</span>) =&gt; <span class="bool-val">true</span>,
                 <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
             })
             .collect_trusted()
@@ -2204,13 +2165,20 @@
     <span class="kw">fn </span>not_equal(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>ListChunked) -&gt; BooleanChunked {
         <span class="self">self</span>.amortized_iter()
             .zip(rhs.amortized_iter())
-            .map(|(left, right)| {
-                <span class="kw">let </span>out = <span class="kw">match </span>(left, right) {
-                    (<span class="prelude-val">None</span>, <span class="prelude-val">None</span>) =&gt; <span class="bool-val">true</span>,
-                    (<span class="prelude-val">Some</span>(l), <span class="prelude-val">Some</span>(r)) =&gt; l.as_ref().series_equal_missing(r.as_ref()),
-                    <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
-                };
-                !out
+            .map(|(left, right)| <span class="kw">match </span>(left, right) {
+                (<span class="prelude-val">Some</span>(l), <span class="prelude-val">Some</span>(r)) =&gt; <span class="prelude-val">Some</span>(!l.as_ref().series_equal_missing(r.as_ref())),
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+            })
+            .collect_trusted()
+    }
+
+    <span class="kw">fn </span>not_equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>ListChunked) -&gt; BooleanChunked {
+        <span class="self">self</span>.amortized_iter()
+            .zip(rhs.amortized_iter())
+            .map(|(left, right)| <span class="kw">match </span>(left, right) {
+                (<span class="prelude-val">Some</span>(l), <span class="prelude-val">Some</span>(r)) =&gt; !l.as_ref().series_equal_missing(r.as_ref()),
+                (<span class="prelude-val">None</span>, <span class="prelude-val">None</span>) =&gt; <span class="bool-val">false</span>,
+                <span class="kw">_ </span>=&gt; <span class="bool-val">true</span>,
             })
             .collect_trusted()
     }
@@ -2233,6 +2201,83 @@
     }
 }
 
+<span class="attr">#[cfg(feature = <span class="string">&quot;dtype-struct&quot;</span>)]
+</span><span class="kw">impl </span>ChunkCompare&lt;<span class="kw-2">&amp;</span>StructChunked&gt; <span class="kw">for </span>StructChunked {
+    <span class="kw">type </span>Item = BooleanChunked;
+    <span class="kw">fn </span>equal(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>StructChunked) -&gt; BooleanChunked {
+        <span class="kw">use </span>std::ops::BitAnd;
+        <span class="kw">if </span><span class="self">self</span>.len() != rhs.len() || <span class="self">self</span>.fields().len() != rhs.fields().len() {
+            BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.fields()
+                .iter()
+                .zip(rhs.fields().iter())
+                .map(|(l, r)| l.equal(r).unwrap())
+                .reduce(|lhs, rhs| lhs.bitand(rhs))
+                .unwrap()
+        }
+    }
+
+    <span class="kw">fn </span>equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>StructChunked) -&gt; BooleanChunked {
+        <span class="kw">use </span>std::ops::BitAnd;
+        <span class="kw">if </span><span class="self">self</span>.len() != rhs.len() || <span class="self">self</span>.fields().len() != rhs.fields().len() {
+            BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.fields()
+                .iter()
+                .zip(rhs.fields().iter())
+                .map(|(l, r)| l.equal_missing(r).unwrap())
+                .reduce(|lhs, rhs| lhs.bitand(rhs))
+                .unwrap()
+        }
+    }
+
+    <span class="kw">fn </span>not_equal(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>StructChunked) -&gt; BooleanChunked {
+        <span class="kw">use </span>std::ops::BitOr;
+        <span class="kw">if </span><span class="self">self</span>.len() != rhs.len() || <span class="self">self</span>.fields().len() != rhs.fields().len() {
+            BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">true</span>, <span class="self">self</span>.len())
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.fields()
+                .iter()
+                .zip(rhs.fields().iter())
+                .map(|(l, r)| l.not_equal(r).unwrap())
+                .reduce(|lhs, rhs| lhs.bitor(rhs))
+                .unwrap()
+        }
+    }
+
+    <span class="kw">fn </span>not_equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>StructChunked) -&gt; BooleanChunked {
+        <span class="kw">use </span>std::ops::BitOr;
+        <span class="kw">if </span><span class="self">self</span>.len() != rhs.len() || <span class="self">self</span>.fields().len() != rhs.fields().len() {
+            BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">true</span>, <span class="self">self</span>.len())
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.fields()
+                .iter()
+                .zip(rhs.fields().iter())
+                .map(|(l, r)| l.not_equal_missing(r).unwrap())
+                .reduce(|lhs, rhs| lhs.bitor(rhs))
+                .unwrap()
+        }
+    }
+
+    <span class="comment">// following are not implemented because gt, lt comparison of series don&#39;t make sense
+    </span><span class="kw">fn </span>gt(<span class="kw-2">&amp;</span><span class="self">self</span>, _rhs: <span class="kw-2">&amp;</span>StructChunked) -&gt; BooleanChunked {
+        <span class="macro">unimplemented!</span>()
+    }
+
+    <span class="kw">fn </span>gt_eq(<span class="kw-2">&amp;</span><span class="self">self</span>, _rhs: <span class="kw-2">&amp;</span>StructChunked) -&gt; BooleanChunked {
+        <span class="macro">unimplemented!</span>()
+    }
+
+    <span class="kw">fn </span>lt(<span class="kw-2">&amp;</span><span class="self">self</span>, _rhs: <span class="kw-2">&amp;</span>StructChunked) -&gt; BooleanChunked {
+        <span class="macro">unimplemented!</span>()
+    }
+
+    <span class="kw">fn </span>lt_eq(<span class="kw-2">&amp;</span><span class="self">self</span>, _rhs: <span class="kw-2">&amp;</span>StructChunked) -&gt; BooleanChunked {
+        <span class="macro">unimplemented!</span>()
+    }
+}
+
 <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-array&quot;</span>)]
 </span><span class="kw">impl </span>ChunkCompare&lt;<span class="kw-2">&amp;</span>ArrayChunked&gt; <span class="kw">for </span>ArrayChunked {
     <span class="kw">type </span>Item = BooleanChunked;
@@ -2248,6 +2293,11 @@
         <span class="kw">unsafe </span>{ BooleanChunked::from_chunks(<span class="self">self</span>.name(), chunks) }
     }
 
+    <span class="kw">fn </span>equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>ArrayChunked) -&gt; BooleanChunked {
+        <span class="comment">// TODO!: maybe do something else here
+        </span><span class="self">self</span>.equal(rhs)
+    }
+
     <span class="kw">fn </span>not_equal(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>ArrayChunked) -&gt; BooleanChunked {
         <span class="kw">let </span>(a, b) = align_chunks_binary(<span class="self">self</span>, rhs);
         <span class="kw">let </span>chunks = a
@@ -2258,6 +2308,11 @@
             })
             .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
         <span class="kw">unsafe </span>{ BooleanChunked::from_chunks(<span class="self">self</span>.name(), chunks) }
+    }
+
+    <span class="kw">fn </span>not_equal_missing(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>ArrayChunked) -&gt; <span class="self">Self</span>::Item {
+        <span class="comment">// TODO!: maybe do something else here
+        </span><span class="self">self</span>.not_equal(rhs)
     }
 
     <span class="comment">// following are not implemented because gt, lt comparison of series don&#39;t make sense
@@ -2369,55 +2424,6 @@
 <span class="kw">impl </span>ChunkEqualElement <span class="kw">for </span>ListChunked {}
 <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-array&quot;</span>)]
 </span><span class="kw">impl </span>ChunkEqualElement <span class="kw">for </span>ArrayChunked {}
-
-<span class="attr">#[cfg(feature = <span class="string">&quot;dtype-struct&quot;</span>)]
-</span><span class="kw">impl </span>ChunkCompare&lt;<span class="kw-2">&amp;</span>StructChunked&gt; <span class="kw">for </span>StructChunked {
-    <span class="kw">type </span>Item = BooleanChunked;
-    <span class="kw">fn </span>equal(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>StructChunked) -&gt; BooleanChunked {
-        <span class="kw">use </span>std::ops::BitAnd;
-        <span class="kw">if </span><span class="self">self</span>.len() != rhs.len() || <span class="self">self</span>.fields().len() != rhs.fields().len() {
-            BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">false</span>, <span class="self">self</span>.len())
-        } <span class="kw">else </span>{
-            <span class="self">self</span>.fields()
-                .iter()
-                .zip(rhs.fields().iter())
-                .map(|(l, r)| l.equal(r).unwrap())
-                .reduce(|lhs, rhs| lhs.bitand(rhs))
-                .unwrap()
-        }
-    }
-
-    <span class="kw">fn </span>not_equal(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>StructChunked) -&gt; BooleanChunked {
-        <span class="kw">use </span>std::ops::BitOr;
-        <span class="kw">if </span><span class="self">self</span>.len() != rhs.len() || <span class="self">self</span>.fields().len() != rhs.fields().len() {
-            BooleanChunked::full(<span class="string">&quot;&quot;</span>, <span class="bool-val">true</span>, <span class="self">self</span>.len())
-        } <span class="kw">else </span>{
-            <span class="self">self</span>.fields()
-                .iter()
-                .zip(rhs.fields().iter())
-                .map(|(l, r)| l.not_equal(r).unwrap())
-                .reduce(|lhs, rhs| lhs.bitor(rhs))
-                .unwrap()
-        }
-    }
-
-    <span class="comment">// following are not implemented because gt, lt comparison of series don&#39;t make sense
-    </span><span class="kw">fn </span>gt(<span class="kw-2">&amp;</span><span class="self">self</span>, _rhs: <span class="kw-2">&amp;</span>StructChunked) -&gt; BooleanChunked {
-        <span class="macro">unimplemented!</span>()
-    }
-
-    <span class="kw">fn </span>gt_eq(<span class="kw-2">&amp;</span><span class="self">self</span>, _rhs: <span class="kw-2">&amp;</span>StructChunked) -&gt; BooleanChunked {
-        <span class="macro">unimplemented!</span>()
-    }
-
-    <span class="kw">fn </span>lt(<span class="kw-2">&amp;</span><span class="self">self</span>, _rhs: <span class="kw-2">&amp;</span>StructChunked) -&gt; BooleanChunked {
-        <span class="macro">unimplemented!</span>()
-    }
-
-    <span class="kw">fn </span>lt_eq(<span class="kw-2">&amp;</span><span class="self">self</span>, _rhs: <span class="kw-2">&amp;</span>StructChunked) -&gt; BooleanChunked {
-        <span class="macro">unimplemented!</span>()
-    }
-}
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>test {
@@ -2711,22 +2717,22 @@
         <span class="kw">let </span>all_true = BooleanChunked::from_slice(<span class="string">&quot;&quot;</span>, <span class="kw-2">&amp;</span>[<span class="bool-val">true</span>, <span class="bool-val">true</span>, <span class="bool-val">true</span>]);
         <span class="kw">let </span>all_false = BooleanChunked::from_slice(<span class="string">&quot;&quot;</span>, <span class="kw-2">&amp;</span>[<span class="bool-val">false</span>, <span class="bool-val">false</span>, <span class="bool-val">false</span>]);
         <span class="kw">let </span>out = a.equal(<span class="kw-2">&amp;</span>true_);
-        <span class="macro">assert_eq!</span>(Vec::from(<span class="kw-2">&amp;</span>out), <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(<span class="bool-val">true</span>), <span class="prelude-val">Some</span>(<span class="bool-val">false</span>), <span class="prelude-val">Some</span>(<span class="bool-val">false</span>)]);
+        <span class="macro">assert_eq!</span>(Vec::from(<span class="kw-2">&amp;</span>out), <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(<span class="bool-val">true</span>), <span class="prelude-val">Some</span>(<span class="bool-val">false</span>), <span class="prelude-val">None</span>]);
         <span class="kw">let </span>out = a.not_equal(<span class="kw-2">&amp;</span>true_);
-        <span class="macro">assert_eq!</span>(Vec::from(<span class="kw-2">&amp;</span>out), <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(<span class="bool-val">false</span>), <span class="prelude-val">Some</span>(<span class="bool-val">true</span>), <span class="prelude-val">Some</span>(<span class="bool-val">true</span>)]);
+        <span class="macro">assert_eq!</span>(Vec::from(<span class="kw-2">&amp;</span>out), <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(<span class="bool-val">false</span>), <span class="prelude-val">Some</span>(<span class="bool-val">true</span>), <span class="prelude-val">None</span>]);
 
         <span class="kw">let </span>out = a.equal(<span class="kw-2">&amp;</span>all_true);
-        <span class="macro">assert_eq!</span>(Vec::from(<span class="kw-2">&amp;</span>out), <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(<span class="bool-val">true</span>), <span class="prelude-val">Some</span>(<span class="bool-val">false</span>), <span class="prelude-val">Some</span>(<span class="bool-val">false</span>)]);
+        <span class="macro">assert_eq!</span>(Vec::from(<span class="kw-2">&amp;</span>out), <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(<span class="bool-val">true</span>), <span class="prelude-val">Some</span>(<span class="bool-val">false</span>), <span class="prelude-val">None</span>]);
         <span class="kw">let </span>out = a.not_equal(<span class="kw-2">&amp;</span>all_true);
-        <span class="macro">assert_eq!</span>(Vec::from(<span class="kw-2">&amp;</span>out), <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(<span class="bool-val">false</span>), <span class="prelude-val">Some</span>(<span class="bool-val">true</span>), <span class="prelude-val">Some</span>(<span class="bool-val">true</span>)]);
+        <span class="macro">assert_eq!</span>(Vec::from(<span class="kw-2">&amp;</span>out), <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(<span class="bool-val">false</span>), <span class="prelude-val">Some</span>(<span class="bool-val">true</span>), <span class="prelude-val">None</span>]);
         <span class="kw">let </span>out = a.equal(<span class="kw-2">&amp;</span>false_);
-        <span class="macro">assert_eq!</span>(Vec::from(<span class="kw-2">&amp;</span>out), <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(<span class="bool-val">false</span>), <span class="prelude-val">Some</span>(<span class="bool-val">true</span>), <span class="prelude-val">Some</span>(<span class="bool-val">false</span>)]);
+        <span class="macro">assert_eq!</span>(Vec::from(<span class="kw-2">&amp;</span>out), <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(<span class="bool-val">false</span>), <span class="prelude-val">Some</span>(<span class="bool-val">true</span>), <span class="prelude-val">None</span>]);
         <span class="kw">let </span>out = a.not_equal(<span class="kw-2">&amp;</span>false_);
-        <span class="macro">assert_eq!</span>(Vec::from(<span class="kw-2">&amp;</span>out), <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(<span class="bool-val">true</span>), <span class="prelude-val">Some</span>(<span class="bool-val">false</span>), <span class="prelude-val">Some</span>(<span class="bool-val">true</span>)]);
+        <span class="macro">assert_eq!</span>(Vec::from(<span class="kw-2">&amp;</span>out), <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(<span class="bool-val">true</span>), <span class="prelude-val">Some</span>(<span class="bool-val">false</span>), <span class="prelude-val">None</span>]);
         <span class="kw">let </span>out = a.equal(<span class="kw-2">&amp;</span>all_false);
-        <span class="macro">assert_eq!</span>(Vec::from(<span class="kw-2">&amp;</span>out), <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(<span class="bool-val">false</span>), <span class="prelude-val">Some</span>(<span class="bool-val">true</span>), <span class="prelude-val">Some</span>(<span class="bool-val">false</span>)]);
+        <span class="macro">assert_eq!</span>(Vec::from(<span class="kw-2">&amp;</span>out), <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(<span class="bool-val">false</span>), <span class="prelude-val">Some</span>(<span class="bool-val">true</span>), <span class="prelude-val">None</span>]);
         <span class="kw">let </span>out = a.not_equal(<span class="kw-2">&amp;</span>all_false);
-        <span class="macro">assert_eq!</span>(Vec::from(<span class="kw-2">&amp;</span>out), <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(<span class="bool-val">true</span>), <span class="prelude-val">Some</span>(<span class="bool-val">false</span>), <span class="prelude-val">Some</span>(<span class="bool-val">true</span>)]);
+        <span class="macro">assert_eq!</span>(Vec::from(<span class="kw-2">&amp;</span>out), <span class="kw-2">&amp;</span>[<span class="prelude-val">Some</span>(<span class="bool-val">true</span>), <span class="prelude-val">Some</span>(<span class="bool-val">false</span>), <span class="prelude-val">None</span>]);
     }
 
     <span class="attr">#[test]

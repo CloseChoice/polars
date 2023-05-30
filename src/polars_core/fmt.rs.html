@@ -1088,12 +1088,6 @@
 <a href="#1088" id="1088">1088</a>
 <a href="#1089" id="1089">1089</a>
 <a href="#1090" id="1090">1090</a>
-<a href="#1091" id="1091">1091</a>
-<a href="#1092" id="1092">1092</a>
-<a href="#1093" id="1093">1093</a>
-<a href="#1094" id="1094">1094</a>
-<a href="#1095" id="1095">1095</a>
-<a href="#1096" id="1096">1096</a>
 </pre></div><pre class="rust"><code><span class="attr">#[cfg(any(feature = <span class="string">&quot;fmt&quot;</span>, feature = <span class="string">&quot;fmt_no_tty&quot;</span>))]
 </span><span class="kw">use </span>std::borrow::Cow;
 <span class="kw">use </span>std::fmt::{Debug, Display, Formatter};
@@ -1942,13 +1936,7 @@
                 <span class="kw">let </span>dt_tz_aware = dt_utc.with_timezone(<span class="kw-2">&amp;</span>tz);
                 <span class="macro">write!</span>(f, <span class="string">&quot;{dt_tz_aware}&quot;</span>)
             }
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">match </span>parse_offset(<span class="self">self</span>.tz) {
-                <span class="prelude-val">Ok</span>(offset) =&gt; {
-                    <span class="kw">let </span>dt_tz_aware = offset.from_utc_datetime(<span class="kw-2">&amp;</span><span class="self">self</span>.ndt);
-                    <span class="macro">write!</span>(f, <span class="string">&quot;{dt_tz_aware}&quot;</span>)
-                }
-                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;invalid timezone&quot;</span>),
-            },
+            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;invalid timezone&quot;</span>),
         }
         <span class="attr">#[cfg(not(feature = <span class="string">&quot;timezones&quot;</span>))]
         </span>{

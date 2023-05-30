@@ -458,6 +458,13 @@
 <a href="#458" id="458">458</a>
 <a href="#459" id="459">459</a>
 <a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>polars_core::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>polars_lazy::dsl::Expr;
 <span class="kw">use </span>polars_lazy::prelude::<span class="kw-2">*</span>;
@@ -757,7 +764,7 @@
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(order_by) = expr.order_by.as_ref() {
             <span class="kw">let </span>(order_by, descending) = <span class="self">self</span>.visit_order_by(order_by)<span class="question-mark">?</span>;
-            base = base.sort_by(<span class="macro">vec!</span>[order_by], <span class="macro">vec!</span>[descending]);
+            base = base.sort_by(order_by, descending);
         }
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(limit) = <span class="kw-2">&amp;</span>expr.limit {
@@ -805,9 +812,16 @@
         }
     }
 
-    <span class="kw">fn </span>visit_order_by(<span class="kw-2">&amp;</span><span class="self">self</span>, order_by: <span class="kw-2">&amp;</span>OrderByExpr) -&gt; PolarsResult&lt;(Expr, bool)&gt; {
-        <span class="kw">let </span>expr = <span class="self">self</span>.visit_expr(<span class="kw-2">&amp;</span>order_by.expr)<span class="question-mark">?</span>;
-        <span class="kw">let </span>descending = order_by.asc.unwrap_or(<span class="bool-val">false</span>);
+    <span class="kw">fn </span>visit_order_by(<span class="kw-2">&amp;</span><span class="self">self</span>, order_by: <span class="kw-2">&amp;</span>[OrderByExpr]) -&gt; PolarsResult&lt;(Vec&lt;Expr&gt;, Vec&lt;bool&gt;)&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>expr = Vec::with_capacity(order_by.len());
+        <span class="kw">let </span><span class="kw-2">mut </span>descending = Vec::with_capacity(order_by.len());
+        <span class="kw">for </span>order_by_expr <span class="kw">in </span>order_by {
+            <span class="kw">let </span>e = <span class="self">self</span>.visit_expr(<span class="kw-2">&amp;</span>order_by_expr.expr)<span class="question-mark">?</span>;
+            expr.push(e);
+            <span class="kw">let </span>desc = order_by_expr.asc.unwrap_or(<span class="bool-val">false</span>);
+            descending.push(desc);
+        }
+
         <span class="prelude-val">Ok</span>((expr, descending))
     }
 

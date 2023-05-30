@@ -301,11 +301,34 @@
 <a href="#301" id="301">301</a>
 <a href="#302" id="302">302</a>
 <a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Much more opinionated, but also much faster strptrime than the one given in Chrono.
 //!
 </span><span class="kw">use </span>atoi::FromRadix10;
 <span class="kw">use </span>chrono::{NaiveDate, NaiveDateTime};
+<span class="kw">use </span>once_cell::sync::Lazy;
 <span class="kw">use </span>polars_utils::slice::GetSaferUnchecked;
+<span class="kw">use </span>regex::Regex;
+
+<span class="kw">use </span><span class="kw">crate</span>::chunkedarray::{polars_bail, PolarsResult};
+
+<span class="kw">static </span>HOUR_PATTERN: Lazy&lt;Regex&gt; = Lazy::new(|| Regex::new(<span class="string">r&quot;%[HI]&quot;</span>).unwrap());
+<span class="kw">static </span>MINUTE_PATTERN: Lazy&lt;Regex&gt; = Lazy::new(|| Regex::new(<span class="string">r&quot;%M&quot;</span>).unwrap());
 
 <span class="attr">#[inline]
 </span><span class="kw">fn </span>update_and_parse&lt;T: atoi::FromRadix10&gt;(
@@ -347,12 +370,21 @@
 <span class="doccomment">/// Tries to convert a chrono `fmt` to a `fmt` that the polars parser consumes.
 /// E.g. chrono supports single letter date identifiers like %F, whereas polars only consumes
 /// year, day, month distinctively with %Y, %d, %m.
-</span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>compile_fmt(fmt: <span class="kw-2">&amp;</span>str) -&gt; String {
-    fmt.replace(<span class="string">&quot;%D&quot;</span>, <span class="string">&quot;%m/%d/%y&quot;</span>)
+</span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>compile_fmt(fmt: <span class="kw-2">&amp;</span>str) -&gt; PolarsResult&lt;String&gt; {
+    <span class="kw">if </span>HOUR_PATTERN.is_match(fmt) &amp; !MINUTE_PATTERN.is_match(fmt) {
+        <span class="comment">// (hopefully) temporary hack. Ideally, chrono would return a ParseKindError indicating
+        // if `fmt` is too long for NaiveDate. If that&#39;s implemented, then this check could
+        // be removed, and that error could be matched against in `transform_datetime_*s`
+        // See https://github.com/chronotope/chrono/issues/1075.
+        </span><span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;Invalid format string: found hour, but no minute directive. \
+            Please either specify both or neither.&quot;</span>);
+    }
+    <span class="prelude-val">Ok</span>(fmt
+        .replace(<span class="string">&quot;%D&quot;</span>, <span class="string">&quot;%m/%d/%y&quot;</span>)
         .replace(<span class="string">&quot;%R&quot;</span>, <span class="string">&quot;%H:%M&quot;</span>)
         .replace(<span class="string">&quot;%T&quot;</span>, <span class="string">&quot;%H:%M:%S&quot;</span>)
         .replace(<span class="string">&quot;%X&quot;</span>, <span class="string">&quot;%H:%M:%S&quot;</span>)
-        .replace(<span class="string">&quot;%F&quot;</span>, <span class="string">&quot;%Y-%m-%d&quot;</span>)
+        .replace(<span class="string">&quot;%F&quot;</span>, <span class="string">&quot;%Y-%m-%d&quot;</span>))
 }
 
 <span class="attr">#[derive(Default, Clone)]

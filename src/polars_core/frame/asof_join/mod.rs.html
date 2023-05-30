@@ -203,6 +203,11 @@
 <a href="#203" id="203">203</a>
 <a href="#204" id="204">204</a>
 <a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
 </pre></div><pre class="rust"><code><span class="kw">mod </span>asof;
 <span class="kw">mod </span>groups;
 <span class="kw">use </span>std::borrow::Cow;
@@ -245,8 +250,8 @@
         ComputeError: <span class="string">&quot;asof join must not have null values in &#39;on&#39; arguments&quot;
     </span>);
     <span class="kw">if </span>check_sorted {
-        ensure_sorted_arg(a, <span class="string">&quot;asof_join&quot;</span>);
-        ensure_sorted_arg(b, <span class="string">&quot;asof_join&quot;</span>);
+        ensure_sorted_arg(a, <span class="string">&quot;asof_join&quot;</span>)<span class="question-mark">?</span>;
+        ensure_sorted_arg(b, <span class="string">&quot;asof_join&quot;</span>)<span class="question-mark">?</span>;
     }
     <span class="prelude-val">Ok</span>(())
 }
@@ -259,6 +264,8 @@
     </span>Backward,
     <span class="doccomment">/// selects the first row in the right DataFrame whose ‘on’ key is greater than or equal to the left’s key.
     </span>Forward,
+    <span class="doccomment">/// selects the right in the right DataFrame whose &#39;on&#39; key is nearest to the left&#39;s key.
+    </span>Nearest,
 }
 
 <span class="kw">impl</span>&lt;T&gt; ChunkedArray&lt;T&gt;
@@ -301,6 +308,9 @@
                     )
                 }
             },
+            AsofStrategy::Nearest =&gt; {
+                join_asof_nearest(ca.cont_slice().unwrap(), other.cont_slice().unwrap())
+            }
         };
         <span class="prelude-val">Ok</span>(out)
     }

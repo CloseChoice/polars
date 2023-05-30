@@ -363,6 +363,49 @@
 <a href="#363" id="363">363</a>
 <a href="#364" id="364">364</a>
 <a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::io::Write;
 
 <span class="attr">#[cfg(any(
@@ -373,10 +416,9 @@
 </span><span class="kw">use </span>arrow::temporal_conversions;
 <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
 </span><span class="kw">use </span>chrono::TimeZone;
-<span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-</span><span class="kw">use </span>chrono_tz::Tz;
 <span class="kw">use </span>lexical_core::{FormattedSize, ToLexical};
 <span class="kw">use </span>memchr::{memchr, memchr2};
+<span class="kw">use </span>polars_arrow::time_zone::Tz;
 <span class="kw">use </span>polars_core::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>polars_core::series::SeriesIter;
 <span class="kw">use </span>polars_core::POOL;
@@ -421,11 +463,13 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">fn </span>write_anyvalue(
+<span class="kw">unsafe fn </span>write_anyvalue(
     f: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;,
     value: AnyValue,
     options: <span class="kw-2">&amp;</span>SerializeOptions,
-    <span class="attr">#[allow(unused_variables)] </span>datetime_format: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
+    datetime_formats: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>str],
+    time_zones: <span class="kw-2">&amp;</span>[<span class="prelude-ty">Option</span>&lt;Tz&gt;],
+    i: usize,
 ) -&gt; PolarsResult&lt;()&gt; {
     <span class="kw">match </span>value {
         AnyValue::Null =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, <span class="kw-2">&amp;</span>options.null),
@@ -461,23 +505,17 @@
             }
         }
         <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-datetime&quot;</span>)]
-        </span>AnyValue::Datetime(v, tu, tz) =&gt; {
-            <span class="comment">// If this is a datetime, then datetime_format was either set or inferred.
-            </span><span class="kw">let </span>datetime_format = datetime_format.unwrap();
+        </span>AnyValue::Datetime(v, tu, <span class="kw">_</span>) =&gt; {
+            <span class="kw">let </span>datetime_format = { <span class="kw-2">*</span>datetime_formats.get_unchecked(i) };
+            <span class="kw">let </span>time_zone = { time_zones.get_unchecked(i) };
             <span class="kw">let </span>ndt = <span class="kw">match </span>tu {
                 TimeUnit::Nanoseconds =&gt; temporal_conversions::timestamp_ns_to_datetime(v),
                 TimeUnit::Microseconds =&gt; temporal_conversions::timestamp_us_to_datetime(v),
                 TimeUnit::Milliseconds =&gt; temporal_conversions::timestamp_ms_to_datetime(v),
             };
-            <span class="kw">let </span>formatted = <span class="kw">match </span>tz {
+            <span class="kw">let </span>formatted = <span class="kw">match </span>time_zone {
                 <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-                </span><span class="prelude-val">Some</span>(tz) =&gt; <span class="kw">match </span>tz.parse::&lt;Tz&gt;() {
-                    <span class="prelude-val">Ok</span>(parsed_tz) =&gt; parsed_tz.from_utc_datetime(<span class="kw-2">&amp;</span>ndt).format(datetime_format),
-                    <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">match </span>temporal_conversions::parse_offset(tz) {
-                        <span class="prelude-val">Ok</span>(parsed_tz) =&gt; parsed_tz.from_utc_datetime(<span class="kw-2">&amp;</span>ndt).format(datetime_format),
-                        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">unreachable!</span>(),
-                    },
-                },
+                </span><span class="prelude-val">Some</span>(time_zone) =&gt; time_zone.from_utc_datetime(<span class="kw-2">&amp;</span>ndt).format(datetime_format),
                 <span class="attr">#[cfg(not(feature = <span class="string">&quot;timezones&quot;</span>))]
                 </span><span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; {
                     <span class="macro">panic!</span>(<span class="string">&quot;activate &#39;timezones&#39; feature&quot;</span>);
@@ -499,8 +537,7 @@
     .map_err(|err| <span class="kw">match </span>value {
         <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-datetime&quot;</span>)]
         </span>AnyValue::Datetime(<span class="kw">_</span>, <span class="kw">_</span>, tz) =&gt; {
-            <span class="comment">// If this is a datetime, then datetime_format was either set or inferred.
-            </span><span class="kw">let </span>datetime_format = datetime_format.unwrap_or_default();
+            <span class="kw">let </span>datetime_format = <span class="kw">unsafe </span>{ <span class="kw-2">*</span>datetime_formats.get_unchecked(i) };
             <span class="kw">let </span>type_name = <span class="kw">if </span>tz.is_some() {
                 <span class="string">&quot;DateTime&quot;
             </span>} <span class="kw">else </span>{
@@ -590,29 +627,75 @@
     );
     <span class="kw">let </span>delimiter = char::from(options.delimiter);
 
-    <span class="kw">let </span>formats: <span class="prelude-ty">Option</span>&lt;Vec&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;&gt;&gt; = <span class="kw">match </span><span class="kw-2">&amp;</span>options.datetime_format {
-        <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Some</span>(
-            df.get_columns()
-                .iter()
-                .map(|col| <span class="kw">match </span>col.dtype() {
-                    DataType::Datetime(TimeUnit::Milliseconds, tz) =&gt; <span class="kw">match </span>tz {
-                        <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;%FT%H:%M:%S.%3f%z&quot;</span>),
-                        <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;%FT%H:%M:%S.%3f&quot;</span>),
-                    },
-                    DataType::Datetime(TimeUnit::Microseconds, tz) =&gt; <span class="kw">match </span>tz {
-                        <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;%FT%H:%M:%S.%6f%z&quot;</span>),
-                        <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;%FT%H:%M:%S.%6f&quot;</span>),
-                    },
-                    DataType::Datetime(TimeUnit::Nanoseconds, tz) =&gt; <span class="kw">match </span>tz {
-                        <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;%FT%H:%M:%S.%9f%z&quot;</span>),
-                        <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;%FT%H:%M:%S.%9f&quot;</span>),
-                    },
-                    <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-                })
-                .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;(),
-        ),
-        <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
-    };
+    <span class="kw">let </span>(datetime_formats, time_zones): (Vec&lt;<span class="kw-2">&amp;</span>str&gt;, Vec&lt;<span class="prelude-ty">Option</span>&lt;Tz&gt;&gt;) = df
+        .get_columns()
+        .iter()
+        .map(|column| <span class="kw">match </span>column.dtype() {
+            DataType::Datetime(TimeUnit::Milliseconds, tz) =&gt; {
+                <span class="kw">let </span>(format, tz_parsed) = <span class="kw">match </span>tz {
+                    <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
+                    </span><span class="prelude-val">Some</span>(tz) =&gt; (
+                        options
+                            .datetime_format
+                            .as_deref()
+                            .unwrap_or(<span class="string">&quot;%FT%H:%M:%S.%3f%z&quot;</span>),
+                        tz.parse::&lt;Tz&gt;().ok(),
+                    ),
+                    <span class="kw">_ </span>=&gt; (
+                        options
+                            .datetime_format
+                            .as_deref()
+                            .unwrap_or(<span class="string">&quot;%FT%H:%M:%S.%3f&quot;</span>),
+                        <span class="prelude-val">None</span>,
+                    ),
+                };
+                (format, tz_parsed)
+            }
+            DataType::Datetime(TimeUnit::Microseconds, tz) =&gt; {
+                <span class="kw">let </span>(format, tz_parsed) = <span class="kw">match </span>tz {
+                    <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
+                    </span><span class="prelude-val">Some</span>(tz) =&gt; (
+                        options
+                            .datetime_format
+                            .as_deref()
+                            .unwrap_or(<span class="string">&quot;%FT%H:%M:%S.%6f%z&quot;</span>),
+                        tz.parse::&lt;Tz&gt;().ok(),
+                    ),
+                    <span class="kw">_ </span>=&gt; (
+                        options
+                            .datetime_format
+                            .as_deref()
+                            .unwrap_or(<span class="string">&quot;%FT%H:%M:%S.%6f&quot;</span>),
+                        <span class="prelude-val">None</span>,
+                    ),
+                };
+                (format, tz_parsed)
+            }
+            DataType::Datetime(TimeUnit::Nanoseconds, tz) =&gt; {
+                <span class="kw">let </span>(format, tz_parsed) = <span class="kw">match </span>tz {
+                    <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
+                    </span><span class="prelude-val">Some</span>(tz) =&gt; (
+                        options
+                            .datetime_format
+                            .as_deref()
+                            .unwrap_or(<span class="string">&quot;%FT%H:%M:%S.%9f%z&quot;</span>),
+                        tz.parse::&lt;Tz&gt;().ok(),
+                    ),
+                    <span class="kw">_ </span>=&gt; (
+                        options
+                            .datetime_format
+                            .as_deref()
+                            .unwrap_or(<span class="string">&quot;%FT%H:%M:%S.%9f&quot;</span>),
+                        <span class="prelude-val">None</span>,
+                    ),
+                };
+                (format, tz_parsed)
+            }
+            <span class="kw">_ </span>=&gt; (<span class="string">&quot;&quot;</span>, <span class="prelude-val">None</span>),
+        })
+        .unzip();
+    <span class="kw">let </span>datetime_formats = datetime_formats.into_iter().collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
+    <span class="kw">let </span>time_zones = time_zones.into_iter().collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
 
     <span class="kw">let </span>len = df.height();
     <span class="kw">let </span>n_threads = POOL.current_num_threads();
@@ -658,14 +741,17 @@
             <span class="comment">// loop rows
             </span><span class="kw">while </span>!finished {
                 <span class="kw">for </span>(i, col) <span class="kw">in </span><span class="kw-2">&amp;mut </span>col_iters.iter_mut().enumerate() {
-                    <span class="kw">let </span>datetime_format = <span class="kw">match </span><span class="kw-2">&amp;</span>options.datetime_format {
-                        <span class="prelude-val">Some</span>(datetime_format) =&gt; <span class="prelude-val">Some</span>(datetime_format.as_str()),
-                        <span class="prelude-val">None </span>=&gt; <span class="kw">unsafe </span>{ <span class="kw-2">*</span>formats.as_ref().unwrap().get_unchecked(i) },
-                    };
                     <span class="kw">match </span>col.next() {
-                        <span class="prelude-val">Some</span>(value) =&gt; {
-                            write_anyvalue(<span class="kw-2">&amp;mut </span>write_buffer, value, options, datetime_format)<span class="question-mark">?</span>;
-                        }
+                        <span class="prelude-val">Some</span>(value) =&gt; <span class="kw">unsafe </span>{
+                            write_anyvalue(
+                                <span class="kw-2">&amp;mut </span>write_buffer,
+                                value,
+                                options,
+                                <span class="kw-2">&amp;</span>datetime_formats,
+                                <span class="kw-2">&amp;</span>time_zones,
+                                i,
+                            )<span class="question-mark">?</span>;
+                        },
                         <span class="prelude-val">None </span>=&gt; {
                             finished = <span class="bool-val">true</span>;
                             <span class="kw">break</span>;

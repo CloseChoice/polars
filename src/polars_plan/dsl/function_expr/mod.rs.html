@@ -607,10 +607,23 @@
 <a href="#607" id="607">607</a>
 <a href="#608" id="608">608</a>
 <a href="#609" id="609">609</a>
+<a href="#610" id="610">610</a>
+<a href="#611" id="611">611</a>
+<a href="#612" id="612">612</a>
+<a href="#613" id="613">613</a>
+<a href="#614" id="614">614</a>
+<a href="#615" id="615">615</a>
+<a href="#616" id="616">616</a>
+<a href="#617" id="617">617</a>
+<a href="#618" id="618">618</a>
+<a href="#619" id="619">619</a>
+<a href="#620" id="620">620</a>
 </pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">&quot;abs&quot;</span>)]
 </span><span class="kw">mod </span>abs;
 <span class="attr">#[cfg(feature = <span class="string">&quot;arg_where&quot;</span>)]
 </span><span class="kw">mod </span>arg_where;
+<span class="attr">#[cfg(feature = <span class="string">&quot;dtype-array&quot;</span>)]
+</span><span class="kw">mod </span>array;
 <span class="kw">mod </span>binary;
 <span class="kw">mod </span>boolean;
 <span class="kw">mod </span>bounds;
@@ -655,6 +668,8 @@
 
 <span class="kw">use </span>std::fmt::{Display, Formatter};
 
+<span class="attr">#[cfg(feature = <span class="string">&quot;dtype-array&quot;</span>)]
+</span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">use </span>array::ArrayFunction;
 <span class="attr">#[cfg(feature = <span class="string">&quot;fused&quot;</span>)]
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use </span>fused::FusedOperator;
 <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">use </span>list::ListFunction;
@@ -720,6 +735,8 @@
         max: <span class="prelude-ty">Option</span>&lt;AnyValue&lt;<span class="lifetime">&#39;static</span>&gt;&gt;,
     },
     ListExpr(ListFunction),
+    <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-array&quot;</span>)]
+    </span>ArrayExpr(ArrayFunction),
     <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-struct&quot;</span>)]
     </span>StructExpr(StructFunction),
     <span class="attr">#[cfg(feature = <span class="string">&quot;top_k&quot;</span>)]
@@ -869,6 +886,8 @@
             LowerBound =&gt; <span class="string">&quot;lower_bound&quot;</span>,
             <span class="attr">#[cfg(feature = <span class="string">&quot;fused&quot;</span>)]
             </span>Fused(fused) =&gt; <span class="kw">return </span>Display::fmt(fused, f),
+            <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-array&quot;</span>)]
+            </span>ArrayExpr(af) =&gt; <span class="kw">return </span>Display::fmt(af, f),
         };
         <span class="macro">write!</span>(f, <span class="string">&quot;{s}&quot;</span>)
     }
@@ -1024,6 +1043,15 @@
                     Sum =&gt; <span class="macro">map!</span>(list::sum),
                 }
             }
+            <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-array&quot;</span>)]
+            </span>ArrayExpr(lf) =&gt; {
+                <span class="kw">use </span>ArrayFunction::<span class="kw-2">*</span>;
+                <span class="kw">match </span>lf {
+                    Min =&gt; <span class="macro">map!</span>(array::min),
+                    Max =&gt; <span class="macro">map!</span>(array::max),
+                    Sum =&gt; <span class="macro">map!</span>(array::sum),
+                }
+            }
             <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-struct&quot;</span>)]
             </span>StructExpr(sf) =&gt; {
                 <span class="kw">use </span>StructFunction::<span class="kw-2">*</span>;
@@ -1127,6 +1155,9 @@
             <span class="attr">#[cfg(feature = <span class="string">&quot;string_from_radix&quot;</span>)]
             </span>FromRadix(radix, strict) =&gt; <span class="macro">map!</span>(strings::from_radix, radix, strict),
             Slice(start, length) =&gt; <span class="macro">map!</span>(strings::str_slice, start, length),
+            Explode =&gt; <span class="macro">map!</span>(strings::explode),
+            <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-decimal&quot;</span>)]
+            </span>ToDecimal(infer_len) =&gt; <span class="macro">map!</span>(strings::to_decimal, infer_len),
         }
     }
 }
@@ -1186,28 +1217,19 @@
             <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
             </span>TzLocalize(tz) =&gt; <span class="macro">map!</span>(datetime::tz_localize, <span class="kw-2">&amp;</span>tz),
             Combine(tu) =&gt; <span class="macro">map_as_slice!</span>(temporal::combine, tu),
-            DateRange {
-                name,
-                every,
-                closed,
-                tz,
-            } =&gt; {
+            DateRange { every, closed, tz } =&gt; {
                 <span class="macro">map_as_slice!</span>(
                     temporal::temporal_range_dispatch,
-                    name.as_ref(),
+                    <span class="string">&quot;date&quot;</span>,
                     every,
                     closed,
                     tz.clone()
                 )
             }
-            TimeRange {
-                name,
-                every,
-                closed,
-            } =&gt; {
+            TimeRange { every, closed } =&gt; {
                 <span class="macro">map_as_slice!</span>(
                     temporal::temporal_range_dispatch,
-                    name.as_ref(),
+                    <span class="string">&quot;time&quot;</span>,
                     every,
                     closed,
                     <span class="prelude-val">None

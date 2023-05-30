@@ -916,7 +916,7 @@
         </span>(DataType::Utf8, DataType::Datetime(tu, <span class="kw">_</span>)) =&gt; s
             .utf8()
             .unwrap()
-            .as_datetime(<span class="prelude-val">None</span>, <span class="kw-2">*</span>tu, <span class="bool-val">false</span>, <span class="bool-val">false</span>, <span class="bool-val">false</span>, <span class="prelude-val">None</span>)
+            .as_datetime(<span class="prelude-val">None</span>, <span class="kw-2">*</span>tu, <span class="bool-val">false</span>, <span class="bool-val">false</span>, <span class="prelude-val">None</span>)
             .map(|ca| ca.into_series()),
         (<span class="kw">_</span>, dt) =&gt; s.cast(dt),
     };

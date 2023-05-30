@@ -458,6 +458,18 @@
 <a href="#458" id="458">458</a>
 <a href="#459" id="459">459</a>
 <a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
+<a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
+<a href="#472" id="472">472</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>polars_arrow::array::ValueSize;
 <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-struct&quot;</span>)]
 </span><span class="kw">use </span>polars_arrow::export::arrow::array::{MutableArray, MutableUtf8Array};
@@ -608,6 +620,13 @@
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;dtype-time&quot;</span>)]
     </span><span class="kw">pub fn </span>to_time(<span class="self">self</span>, options: StrptimeOptions) -&gt; Expr {
         <span class="self">self</span>.strptime(DataType::Time, options)
+    }
+
+    <span class="doccomment">/// Convert a Utf8 column into a Decimal column.
+    </span><span class="attr">#[cfg(feature = <span class="string">&quot;dtype-decimal&quot;</span>)]
+    </span><span class="kw">pub fn </span>to_decimal(<span class="self">self</span>, infer_length: usize) -&gt; Expr {
+        <span class="self">self</span>.<span class="number">0
+            </span>.map_private(StringFunction::ToDecimal(infer_length).into())
     }
 
     <span class="doccomment">/// Concat the values into a string array.
@@ -916,6 +935,11 @@
             </span>.map_private(FunctionExpr::StringExpr(StringFunction::Slice(
                 start, length,
             )))
+    }
+
+    <span class="kw">pub fn </span>explode(<span class="self">self</span>) -&gt; Expr {
+        <span class="self">self</span>.<span class="number">0
+            </span>.apply_private(FunctionExpr::StringExpr(StringFunction::Explode))
     }
 }
 </code></pre></div></section></main></body></html>

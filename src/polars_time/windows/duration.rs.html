@@ -745,6 +745,14 @@
 <a href="#745" id="745">745</a>
 <a href="#746" id="746">746</a>
 <a href="#747" id="747">747</a>
+<a href="#748" id="748">748</a>
+<a href="#749" id="749">749</a>
+<a href="#750" id="750">750</a>
+<a href="#751" id="751">751</a>
+<a href="#752" id="752">752</a>
+<a href="#753" id="753">753</a>
+<a href="#754" id="754">754</a>
+<a href="#755" id="755">755</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::cmp::Ordering;
 <span class="kw">use </span>std::ops::Mul;
 
@@ -753,7 +761,7 @@
 <span class="kw">use </span>polars_arrow::export::arrow::temporal_conversions::{
     timestamp_ms_to_datetime, timestamp_ns_to_datetime, timestamp_us_to_datetime, MILLISECONDS,
 };
-<span class="kw">use </span>polars_arrow::time_zone::PolarsTimeZone;
+<span class="kw">use </span>polars_arrow::time_zone::Tz;
 <span class="kw">use </span>polars_core::export::arrow::temporal_conversions::MICROSECONDS;
 <span class="kw">use </span>polars_core::prelude::{
     datetime_to_timestamp_ms, datetime_to_timestamp_ns, datetime_to_timestamp_us, polars_bail,
@@ -1107,11 +1115,74 @@
             + (<span class="self">self</span>.weeks * NS_WEEK + <span class="self">self</span>.nsecs + <span class="self">self</span>.days * NS_DAY) / <span class="number">1_000_000
     </span>}
 
+    <span class="attr">#[cfg(feature = <span class="string">&quot;private&quot;</span>)]
+    #[doc(hidden)]
+    </span><span class="kw">fn </span>add_month(
+        ts: NaiveDateTime,
+        n_months: i64,
+        negative: bool,
+        saturating: bool,
+    ) -&gt; PolarsResult&lt;NaiveDateTime&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>months = n_months;
+        <span class="kw">if </span>negative {
+            months = -months;
+        }
+
+        <span class="comment">// Retrieve the current date and increment the values
+        // based on the number of months
+        </span><span class="kw">let </span><span class="kw-2">mut </span>year = ts.year();
+        <span class="kw">let </span><span class="kw-2">mut </span>month = ts.month() <span class="kw">as </span>i32;
+        <span class="kw">let </span><span class="kw-2">mut </span>day = ts.day();
+        year += (months / <span class="number">12</span>) <span class="kw">as </span>i32;
+        month += (months % <span class="number">12</span>) <span class="kw">as </span>i32;
+
+        <span class="comment">// if the month overflowed or underflowed, adjust the year
+        // accordingly. Because we add the modulo for the months
+        // the year will only adjust by one
+        </span><span class="kw">if </span>month &gt; <span class="number">12 </span>{
+            year += <span class="number">1</span>;
+            month -= <span class="number">12</span>;
+        } <span class="kw">else if </span>month &lt;= <span class="number">0 </span>{
+            year -= <span class="number">1</span>;
+            month += <span class="number">12</span>;
+        }
+
+        <span class="kw">if </span>saturating {
+            <span class="comment">// Normalize the day if we are past the end of the month.
+            </span><span class="kw">let </span><span class="kw-2">mut </span>last_day_of_month = last_day_of_month(month);
+            <span class="kw">if </span>month == (chrono::Month::February.number_from_month() <span class="kw">as </span>i32) &amp;&amp; is_leap_year(year) {
+                last_day_of_month += <span class="number">1</span>;
+            }
+
+            <span class="kw">if </span>day &gt; last_day_of_month {
+                day = last_day_of_month
+            }
+        }
+
+        <span class="comment">// Retrieve the original time and construct a data
+        // with the new year, month and day
+        </span><span class="kw">let </span>hour = ts.hour();
+        <span class="kw">let </span>minute = ts.minute();
+        <span class="kw">let </span>sec = ts.second();
+        <span class="kw">let </span>nsec = ts.nanosecond();
+        new_datetime(year, month <span class="kw">as </span>u32, day, hour, minute, sec, nsec).ok_or(
+            <span class="macro">polars_err!</span>(
+                ComputeError: <span class="macro">format!</span>(
+                    <span class="string">&quot;cannot advance &#39;{}&#39; by {} month(s). \
+                        If you were trying to get the last day of each month, you may want to try `.dt.month_end` \
+                        or append \&quot;_saturating\&quot; to your duration string.&quot;</span>,
+                        ts,
+                        <span class="kw">if </span>negative {-n_months} <span class="kw">else </span>{n_months}
+                )
+            ),
+        )
+    }
+
     <span class="attr">#[inline]
     </span><span class="kw">pub fn </span>truncate_impl&lt;F, G, J&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         t: i64,
-        tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;,
+        tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Tz&gt;,
         nsecs_to_unit: F,
         timestamp_to_datetime: G,
         datetime_to_timestamp: J,
@@ -1225,7 +1296,7 @@
 
     <span class="comment">// Truncate the given ns timestamp by the window boundary.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>truncate_ns(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;) -&gt; PolarsResult&lt;i64&gt; {
+    </span><span class="kw">pub fn </span>truncate_ns(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Tz&gt;) -&gt; PolarsResult&lt;i64&gt; {
         <span class="self">self</span>.truncate_impl(
             t,
             tz,
@@ -1237,7 +1308,7 @@
 
     <span class="comment">// Truncate the given ns timestamp by the window boundary.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>truncate_us(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;) -&gt; PolarsResult&lt;i64&gt; {
+    </span><span class="kw">pub fn </span>truncate_us(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Tz&gt;) -&gt; PolarsResult&lt;i64&gt; {
         <span class="self">self</span>.truncate_impl(
             t,
             tz,
@@ -1249,7 +1320,7 @@
 
     <span class="comment">// Truncate the given ms timestamp by the window boundary.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>truncate_ms(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;) -&gt; PolarsResult&lt;i64&gt; {
+    </span><span class="kw">pub fn </span>truncate_ms(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Tz&gt;) -&gt; PolarsResult&lt;i64&gt; {
         <span class="self">self</span>.truncate_impl(
             t,
             tz,
@@ -1262,7 +1333,7 @@
     <span class="kw">fn </span>add_impl_month_week_or_day&lt;F, G, J&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         t: i64,
-        tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;,
+        tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Tz&gt;,
         nsecs_to_unit: F,
         timestamp_to_datetime: G,
         datetime_to_timestamp: J,
@@ -1276,66 +1347,12 @@
         <span class="kw">let </span><span class="kw-2">mut </span>new_t = t;
 
         <span class="kw">if </span>d.months &gt; <span class="number">0 </span>{
-            <span class="kw">let </span><span class="kw-2">mut </span>months = d.months;
-            <span class="kw">if </span>d.negative {
-                months = -months;
-            }
-
-            <span class="comment">// Retrieve the current date and increment the values
-            // based on the number of months
-            </span><span class="kw">let </span>ts = <span class="kw">match </span>tz {
+            <span class="kw">let </span>ts = <span class="kw">match </span>tz {
                 <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
                 </span><span class="prelude-val">Some</span>(tz) =&gt; unlocalize_datetime(timestamp_to_datetime(t), tz),
                 <span class="kw">_ </span>=&gt; timestamp_to_datetime(t),
             };
-            <span class="kw">let </span><span class="kw-2">mut </span>year = ts.year();
-            <span class="kw">let </span><span class="kw-2">mut </span>month = ts.month() <span class="kw">as </span>i32;
-            <span class="kw">let </span><span class="kw-2">mut </span>day = ts.day();
-            year += (months / <span class="number">12</span>) <span class="kw">as </span>i32;
-            month += (months % <span class="number">12</span>) <span class="kw">as </span>i32;
-
-            <span class="comment">// if the month overflowed or underflowed, adjust the year
-            // accordingly. Because we add the modulo for the months
-            // the year will only adjust by one
-            </span><span class="kw">if </span>month &gt; <span class="number">12 </span>{
-                year += <span class="number">1</span>;
-                month -= <span class="number">12</span>;
-            } <span class="kw">else if </span>month &lt;= <span class="number">0 </span>{
-                year -= <span class="number">1</span>;
-                month += <span class="number">12</span>;
-            }
-
-            <span class="kw">if </span>d.saturating {
-                <span class="comment">// Normalize the day if we are past the end of the month.
-                </span><span class="kw">let </span><span class="kw-2">mut </span>last_day_of_month = last_day_of_month(month);
-                <span class="kw">if </span>month == (chrono::Month::February.number_from_month() <span class="kw">as </span>i32)
-                    &amp;&amp; is_leap_year(year)
-                {
-                    last_day_of_month += <span class="number">1</span>;
-                }
-
-                <span class="kw">if </span>day &gt; last_day_of_month {
-                    day = last_day_of_month
-                }
-            }
-
-            <span class="comment">// Retrieve the original time and construct a data
-            // with the new year, month and day
-            </span><span class="kw">let </span>hour = ts.hour();
-            <span class="kw">let </span>minute = ts.minute();
-            <span class="kw">let </span>sec = ts.second();
-            <span class="kw">let </span>nsec = ts.nanosecond();
-            <span class="kw">let </span>dt = new_datetime(year, month <span class="kw">as </span>u32, day, hour, minute, sec, nsec).ok_or(
-                <span class="macro">polars_err!</span>(
-                    ComputeError: <span class="macro">format!</span>(
-                        <span class="string">&quot;cannot advance &#39;{}&#39; by {} month(s). \
-                         If you were trying to get the last day of each month, you may want to try `.dt.month_end` \
-                         or append \&quot;_saturating\&quot; to your duration string.&quot;</span>,
-                         ts,
-                         <span class="kw">if </span>d.negative {-d.months} <span class="kw">else </span>{d.months}
-                    )
-                ),
-            )<span class="question-mark">?</span>;
+            <span class="kw">let </span>dt = <span class="self">Self</span>::add_month(ts, d.months, d.negative, d.saturating)<span class="question-mark">?</span>;
             new_t = <span class="kw">match </span>tz {
                 <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
                 </span><span class="prelude-val">Some</span>(tz) =&gt; datetime_to_timestamp(localize_datetime(dt, tz)<span class="question-mark">?</span>),
@@ -1376,7 +1393,7 @@
         <span class="prelude-val">Ok</span>(new_t)
     }
 
-    <span class="kw">pub fn </span>add_ns(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;) -&gt; PolarsResult&lt;i64&gt; {
+    <span class="kw">pub fn </span>add_ns(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Tz&gt;) -&gt; PolarsResult&lt;i64&gt; {
         <span class="kw">let </span>d = <span class="self">self</span>;
         <span class="kw">let </span>new_t = <span class="self">self</span>.add_impl_month_week_or_day(
             t,
@@ -1389,7 +1406,7 @@
         <span class="prelude-val">Ok</span>(new_t<span class="question-mark">? </span>+ nsecs)
     }
 
-    <span class="kw">pub fn </span>add_us(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;) -&gt; PolarsResult&lt;i64&gt; {
+    <span class="kw">pub fn </span>add_us(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Tz&gt;) -&gt; PolarsResult&lt;i64&gt; {
         <span class="kw">let </span>d = <span class="self">self</span>;
         <span class="kw">let </span>new_t = <span class="self">self</span>.add_impl_month_week_or_day(
             t,
@@ -1402,7 +1419,7 @@
         <span class="prelude-val">Ok</span>(new_t<span class="question-mark">? </span>+ nsecs / <span class="number">1_000</span>)
     }
 
-    <span class="kw">pub fn </span>add_ms(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="kw">impl </span>PolarsTimeZone&gt;) -&gt; PolarsResult&lt;i64&gt; {
+    <span class="kw">pub fn </span>add_ms(<span class="kw-2">&amp;</span><span class="self">self</span>, t: i64, tz: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Tz&gt;) -&gt; PolarsResult&lt;i64&gt; {
         <span class="kw">let </span>d = <span class="self">self</span>;
         <span class="kw">let </span>new_t = <span class="self">self</span>.add_impl_month_week_or_day(
             t,
@@ -1469,7 +1486,6 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_add_ns() {
-        <span class="kw">use </span>polars_arrow::time_zone::NO_TIMEZONE;
         <span class="kw">let </span>t = <span class="number">1</span>;
         <span class="kw">let </span>seven_days = Duration::parse(<span class="string">&quot;7d&quot;</span>);
         <span class="kw">let </span>one_week = Duration::parse(<span class="string">&quot;1w&quot;</span>);
@@ -1477,8 +1493,8 @@
         <span class="comment">// add_ns can only error if a time zone is passed, so it&#39;s
         // safe to unwrap here
         </span><span class="macro">assert_eq!</span>(
-            seven_days.add_ns(t, NO_TIMEZONE).unwrap(),
-            one_week.add_ns(t, NO_TIMEZONE).unwrap()
+            seven_days.add_ns(t, <span class="prelude-val">None</span>).unwrap(),
+            one_week.add_ns(t, <span class="prelude-val">None</span>).unwrap()
         );
 
         <span class="kw">let </span>seven_days_negative = Duration::parse(<span class="string">&quot;-7d&quot;</span>);
@@ -1487,8 +1503,8 @@
         <span class="comment">// add_ns can only error if a time zone is passed, so it&#39;s
         // safe to unwrap here
         </span><span class="macro">assert_eq!</span>(
-            seven_days_negative.add_ns(t, NO_TIMEZONE).unwrap(),
-            one_week_negative.add_ns(t, NO_TIMEZONE).unwrap()
+            seven_days_negative.add_ns(t, <span class="prelude-val">None</span>).unwrap(),
+            one_week_negative.add_ns(t, <span class="prelude-val">None</span>).unwrap()
         );
     }
 }

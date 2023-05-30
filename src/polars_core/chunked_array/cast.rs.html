@@ -431,6 +431,33 @@
 <a href="#431" id="431">431</a>
 <a href="#432" id="432">432</a>
 <a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Implementations of the ChunkCast Trait.
 </span><span class="kw">use </span>std::convert::TryFrom;
 
@@ -515,13 +542,11 @@
     <span class="kw">fn </span>cast_impl(<span class="kw-2">&amp;</span><span class="self">self</span>, data_type: <span class="kw-2">&amp;</span>DataType, checked: bool) -&gt; PolarsResult&lt;Series&gt; {
         <span class="kw">if </span><span class="self">self</span>.dtype() == data_type {
             <span class="comment">// safety: chunks are correct dtype
-            </span><span class="kw">return unsafe </span>{
-                <span class="prelude-val">Ok</span>(Series::from_chunks_and_dtype_unchecked(
-                    <span class="self">self</span>.name(),
-                    <span class="self">self</span>.chunks.clone(),
-                    data_type,
-                ))
+            </span><span class="kw">let </span><span class="kw-2">mut </span>out = <span class="kw">unsafe </span>{
+                Series::from_chunks_and_dtype_unchecked(<span class="self">self</span>.name(), <span class="self">self</span>.chunks.clone(), data_type)
             };
+            out.set_sorted_flag(<span class="self">self</span>.is_sorted_flag());
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(out);
         }
         <span class="kw">match </span>data_type {
             <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-categorical&quot;</span>)]
@@ -538,10 +563,17 @@
             <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-struct&quot;</span>)]
             </span>DataType::Struct(fields) =&gt; cast_single_to_struct(<span class="self">self</span>.name(), <span class="kw-2">&amp;</span><span class="self">self</span>.chunks, fields),
             <span class="kw">_ </span>=&gt; cast_impl_inner(<span class="self">self</span>.name(), <span class="kw-2">&amp;</span><span class="self">self</span>.chunks, data_type, checked).map(|<span class="kw-2">mut </span>s| {
-                <span class="comment">// maintain sorted if data types remain signed
+                <span class="comment">// maintain sorted if data types
+                // - remain signed
+                // - unsigned -&gt; signed
                 // this may still fail with overflow?
-                </span><span class="kw">if </span>((<span class="self">self</span>.dtype().is_signed() &amp;&amp; data_type.is_signed())
-                    || (<span class="self">self</span>.dtype().is_unsigned() &amp;&amp; data_type.is_unsigned()))
+                </span><span class="kw">let </span>dtype = <span class="self">self</span>.dtype();
+
+                <span class="kw">let </span>to_signed = data_type.is_signed();
+                <span class="kw">let </span>unsigned2unsigned = dtype.is_unsigned() &amp;&amp; data_type.is_unsigned();
+                <span class="kw">let </span>allowed = to_signed || unsigned2unsigned;
+
+                <span class="kw">if </span>(allowed)
                     &amp;&amp; (s.null_count() == <span class="self">self</span>.null_count())
                     <span class="comment">// physical to logicals
                     </span>|| (<span class="self">self</span>.dtype().to_physical() == data_type.to_physical())
@@ -600,6 +632,28 @@
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-struct&quot;</span>)]
             </span>DataType::Struct(fields) =&gt; cast_single_to_struct(<span class="self">self</span>.name(), <span class="kw-2">&amp;</span><span class="self">self</span>.chunks, fields),
+            <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-decimal&quot;</span>)]
+            </span>DataType::Decimal(precision, scale) =&gt; <span class="kw">match </span>(precision, scale) {
+                (precision, <span class="prelude-val">Some</span>(scale)) =&gt; {
+                    <span class="kw">let </span>chunks = <span class="self">self
+                        </span>.downcast_iter()
+                        .map(|arr| {
+                            polars_arrow::compute::cast::cast_utf8_to_decimal(
+                                arr, <span class="kw-2">*</span>precision, <span class="kw-2">*</span>scale,
+                            )
+                        })
+                        .collect();
+                    <span class="kw">unsafe </span>{
+                        <span class="prelude-val">Ok</span>(Int128Chunked::from_chunks(<span class="self">self</span>.name(), chunks)
+                            .into_decimal_unchecked(<span class="kw-2">*</span>precision, <span class="kw-2">*</span>scale)
+                            .into_series())
+                    }
+                }
+                (<span class="prelude-val">None</span>, <span class="prelude-val">None</span>) =&gt; <span class="self">self</span>.to_decimal(<span class="number">100</span>),
+                <span class="kw">_ </span>=&gt; {
+                    <span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;expected &#39;precision&#39; or &#39;scale&#39; when casting to Decimal&quot;</span>)
+                }
+            },
             <span class="kw">_ </span>=&gt; cast_impl(<span class="self">self</span>.name(), <span class="kw-2">&amp;</span><span class="self">self</span>.chunks, data_type),
         }
     }

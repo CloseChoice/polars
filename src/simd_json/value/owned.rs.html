@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/simd-json-0.9.2/src/value/owned.rs`."><title>owned.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="simd_json" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (a77c55248 2023-05-06)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-6f6ffb5395b17c6e.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../simd_json/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/index.crates.io-6f17d22bba15001f/simd-json-0.10.3/src/value/owned.rs`."><title>owned.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="simd_json" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (a77c55248 2023-05-06)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-6f6ffb5395b17c6e.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../simd_json/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -974,6 +974,16 @@
 <a href="#974" id="974">974</a>
 <a href="#975" id="975">975</a>
 <a href="#976" id="976">976</a>
+<a href="#977" id="977">977</a>
+<a href="#978" id="978">978</a>
+<a href="#979" id="979">979</a>
+<a href="#980" id="980">980</a>
+<a href="#981" id="981">981</a>
+<a href="#982" id="982">982</a>
+<a href="#983" id="983">983</a>
+<a href="#984" id="984">984</a>
+<a href="#985" id="985">985</a>
+<a href="#986" id="986">986</a>
 </pre></div><pre class="rust"><code><span class="doccomment">/// A lifetime less DOM implementation. It uses strings to make te
 /// structure fully owned, avoiding lifetimes at the cost of performance.
 /// Access via array indexes is possible:
@@ -999,6 +1009,7 @@
 <span class="kw">mod </span>from;
 <span class="kw">mod </span>serialize;
 
+<span class="kw">use </span><span class="kw">super</span>::ObjectHasher;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::safer_unchecked::GetSaferUnchecked;
 <span class="kw">use crate</span>::{AlignedBuf, Deserializer, Node, <span class="prelude-ty">Result</span>, StaticNode};
@@ -1008,7 +1019,13 @@
 <span class="kw">use </span>value_trait::{ValueAccess, ValueInto};
 
 <span class="doccomment">/// Representation of a JSON object
-</span><span class="kw">pub type </span>Object = HashMap&lt;String, Value&gt;;
+</span><span class="kw">pub type </span>Object = HashMap&lt;String, Value, ObjectHasher&gt;;
+<span class="kw">impl </span><span class="kw">crate</span>::value::ObjectInit <span class="kw">for </span>Object {
+    <span class="attr">#[cfg(feature = <span class="string">&quot;known-key&quot;</span>)]
+    </span><span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::default()
+    }
+}
 
 <span class="doccomment">/// Parses a slice of bytes into a Value dom. This function will
 /// rewrite the slice to de-escape strings.
@@ -1076,7 +1093,10 @@
     <span class="attr">#[inline]
     #[must_use]
     </span><span class="kw">fn </span>object_with_capacity(capacity: usize) -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::Object(Box::new(Object::with_capacity(capacity)))
+        <span class="self">Self</span>::Object(Box::new(Object::with_capacity_and_hasher(
+            capacity,
+            ObjectHasher::default(),
+        )))
     }
 }
 
@@ -1091,7 +1111,7 @@
     }
     <span class="attr">#[inline]
     #[must_use]
-    </span><span class="kw">fn </span>as_object_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>HashMap&lt;<span class="self">Self</span>::Key, <span class="self">Self</span>&gt;&gt; {
+    </span><span class="kw">fn </span>as_object_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>Object&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             <span class="self">Self</span>::Object(m) =&gt; <span class="prelude-val">Some</span>(m),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
@@ -1111,7 +1131,7 @@
     <span class="kw">type </span>Target = Value;
     <span class="kw">type </span>Key = String;
     <span class="kw">type </span>Array = Vec&lt;<span class="self">Self</span>&gt;;
-    <span class="kw">type </span>Object = HashMap&lt;<span class="self">Self</span>::Key, <span class="self">Self</span>&gt;;
+    <span class="kw">type </span>Object = Object;
 
     <span class="attr">#[inline]
     #[must_use]
@@ -1211,7 +1231,7 @@
 
     <span class="attr">#[inline]
     #[must_use]
-    </span><span class="kw">fn </span>as_object(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>HashMap&lt;<span class="self">Self</span>::Key, <span class="self">Self</span>&gt;&gt; {
+    </span><span class="kw">fn </span>as_object(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Object&gt; {
         <span class="kw">match </span><span class="self">self </span>{
             <span class="self">Self</span>::Object(m) =&gt; <span class="prelude-val">Some</span>(m),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
@@ -1334,7 +1354,7 @@
 
     <span class="attr">#[cfg_attr(not(feature = <span class="string">&quot;no-inline&quot;</span>), inline(always))]
     </span><span class="kw">fn </span>parse_map(<span class="kw-2">&amp;mut </span><span class="self">self</span>, len: usize) -&gt; Value {
-        <span class="kw">let </span><span class="kw-2">mut </span>res = Object::with_capacity(len);
+        <span class="kw">let </span><span class="kw-2">mut </span>res = Object::with_capacity_and_hasher(len, ObjectHasher::default());
 
         <span class="kw">for _ in </span><span class="number">0</span>..len {
             <span class="kw">if let </span>Node::String(key) = <span class="kw">unsafe </span>{ <span class="self">self</span>.de.next_() } {
@@ -1764,7 +1784,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>conversions_object() {
-        <span class="kw">let </span>v = Value::from(Object::new());
+        <span class="kw">let </span>v = Value::from(Object::with_capacity_and_hasher(<span class="number">0</span>, ObjectHasher::default()));
         <span class="macro">assert!</span>(v.is_object());
         <span class="macro">assert_eq!</span>(v.value_type(), ValueType::Object);
         <span class="kw">let </span>v = Value::from(<span class="string">&quot;no object&quot;</span>);

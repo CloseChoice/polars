@@ -301,6 +301,12 @@
 <a href="#301" id="301">301</a>
 <a href="#302" id="302">302</a>
 <a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
 </pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">&quot;temporal&quot;</span>)]
 </span><span class="kw">use </span>polars_core::export::chrono::{Duration <span class="kw">as </span>ChronoDuration, NaiveDate, NaiveDateTime};
 <span class="kw">use </span>polars_core::prelude::<span class="kw-2">*</span>;
@@ -591,6 +597,12 @@
 <span class="kw">impl </span>Literal <span class="kw">for </span>Series {
     <span class="kw">fn </span>lit(<span class="self">self</span>) -&gt; Expr {
         Expr::Literal(LiteralValue::Series(SpecialEq::new(<span class="self">self</span>)))
+    }
+}
+
+<span class="kw">impl </span>Literal <span class="kw">for </span>LiteralValue {
+    <span class="kw">fn </span>lit(<span class="self">self</span>) -&gt; Expr {
+        Expr::Literal(<span class="self">self</span>)
     }
 }
 

@@ -655,6 +655,12 @@
 <a href="#655" id="655">655</a>
 <a href="#656" id="656">656</a>
 <a href="#657" id="657">657</a>
+<a href="#658" id="658">658</a>
+<a href="#659" id="659">659</a>
+<a href="#660" id="660">660</a>
+<a href="#661" id="661">661</a>
+<a href="#662" id="662">662</a>
+<a href="#663" id="663">663</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::borrow::Cow;
 
 <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
@@ -720,6 +726,9 @@
     <span class="attr">#[cfg(feature = <span class="string">&quot;string_from_radix&quot;</span>)]
     </span>FromRadix(u32, bool),
     Slice(i64, <span class="prelude-ty">Option</span>&lt;u64&gt;),
+    Explode,
+    <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-decimal&quot;</span>)]
+    </span>ToDecimal(usize),
 }
 
 <span class="kw">impl </span>StringFunction {
@@ -745,13 +754,15 @@
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;string_from_radix&quot;</span>)]
             </span>FromRadix { .. } =&gt; mapper.with_dtype(DataType::Int32),
+            Explode =&gt; mapper.with_same_dtype(),
+            <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-decimal&quot;</span>)]
+            </span>ToDecimal(<span class="kw">_</span>) =&gt; mapper.with_dtype(DataType::Decimal(<span class="prelude-val">None</span>, <span class="prelude-val">None</span>)),
         }
     }
 }
 
 <span class="kw">impl </span>Display <span class="kw">for </span>StringFunction {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; std::fmt::Result {
-        <span class="kw">use </span><span class="self">self</span>::<span class="kw-2">*</span>;
         <span class="kw">let </span>s = <span class="kw">match </span><span class="self">self </span>{
             <span class="attr">#[cfg(feature = <span class="string">&quot;regex&quot;</span>)]
             </span>StringFunction::Contains { .. } =&gt; <span class="string">&quot;contains&quot;</span>,
@@ -782,6 +793,9 @@
             <span class="attr">#[cfg(feature = <span class="string">&quot;string_from_radix&quot;</span>)]
             </span>StringFunction::FromRadix { .. } =&gt; <span class="string">&quot;from_radix&quot;</span>,
             StringFunction::Slice(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="string">&quot;str_slice&quot;</span>,
+            StringFunction::Explode =&gt; <span class="string">&quot;explode&quot;</span>,
+            <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-decimal&quot;</span>)]
+            </span>StringFunction::ToDecimal(<span class="kw">_</span>) =&gt; <span class="string">&quot;to_decimal&quot;</span>,
         };
 
         <span class="macro">write!</span>(f, <span class="string">&quot;str.{s}&quot;</span>)
@@ -1050,28 +1064,17 @@
     time_zone: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>TimeZone&gt;,
     options: <span class="kw-2">&amp;</span>StrptimeOptions,
 ) -&gt; PolarsResult&lt;Series&gt; {
-    <span class="kw">let </span>tz_aware = <span class="kw">match </span>(options.tz_aware, <span class="kw-2">&amp;</span>options.format) {
-        (<span class="bool-val">true</span>, <span class="prelude-val">Some</span>(<span class="kw">_</span>)) =&gt; <span class="bool-val">true</span>,
-        (<span class="bool-val">true</span>, <span class="prelude-val">None</span>) =&gt; <span class="macro">polars_bail!</span>(
-            ComputeError:
-            <span class="string">&quot;passing &#39;tz_aware=True&#39; without &#39;format&#39; is not yet supported, please specify &#39;format&#39;&quot;
-        </span>),
+    <span class="kw">let </span>tz_aware = <span class="kw">match </span><span class="kw-2">&amp;</span>options.format {
         <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-        </span>(<span class="bool-val">false</span>, <span class="prelude-val">Some</span>(format)) =&gt; TZ_AWARE_RE.is_match(format),
-        (<span class="bool-val">false</span>, <span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+        </span><span class="prelude-val">Some</span>(format) =&gt; TZ_AWARE_RE.is_match(format),
+        <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
     };
-    <span class="kw">match </span>(time_zone, tz_aware, options.utc) {
-        (<span class="prelude-val">Some</span>(<span class="kw">_</span>), <span class="bool-val">true</span>, <span class="kw">_</span>) =&gt; <span class="macro">polars_bail!</span>(
+    <span class="kw">if let </span>(<span class="prelude-val">Some</span>(<span class="kw">_</span>), <span class="bool-val">true</span>) = (time_zone, tz_aware) {
+        <span class="macro">polars_bail!</span>(
             ComputeError:
             <span class="string">&quot;cannot use strptime with both a tz-aware format and a tz-aware dtype, \
             please drop time zone from the dtype&quot;
-        </span>),
-        (<span class="prelude-val">Some</span>(<span class="kw">_</span>), <span class="kw">_</span>, <span class="bool-val">true</span>) =&gt; <span class="macro">polars_bail!</span>(
-            ComputeError:
-            <span class="string">&quot;cannot use strptime with both &#39;utc=True&#39; and tz-aware dtype, \
-            please drop time zone from the dtype&quot;
-        </span>),
-        <span class="kw">_ </span>=&gt; (),
+        </span>)
     };
 
     <span class="kw">let </span>ca = s.utf8()<span class="question-mark">?</span>;
@@ -1081,7 +1084,6 @@
             <span class="kw-2">*</span>time_unit,
             options.cache,
             tz_aware,
-            options.utc,
             time_zone,
         )<span class="question-mark">?
         </span>.into_series()
@@ -1098,8 +1100,7 @@
             \n\
             You might want to try:\n\
             - setting `strict=False`\n\
-            - explicitly specifying a `format`\n\
-            - setting `utc=True` (if you are parsing datetimes with multiple offsets)&quot;
+            - explicitly specifying a `format`&quot;
         </span>);
     }
     <span class="prelude-val">Ok</span>(out.into_series())
@@ -1311,5 +1312,16 @@
 <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>str_slice(s: <span class="kw-2">&amp;</span>Series, start: i64, length: <span class="prelude-ty">Option</span>&lt;u64&gt;) -&gt; PolarsResult&lt;Series&gt; {
     <span class="kw">let </span>ca = s.utf8()<span class="question-mark">?</span>;
     ca.str_slice(start, length).map(|ca| ca.into_series())
+}
+
+<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>explode(s: <span class="kw-2">&amp;</span>Series) -&gt; PolarsResult&lt;Series&gt; {
+    <span class="kw">let </span>ca = s.utf8()<span class="question-mark">?</span>;
+    ca.explode()
+}
+
+<span class="attr">#[cfg(feature = <span class="string">&quot;dtype-decimal&quot;</span>)]
+</span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>to_decimal(s: <span class="kw-2">&amp;</span>Series, infer_len: usize) -&gt; PolarsResult&lt;Series&gt; {
+    <span class="kw">let </span>ca = s.utf8()<span class="question-mark">?</span>;
+    ca.to_decimal(infer_len)
 }
 </code></pre></div></section></main></body></html>

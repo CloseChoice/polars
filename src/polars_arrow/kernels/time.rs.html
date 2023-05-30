@@ -105,34 +105,26 @@
 <a href="#105" id="105">105</a>
 <a href="#106" id="106">106</a>
 <a href="#107" id="107">107</a>
-<a href="#108" id="108">108</a>
-<a href="#109" id="109">109</a>
-<a href="#110" id="110">110</a>
-<a href="#111" id="111">111</a>
-<a href="#112" id="112">112</a>
-<a href="#113" id="113">113</a>
-<a href="#114" id="114">114</a>
-<a href="#115" id="115">115</a>
-<a href="#116" id="116">116</a>
-<a href="#117" id="117">117</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>arrow::array::PrimitiveArray;
 <span class="kw">use </span>arrow::compute::arity::try_unary;
 <span class="kw">use </span>arrow::datatypes::{DataType <span class="kw">as </span>ArrowDataType, TimeUnit};
 <span class="kw">use </span>arrow::error::{Error <span class="kw">as </span>ArrowError, <span class="prelude-ty">Result</span>};
 <span class="kw">use </span>arrow::temporal_conversions::{
-    parse_offset, timestamp_ms_to_datetime, timestamp_ns_to_datetime, timestamp_us_to_datetime,
+    timestamp_ms_to_datetime, timestamp_ns_to_datetime, timestamp_us_to_datetime,
 };
 <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
 </span><span class="kw">use </span>chrono::{LocalResult, NaiveDateTime, TimeZone};
+<span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
+</span><span class="kw">use </span>chrono_tz::Tz;
 <span class="kw">use </span>polars_error::polars_bail;
 
 <span class="kw">use </span><span class="kw">crate</span>::error::PolarsResult;
 <span class="kw">use </span><span class="kw">crate</span>::prelude::ArrayRef;
 
 <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-</span><span class="kw">fn </span>convert_to_naive_local&lt;T1: TimeZone + std::fmt::Debug + std::fmt::Display, T2: TimeZone&gt;(
-    from_tz: <span class="kw-2">&amp;</span>T1,
-    to_tz: <span class="kw-2">&amp;</span>T2,
+</span><span class="kw">fn </span>convert_to_naive_local(
+    from_tz: <span class="kw-2">&amp;</span>Tz,
+    to_tz: <span class="kw-2">&amp;</span>Tz,
     ndt: NaiveDateTime,
     use_earliest: <span class="prelude-ty">Option</span>&lt;bool&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;NaiveDateTime&gt; {
@@ -156,9 +148,9 @@
 }
 
 <span class="attr">#[cfg(feature = <span class="string">&quot;timezones&quot;</span>)]
-</span><span class="kw">fn </span>convert_to_timestamp&lt;T1: TimeZone + std::fmt::Debug + std::fmt::Display, T2: TimeZone&gt;(
-    from_tz: T1,
-    to_tz: T2,
+</span><span class="kw">fn </span>convert_to_timestamp(
+    from_tz: Tz,
+    to_tz: Tz,
     arr: <span class="kw-2">&amp;</span>PrimitiveArray&lt;i64&gt;,
     tu: TimeUnit,
     use_earliest: <span class="prelude-ty">Option</span>&lt;bool&gt;,
@@ -215,21 +207,9 @@
     <span class="prelude-val">Ok</span>(<span class="kw">match </span>from.parse::&lt;chrono_tz::Tz&gt;() {
         <span class="prelude-val">Ok</span>(from_tz) =&gt; <span class="kw">match </span>to.parse::&lt;chrono_tz::Tz&gt;() {
             <span class="prelude-val">Ok</span>(to_tz) =&gt; convert_to_timestamp(from_tz, to_tz, arr, tu, use_earliest)<span class="question-mark">?</span>,
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">match </span>parse_offset(to) {
-                <span class="prelude-val">Ok</span>(to_tz) =&gt; convert_to_timestamp(from_tz, to_tz, arr, tu, use_earliest)<span class="question-mark">?</span>,
-                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;unable to parse time zone: &#39;{}&#39;&quot;</span>, to),
-            },
+            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;unable to parse time zone: &#39;{}&#39;&quot;</span>, to),
         },
-        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">match </span>parse_offset(from) {
-            <span class="prelude-val">Ok</span>(from_tz) =&gt; <span class="kw">match </span>to.parse::&lt;chrono_tz::Tz&gt;() {
-                <span class="prelude-val">Ok</span>(to_tz) =&gt; convert_to_timestamp(from_tz, to_tz, arr, tu, use_earliest)<span class="question-mark">?</span>,
-                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">match </span>parse_offset(to) {
-                    <span class="prelude-val">Ok</span>(to_tz) =&gt; convert_to_timestamp(from_tz, to_tz, arr, tu, use_earliest)<span class="question-mark">?</span>,
-                    <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;unable to parse time zone: &#39;{}&#39;&quot;</span>, to),
-                },
-            },
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;unable to parse time zone: &#39;{}&#39;&quot;</span>, from),
-        },
+        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;unable to parse time zone: &#39;{}&#39;&quot;</span>, from),
     })
 }
 </code></pre></div></section></main></body></html>

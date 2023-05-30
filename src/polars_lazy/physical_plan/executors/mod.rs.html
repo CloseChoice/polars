@@ -215,19 +215,6 @@
 <a href="#215" id="215">215</a>
 <a href="#216" id="216">216</a>
 <a href="#217" id="217">217</a>
-<a href="#218" id="218">218</a>
-<a href="#219" id="219">219</a>
-<a href="#220" id="220">220</a>
-<a href="#221" id="221">221</a>
-<a href="#222" id="222">222</a>
-<a href="#223" id="223">223</a>
-<a href="#224" id="224">224</a>
-<a href="#225" id="225">225</a>
-<a href="#226" id="226">226</a>
-<a href="#227" id="227">227</a>
-<a href="#228" id="228">228</a>
-<a href="#229" id="229">229</a>
-<a href="#230" id="230">230</a>
 </pre></div><pre class="rust"><code><span class="kw">mod </span>cache;
 <span class="kw">mod </span>executor;
 <span class="kw">mod </span>ext_context;
@@ -293,9 +280,7 @@
     </span><span class="attr">#[allow(clippy::type_complexity)]
     </span><span class="comment">// String: partition_name,
     // u32: index,
-    // bool: flatten (we must run those first because they need a sorted group tuples.
-    //       if we cache the group tuples we must ensure we cast the sorted ones.
-    </span><span class="kw">let </span><span class="kw-2">mut </span>windows: Vec&lt;(String, Vec&lt;(u32, bool, Arc&lt;<span class="kw">dyn </span>PhysicalExpr&gt;)&gt;)&gt; = <span class="macro">vec!</span>[];
+    </span><span class="kw">let </span><span class="kw-2">mut </span>windows: Vec&lt;(String, Vec&lt;(u32, Arc&lt;<span class="kw">dyn </span>PhysicalExpr&gt;)&gt;)&gt; = <span class="macro">vec!</span>[];
     <span class="kw">let </span><span class="kw-2">mut </span>other = Vec::with_capacity(exprs.len());
 
     <span class="comment">// first we partition the window function by the values they group over.
@@ -307,17 +292,12 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>is_window = <span class="bool-val">false</span>;
         <span class="kw">for </span>e <span class="kw">in </span>e.into_iter() {
-            <span class="kw">if let </span>Expr::Window {
-                partition_by,
-                options,
-                ..
-            } = e
-            {
+            <span class="kw">if let </span>Expr::Window { partition_by, .. } = e {
                 <span class="kw">let </span>groupby = <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, partition_by.as_slice());
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(tpl) = windows.iter_mut().find(|tpl| tpl.<span class="number">0 </span>== groupby) {
-                    tpl.<span class="number">1</span>.push((index, options.explode, phys.clone()))
+                    tpl.<span class="number">1</span>.push((index, phys.clone()))
                 } <span class="kw">else </span>{
-                    windows.push((groupby, <span class="macro">vec!</span>[(index, options.explode, phys.clone())]))
+                    windows.push((groupby, <span class="macro">vec!</span>[(index, phys.clone())]))
                 }
                 is_window = <span class="bool-val">true</span>;
                 <span class="kw">break</span>;
@@ -335,7 +315,7 @@
             .collect::&lt;PolarsResult&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;&gt;()
     })<span class="question-mark">?</span>;
 
-    <span class="kw">for </span><span class="kw-2">mut </span>partition <span class="kw">in </span>windows {
+    <span class="kw">for </span>partition <span class="kw">in </span>windows {
         <span class="comment">// clear the cache for every partitioned group
         </span><span class="kw">let </span><span class="kw-2">mut </span>state = state.split();
         <span class="comment">// inform the expression it has window functions.
@@ -348,13 +328,7 @@
             state.insert_cache_window_flag();
         }
 
-        partition.<span class="number">1</span>.sort_unstable_by_key(|(_idx, explode, <span class="kw">_</span>)| {
-            <span class="comment">// negate as `false` will be first and we want the exploded
-            // e.g. the sorted groups cd to be the first to fill the cache.
-            </span>!explode
-        });
-
-        <span class="kw">for </span>(index, <span class="kw">_</span>, e) <span class="kw">in </span>partition.<span class="number">1 </span>{
+        <span class="kw">for </span>(index, e) <span class="kw">in </span>partition.<span class="number">1 </span>{
             <span class="kw">if </span>e.as_expression()
                 .unwrap()
                 .into_iter()

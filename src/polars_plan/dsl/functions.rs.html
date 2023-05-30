@@ -1455,10 +1455,6 @@
 <a href="#1455" id="1455">1455</a>
 <a href="#1456" id="1456">1456</a>
 <a href="#1457" id="1457">1457</a>
-<a href="#1458" id="1458">1458</a>
-<a href="#1459" id="1459">1459</a>
-<a href="#1460" id="1460">1460</a>
-<a href="#1461" id="1461">1461</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! # Functions
 //!
 //! Functions on expressions that might be useful.
@@ -1810,6 +1806,8 @@
 /// - if `start` and `end` are literals the output will be of `Int64`.
 </span><span class="attr">#[cfg(feature = <span class="string">&quot;arange&quot;</span>)]
 </span><span class="kw">pub fn </span>arange(start: Expr, end: Expr, step: i64) -&gt; Expr {
+    <span class="kw">let </span>output_name = <span class="string">&quot;arange&quot;</span>;
+
     <span class="kw">let </span>has_col_without_agg = |e: <span class="kw-2">&amp;</span>Expr| {
         has_expr(e, |ae| <span class="macro">matches!</span>(ae, Expr::Column(<span class="kw">_</span>)))
             &amp;&amp;
@@ -1893,9 +1891,10 @@
                 } <span class="kw">else </span>{
                     DataType::Int64
                 };
-                Field::new(<span class="string">&quot;arange&quot;</span>, dtype)
+                Field::new(output_name, dtype)
             }),
         )
+        .alias(output_name)
     } <span class="kw">else </span>{
         <span class="kw">let </span>f = <span class="kw">move </span>|sa: Series, sb: Series| {
             <span class="macro">polars_ensure!</span>(step != <span class="number">0</span>, InvalidOperation: <span class="string">&quot;step must not be zero&quot;</span>);
@@ -1920,7 +1919,7 @@
             <span class="kw">let </span>start = sa.i64()<span class="question-mark">?</span>;
             <span class="kw">let </span>end = sb.i64()<span class="question-mark">?</span>;
             <span class="kw">let </span><span class="kw-2">mut </span>builder = ListPrimitiveChunkedBuilder::&lt;Int64Type&gt;::new(
-                <span class="string">&quot;arange&quot;</span>,
+                output_name,
                 start.len(),
                 start.len() * <span class="number">3</span>,
                 DataType::Int64,
@@ -1954,8 +1953,11 @@
             start,
             end,
             f,
-            GetOutput::map_field(|<span class="kw">_</span>| Field::new(<span class="string">&quot;arange&quot;</span>, DataType::List(DataType::Int64.into()))),
+            GetOutput::map_field(|<span class="kw">_</span>| {
+                Field::new(output_name, DataType::List(DataType::Int64.into()))
+            }),
         )
+        .alias(output_name)
     }
 }
 
@@ -2763,13 +2765,17 @@
 /// number of rows.
 </span><span class="kw">pub fn </span>repeat&lt;L: Literal&gt;(value: L, n: Expr) -&gt; Expr {
     <span class="kw">let </span>function = |s: Series, n: Series| {
-        <span class="kw">let </span>n =
-            n.get(<span class="number">0</span>).unwrap().extract::&lt;usize&gt;().ok_or_else(
-                || <span class="macro">polars_err!</span>(ComputeError: <span class="string">&quot;could not extract a size from {:?}&quot;</span>, n),
-            )<span class="question-mark">?</span>;
+        <span class="macro">polars_ensure!</span>(
+            n.dtype().is_integer(),
+            SchemaMismatch: <span class="string">&quot;expected expression of dtype &#39;integer&#39;, got &#39;{}&#39;&quot;</span>, n.dtype()
+        );
+        <span class="kw">let </span>first_value = n.get(<span class="number">0</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>n = first_value.extract::&lt;usize&gt;().ok_or_else(
+            || <span class="macro">polars_err!</span>(ComputeError: <span class="string">&quot;could not parse value &#39;{}&#39; as a size.&quot;</span>, first_value),
+        )<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(s.new_from_index(<span class="number">0</span>, n)))
     };
-    apply_binary(lit(value), n, function, GetOutput::same_type())
+    apply_binary(lit(value), n, function, GetOutput::same_type()).alias(<span class="string">&quot;repeat&quot;</span>)
 }
 
 <span class="attr">#[cfg(feature = <span class="string">&quot;arg_where&quot;</span>)]
@@ -2803,10 +2809,9 @@
     }
 }
 
-<span class="doccomment">/// Create a date range, named `name`, from a `start` and `stop` expression.
+<span class="doccomment">/// Create a date range from a `start` and `stop` expression.
 </span><span class="attr">#[cfg(feature = <span class="string">&quot;temporal&quot;</span>)]
 </span><span class="kw">pub fn </span>date_range(
-    name: String,
     start: Expr,
     end: Expr,
     every: Duration,
@@ -2817,41 +2822,28 @@
 
     Expr::Function {
         input,
-        function: FunctionExpr::TemporalExpr(TemporalFunction::DateRange {
-            name,
-            every,
-            closed,
-            tz,
-        }),
+        function: FunctionExpr::TemporalExpr(TemporalFunction::DateRange { every, closed, tz }),
         options: FunctionOptions {
             collect_groups: ApplyOptions::ApplyGroups,
             cast_to_supertypes: <span class="bool-val">true</span>,
+            allow_rename: <span class="bool-val">true</span>,
             ..Default::default()
         },
     }
 }
 
-<span class="doccomment">/// Create a time range, named `name`, from a `start` and `stop` expression.
+<span class="doccomment">/// Create a time range from a `start` and `stop` expression.
 </span><span class="attr">#[cfg(feature = <span class="string">&quot;temporal&quot;</span>)]
-</span><span class="kw">pub fn </span>time_range(
-    name: String,
-    start: Expr,
-    end: Expr,
-    every: Duration,
-    closed: ClosedWindow,
-) -&gt; Expr {
+</span><span class="kw">pub fn </span>time_range(start: Expr, end: Expr, every: Duration, closed: ClosedWindow) -&gt; Expr {
     <span class="kw">let </span>input = <span class="macro">vec!</span>[start, end];
 
     Expr::Function {
         input,
-        function: FunctionExpr::TemporalExpr(TemporalFunction::TimeRange {
-            name,
-            every,
-            closed,
-        }),
+        function: FunctionExpr::TemporalExpr(TemporalFunction::TimeRange { every, closed }),
         options: FunctionOptions {
             collect_groups: ApplyOptions::ApplyGroups,
             cast_to_supertypes: <span class="bool-val">false</span>,
+            allow_rename: <span class="bool-val">true</span>,
             ..Default::default()
         },
     }

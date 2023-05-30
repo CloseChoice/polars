@@ -1224,17 +1224,17 @@
                             <span class="prelude-val">None
                         </span>}
                     }
-                    FloorDivide =&gt; <span class="prelude-val">None</span>,
                     Modulus =&gt; <span class="macro">eval_binary_same_type!</span>(left_aexpr, %, right_aexpr),
                     Lt =&gt; <span class="macro">eval_binary_bool_type!</span>(left_aexpr, &lt;, right_aexpr),
                     Gt =&gt; <span class="macro">eval_binary_bool_type!</span>(left_aexpr, &gt;, right_aexpr),
-                    Eq =&gt; <span class="macro">eval_binary_bool_type!</span>(left_aexpr, ==, right_aexpr),
-                    NotEq =&gt; <span class="macro">eval_binary_bool_type!</span>(left_aexpr, !=, right_aexpr),
+                    Eq | EqValidity =&gt; <span class="macro">eval_binary_bool_type!</span>(left_aexpr, ==, right_aexpr),
+                    NotEq | NotEqValidity =&gt; <span class="macro">eval_binary_bool_type!</span>(left_aexpr, !=, right_aexpr),
                     GtEq =&gt; <span class="macro">eval_binary_bool_type!</span>(left_aexpr, &gt;=, right_aexpr),
                     LtEq =&gt; <span class="macro">eval_binary_bool_type!</span>(left_aexpr, &lt;=, right_aexpr),
                     And =&gt; eval_bitwise(left_aexpr, right_aexpr, |l, r| l &amp; r),
                     Or =&gt; eval_bitwise(left_aexpr, right_aexpr, |l, r| l | r),
                     Xor =&gt; eval_bitwise(left_aexpr, right_aexpr, |l, r| l ^ r),
+                    FloorDivide =&gt; <span class="prelude-val">None</span>,
                 };
                 <span class="kw">if </span>out.is_some() {
                     <span class="kw">return </span><span class="prelude-val">Ok</span>(out);

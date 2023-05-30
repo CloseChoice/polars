@@ -209,6 +209,10 @@
 <a href="#209" id="209">209</a>
 <a href="#210" id="210">210</a>
 <a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::sync::Arc;
 
 <span class="kw">use </span>polars_arrow::utils::CustomIterTools;
@@ -268,6 +272,7 @@
     ) -&gt; PolarsResult&lt;AggregationContext&lt;<span class="lifetime">&#39;a</span>&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>ac = <span class="self">self</span>.phys_expr.evaluate_on_groups(df, groups, state)<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>idx = <span class="self">self</span>.idx.evaluate_on_groups(df, groups, state)<span class="question-mark">?</span>;
+        <span class="macro">eprintln!</span>(<span class="string">&quot;idx: {:?}&quot;</span>, idx);
 
         <span class="kw">let </span>idx =
             <span class="kw">match </span>idx.state {
@@ -336,7 +341,8 @@
                     <span class="kw">let </span>idx = s.cast(<span class="kw-2">&amp;</span>IDX_DTYPE)<span class="question-mark">?</span>;
                     <span class="kw">let </span>idx = idx.idx().unwrap();
 
-                    <span class="kw">return if </span>idx.len() == <span class="number">1 </span>{
+                    <span class="kw">return if </span>(idx.len() == <span class="number">1</span>) &amp; (s.name() != <span class="string">&quot;&quot;</span>) {
+                        <span class="macro">eprintln!</span>(<span class="string">&quot;idx.len == 1, idx: {:?} and series {:?} and series.name {:?}&quot;</span>, idx, s, s.name());
                         <span class="kw">match </span>idx.get(<span class="number">0</span>) {
                             <span class="prelude-val">None </span>=&gt; <span class="macro">polars_bail!</span>(ComputeError: <span class="string">&quot;cannot take by a null&quot;</span>),
                             <span class="prelude-val">Some</span>(idx) =&gt; {
@@ -372,7 +378,9 @@
                             }
                         }
                     } <span class="kw">else </span>{
-                        <span class="kw">let </span>out = ac
+                        <span class="macro">eprintln!</span>(<span class="string">&quot;idx.len != 1&quot;</span>);
+                        <span class="comment">//eprintln!(&quot;these are the idx: {:?}&quot;, idx);
+                        </span><span class="kw">let </span>out = ac
                             .aggregated()
                             .list()
                             .unwrap()

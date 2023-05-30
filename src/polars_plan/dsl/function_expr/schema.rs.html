@@ -315,6 +315,16 @@
 <a href="#315" id="315">315</a>
 <a href="#316" id="316">316</a>
 <a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
 </pre></div><pre class="rust"><code><span class="kw">use super</span>::<span class="kw-2">*</span>;
 
 <span class="kw">impl </span>FunctionExpr {
@@ -414,18 +424,15 @@
                     </span>Take(<span class="kw">_</span>) =&gt; mapper.with_same_dtype(),
                     <span class="attr">#[cfg(feature = <span class="string">&quot;list_count&quot;</span>)]
                     </span>CountMatch =&gt; mapper.with_dtype(IDX_DTYPE),
-                    Sum =&gt; {
-                        <span class="kw">let </span><span class="kw-2">mut </span>first = fields[<span class="number">0</span>].clone();
-                        <span class="kw">use </span>DataType::<span class="kw-2">*</span>;
-                        <span class="kw">let </span>dt = first.data_type().inner_dtype().cloned().unwrap_or(Unknown);
-
-                        <span class="kw">if </span><span class="macro">matches!</span>(dt, UInt8 | Int8 | Int16 | UInt16) {
-                            first.coerce(Int64);
-                        } <span class="kw">else </span>{
-                            first.coerce(dt);
-                        }
-                        <span class="prelude-val">Ok</span>(first)
-                    }
+                    Sum =&gt; mapper.nested_sum_type(),
+                }
+            }
+            <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-array&quot;</span>)]
+            </span>ArrayExpr(af) =&gt; {
+                <span class="kw">use </span>ArrayFunction::<span class="kw-2">*</span>;
+                <span class="kw">match </span>af {
+                    Min | Max =&gt; mapper.with_same_dtype(),
+                    Sum =&gt; mapper.nested_sum_type(),
                 }
             }
             <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-struct&quot;</span>)]
@@ -630,6 +637,19 @@
                 <span class="macro">polars_bail!</span>(op = <span class="string">&quot;cast-timezone&quot;</span>, got = dt, expected = <span class="string">&quot;Datetime&quot;</span>);
             }
         })
+    }
+
+    <span class="kw">fn </span>nested_sum_type(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; PolarsResult&lt;Field&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>first = <span class="self">self</span>.fields[<span class="number">0</span>].clone();
+        <span class="kw">use </span>DataType::<span class="kw-2">*</span>;
+        <span class="kw">let </span>dt = first.data_type().inner_dtype().cloned().unwrap_or(Unknown);
+
+        <span class="kw">if </span><span class="macro">matches!</span>(dt, UInt8 | Int8 | Int16 | UInt16) {
+            first.coerce(Int64);
+        } <span class="kw">else </span>{
+            first.coerce(dt);
+        }
+        <span class="prelude-val">Ok</span>(first)
     }
 }
 </code></pre></div></section></main></body></html>

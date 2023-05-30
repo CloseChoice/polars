@@ -71,6 +71,22 @@
 <a href="#71" id="71">71</a>
 <a href="#72" id="72">72</a>
 <a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::borrow::Cow;
 
 <span class="kw">use </span>polars_core::prelude::JoinType;
@@ -98,10 +114,6 @@
     </span><span class="kw">pub </span>exact: bool,
     <span class="doccomment">/// use a cache of unique, converted dates to apply the datetime conversion.
     </span><span class="kw">pub </span>cache: bool,
-    <span class="doccomment">/// Parse a timezone aware timestamp
-    </span><span class="kw">pub </span>tz_aware: bool,
-    <span class="doccomment">/// Convert timezone aware to UTC
-    </span><span class="kw">pub </span>utc: bool,
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>StrptimeOptions {
@@ -111,8 +123,6 @@
             strict: <span class="bool-val">true</span>,
             exact: <span class="bool-val">true</span>,
             cache: <span class="bool-val">true</span>,
-            tz_aware: <span class="bool-val">false</span>,
-            utc: <span class="bool-val">false</span>,
         }
     }
 }
@@ -143,5 +153,27 @@
             rows_right: (<span class="prelude-val">None</span>, usize::MAX),
         }
     }
+}
+
+<span class="attr">#[derive(Copy, Clone, Debug, PartialEq, Eq, Default)]
+#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]
+</span><span class="kw">pub struct </span>WindowOptions {
+    <span class="doccomment">/// Explode the aggregated list and just do a hstack instead of a join
+    /// this requires the groups to be sorted to make any sense
+    </span><span class="kw">pub </span>mapping: WindowMapping,
+}
+
+<span class="attr">#[derive(Copy, Clone, Debug, PartialEq, Eq, Default)]
+#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]
+</span><span class="kw">pub enum </span>WindowMapping {
+    <span class="doccomment">/// Map the group values to the position
+    </span><span class="attr">#[default]
+    </span>GroupsToRows,
+    <span class="doccomment">/// Explode the aggregated list and just do a hstack instead of a join
+    /// this requires the groups to be sorted to make any sense
+    </span>Explode,
+    <span class="doccomment">/// Join the groups as &#39;List&lt;group_dtype&gt;&#39; to the row positions.
+    /// warning: this can be memory intensive
+    </span>Join,
 }
 </code></pre></div></section></main></body></html>
