@@ -1,6 +1,0 @@
-﻿polars.Series.arr.contains
-==========================
-
-.. currentmodule:: polars
-
-.. autoaccessormethod:: Series.arr.contains

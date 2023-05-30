@@ -1,6 +1,0 @@
-﻿polars.Expr.arr.to_struct
-=========================
-
-.. currentmodule:: polars
-
-.. autoaccessormethod:: Expr.arr.to_struct

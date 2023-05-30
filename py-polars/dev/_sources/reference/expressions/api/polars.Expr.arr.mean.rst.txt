@@ -1,6 +1,0 @@
-﻿polars.Expr.arr.mean
-====================
-
-.. currentmodule:: polars
-
-.. autoaccessormethod:: Expr.arr.mean

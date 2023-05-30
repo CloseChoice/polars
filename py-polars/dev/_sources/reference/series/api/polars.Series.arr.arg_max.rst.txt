@@ -1,6 +1,0 @@
-﻿polars.Series.arr.arg_max
-=========================
-
-.. currentmodule:: polars
-
-.. autoaccessormethod:: Series.arr.arg_max

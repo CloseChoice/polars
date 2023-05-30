@@ -1,6 +1,0 @@
-﻿polars.Expr.arr.first
-=====================
-
-.. currentmodule:: polars
-
-.. autoaccessormethod:: Expr.arr.first

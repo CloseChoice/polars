@@ -1,6 +1,0 @@
-﻿polars.Expr.arr.diff
-====================
-
-.. currentmodule:: polars
-
-.. autoaccessormethod:: Expr.arr.diff

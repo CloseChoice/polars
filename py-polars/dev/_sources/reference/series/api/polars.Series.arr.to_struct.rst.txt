@@ -1,6 +1,0 @@
-﻿polars.Series.arr.to_struct
-===========================
-
-.. currentmodule:: polars
-
-.. autoaccessormethod:: Series.arr.to_struct

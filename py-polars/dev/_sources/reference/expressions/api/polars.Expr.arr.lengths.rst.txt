@@ -1,6 +1,0 @@
-﻿polars.Expr.arr.lengths
-=======================
-
-.. currentmodule:: polars
-
-.. autoaccessormethod:: Expr.arr.lengths

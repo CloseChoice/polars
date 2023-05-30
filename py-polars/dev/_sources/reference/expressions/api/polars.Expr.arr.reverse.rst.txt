@@ -1,6 +1,0 @@
-﻿polars.Expr.arr.reverse
-=======================
-
-.. currentmodule:: polars
-
-.. autoaccessormethod:: Expr.arr.reverse

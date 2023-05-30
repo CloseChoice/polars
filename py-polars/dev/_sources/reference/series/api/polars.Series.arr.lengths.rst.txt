@@ -1,6 +1,0 @@
-﻿polars.Series.arr.lengths
-=========================
-
-.. currentmodule:: polars
-
-.. autoaccessormethod:: Series.arr.lengths

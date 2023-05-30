@@ -1,6 +1,0 @@
-﻿polars.Expr.arr.eval
-====================
-
-.. currentmodule:: polars
-
-.. autoaccessormethod:: Expr.arr.eval

@@ -1,6 +1,0 @@
-﻿polars.Expr.arr.sort
-====================
-
-.. currentmodule:: polars
-
-.. autoaccessormethod:: Expr.arr.sort
