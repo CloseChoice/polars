@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["keywords"],"struct":["SQLContext"]};
+window.SIDEBAR_ITEMS = {"fn":["sql_expr"],"mod":["keywords"],"struct":["SQLContext"]};

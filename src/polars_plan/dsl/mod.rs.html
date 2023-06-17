@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `polars/polars-lazy/polars-plan/src/dsl/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="polars_plan" data-themes="" data-resource-suffix="" data-rustdoc-version="1.71.0-nightly (a77c55248 2023-05-06)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-6f6ffb5395b17c6e.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../polars_plan/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `polars/polars-lazy/polars-plan/src/dsl/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="polars_plan" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0-nightly (871b59520 2023-05-31)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../polars_plan/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1898,6 +1898,27 @@
 <a href="#1898" id="1898">1898</a>
 <a href="#1899" id="1899">1899</a>
 <a href="#1900" id="1900">1900</a>
+<a href="#1901" id="1901">1901</a>
+<a href="#1902" id="1902">1902</a>
+<a href="#1903" id="1903">1903</a>
+<a href="#1904" id="1904">1904</a>
+<a href="#1905" id="1905">1905</a>
+<a href="#1906" id="1906">1906</a>
+<a href="#1907" id="1907">1907</a>
+<a href="#1908" id="1908">1908</a>
+<a href="#1909" id="1909">1909</a>
+<a href="#1910" id="1910">1910</a>
+<a href="#1911" id="1911">1911</a>
+<a href="#1912" id="1912">1912</a>
+<a href="#1913" id="1913">1913</a>
+<a href="#1914" id="1914">1914</a>
+<a href="#1915" id="1915">1915</a>
+<a href="#1916" id="1916">1916</a>
+<a href="#1917" id="1917">1917</a>
+<a href="#1918" id="1918">1918</a>
+<a href="#1919" id="1919">1919</a>
+<a href="#1920" id="1920">1920</a>
+<a href="#1921" id="1921">1921</a>
 </pre></div><pre class="rust"><code><span class="attr">#![allow(ambiguous_glob_reexports)]
 </span><span class="doccomment">//! Domain specific language for the Lazy API.
 </span><span class="attr">#[cfg(feature = <span class="string">&quot;dtype-categorical&quot;</span>)]
@@ -1912,6 +1933,7 @@
 <span class="attr">#[cfg(feature = <span class="string">&quot;temporal&quot;</span>)]
 </span><span class="kw">pub mod </span>dt;
 <span class="kw">mod </span>expr;
+<span class="kw">mod </span>expr_dyn_fn;
 <span class="kw">mod </span>from;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>function_expr;
 <span class="attr">#[cfg(feature = <span class="string">&quot;compile&quot;</span>)]
@@ -1921,6 +1943,7 @@
 </span><span class="kw">mod </span>meta;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>names;
 <span class="kw">mod </span>options;
+<span class="kw">mod </span>selector;
 <span class="attr">#[cfg(feature = <span class="string">&quot;strings&quot;</span>)]
 </span><span class="kw">pub mod </span>string;
 <span class="attr">#[cfg(feature = <span class="string">&quot;dtype-struct&quot;</span>)]
@@ -1930,10 +1953,14 @@
 <span class="kw">use </span>std::sync::Arc;
 
 <span class="kw">pub use </span>arity::<span class="kw-2">*</span>;
+<span class="attr">#[cfg(feature = <span class="string">&quot;dtype-array&quot;</span>)]
+</span><span class="kw">pub use </span>array::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>expr::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>function_expr::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>functions::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>list::<span class="kw-2">*</span>;
+<span class="attr">#[cfg(feature = <span class="string">&quot;meta&quot;</span>)]
+</span><span class="kw">pub use </span>meta::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>options::<span class="kw-2">*</span>;
 <span class="kw">use </span>polars_arrow::prelude::QuantileInterpolOptions;
 <span class="kw">use </span>polars_core::prelude::<span class="kw-2">*</span>;
@@ -1943,6 +1970,9 @@
 <span class="kw">use </span>polars_core::utils::{try_get_supertype, NoNull};
 <span class="attr">#[cfg(feature = <span class="string">&quot;rolling_window&quot;</span>)]
 </span><span class="kw">use </span>polars_time::series::SeriesOpsTime;
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">use </span>selector::Selector;
+<span class="attr">#[cfg(feature = <span class="string">&quot;dtype-struct&quot;</span>)]
+</span><span class="kw">pub use </span>struct_::<span class="kw-2">*</span>;
 
 <span class="kw">use </span><span class="kw">crate</span>::constants::MAP_LIST_NAME;
 <span class="kw">pub use </span><span class="kw">crate</span>::logical_plan::lit;
@@ -2907,9 +2937,10 @@
         binary_expr(<span class="self">self</span>, Operator::Or, expr.into())
     }
 
-    <span class="doccomment">/// Filter a single column
-    /// Should be used in aggregation context. If you want to filter on a DataFrame level, use
-    /// [LazyFrame::filter](LazyFrame::filter)
+    <span class="doccomment">/// Filter a single column.
+    ///
+    /// Should be used in aggregation context. If you want to filter on a
+    /// DataFrame level, use `LazyFrame::filter`.
     </span><span class="kw">pub fn </span>filter&lt;E: Into&lt;Expr&gt;&gt;(<span class="self">self</span>, predicate: E) -&gt; <span class="self">Self </span>{
         <span class="kw">if </span>has_expr(<span class="kw-2">&amp;</span><span class="self">self</span>, |e| <span class="macro">matches!</span>(e, Expr::Wildcard)) {
             <span class="macro">panic!</span>(<span class="string">&quot;filter &#39;*&#39; not allowed, use LazyFrame::filter&quot;</span>)
@@ -3142,6 +3173,7 @@
                         tu: <span class="prelude-val">Some</span>(tu),
                         tz: tz.as_ref(),
                         closed_window: options.closed_window,
+                        fn_params: options.fn_params.clone(),
                     };
 
                     rolling_fn(s, options).map(<span class="prelude-val">Some</span>)
@@ -3163,8 +3195,9 @@
         }
     }
 
-    <span class="doccomment">/// Apply a rolling min See:
-    /// [ChunkedArray::rolling_min]
+    <span class="doccomment">/// Apply a rolling minimum.
+    ///
+    /// See: [`RollingAgg::rolling_min`]
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;rolling_window&quot;</span>)]
     </span><span class="kw">pub fn </span>rolling_min(<span class="self">self</span>, options: RollingOptions) -&gt; Expr {
         <span class="self">self</span>.finish_rolling(
@@ -3176,8 +3209,9 @@
         )
     }
 
-    <span class="doccomment">/// Apply a rolling max See:
-    /// [ChunkedArray::rolling_max]
+    <span class="doccomment">/// Apply a rolling maximum.
+    ///
+    /// See: [`RollingAgg::rolling_max`]
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;rolling_window&quot;</span>)]
     </span><span class="kw">pub fn </span>rolling_max(<span class="self">self</span>, options: RollingOptions) -&gt; Expr {
         <span class="self">self</span>.finish_rolling(
@@ -3189,8 +3223,9 @@
         )
     }
 
-    <span class="doccomment">/// Apply a rolling mean See:
-    /// [ChunkedArray::rolling_mean]
+    <span class="doccomment">/// Apply a rolling mean.
+    ///
+    /// See: [`RollingAgg::rolling_mean`]
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;rolling_window&quot;</span>)]
     </span><span class="kw">pub fn </span>rolling_mean(<span class="self">self</span>, options: RollingOptions) -&gt; Expr {
         <span class="self">self</span>.finish_rolling(
@@ -3202,8 +3237,9 @@
         )
     }
 
-    <span class="doccomment">/// Apply a rolling sum See:
-    /// [ChunkedArray::rolling_sum]
+    <span class="doccomment">/// Apply a rolling sum.
+    ///
+    /// See: [`RollingAgg::rolling_sum`]
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;rolling_window&quot;</span>)]
     </span><span class="kw">pub fn </span>rolling_sum(<span class="self">self</span>, options: RollingOptions) -&gt; Expr {
         <span class="self">self</span>.finish_rolling(
@@ -3215,8 +3251,9 @@
         )
     }
 
-    <span class="doccomment">/// Apply a rolling median See:
-    /// [`ChunkedArray::rolling_median`]
+    <span class="doccomment">/// Apply a rolling median.
+    ///
+    /// See: [`RollingAgg::rolling_median`]
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;rolling_window&quot;</span>)]
     </span><span class="kw">pub fn </span>rolling_median(<span class="self">self</span>, options: RollingOptions) -&gt; Expr {
         <span class="self">self</span>.finish_rolling(
@@ -3228,8 +3265,9 @@
         )
     }
 
-    <span class="doccomment">/// Apply a rolling quantile See:
-    /// [`ChunkedArray::rolling_quantile`]
+    <span class="doccomment">/// Apply a rolling quantile.
+    ///
+    /// See: [`RollingAgg::rolling_quantile`]
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;rolling_window&quot;</span>)]
     </span><span class="kw">pub fn </span>rolling_quantile(
         <span class="self">self</span>,
@@ -3650,6 +3688,10 @@
         <span class="self">self</span>.map_private(FunctionExpr::Hash(k0, k1, k2, k3))
     }
 
+    <span class="kw">pub fn </span>to_physical(<span class="self">self</span>) -&gt; Expr {
+        <span class="self">self</span>.map_private(FunctionExpr::ToPhysical)
+    }
+
     <span class="attr">#[cfg(feature = <span class="string">&quot;strings&quot;</span>)]
     </span><span class="kw">pub fn </span>str(<span class="self">self</span>) -&gt; string::StringNameSpace {
         string::StringNameSpace(<span class="self">self</span>)
@@ -3668,7 +3710,7 @@
         list::ListNameSpace(<span class="self">self</span>)
     }
 
-    <span class="doccomment">/// Get the [`ArrayNameSpace`]
+    <span class="doccomment">/// Get the [`array::ArrayNameSpace`]
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;dtype-array&quot;</span>)]
     </span><span class="kw">pub fn </span>arr(<span class="self">self</span>) -&gt; array::ArrayNameSpace {
         array::ArrayNameSpace(<span class="self">self</span>)
@@ -3680,13 +3722,13 @@
         cat::CategoricalNameSpace(<span class="self">self</span>)
     }
 
-    <span class="doccomment">/// Get the [`StructNameSpace`]
+    <span class="doccomment">/// Get the [`struct_::StructNameSpace`]
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;dtype-struct&quot;</span>)]
     </span><span class="kw">pub fn </span>struct_(<span class="self">self</span>) -&gt; struct_::StructNameSpace {
         struct_::StructNameSpace(<span class="self">self</span>)
     }
 
-    <span class="doccomment">/// Get the [`MetaNameSpace`]
+    <span class="doccomment">/// Get the [`meta::MetaNameSpace`]
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;meta&quot;</span>)]
     </span><span class="kw">pub fn </span>meta(<span class="self">self</span>) -&gt; meta::MetaNameSpace {
         meta::MetaNameSpace(<span class="self">self</span>)
