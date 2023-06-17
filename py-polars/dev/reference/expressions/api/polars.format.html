@@ -417,6 +417,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.arr.max.html">polars.Series.arr.max</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.arr.min.html">polars.Series.arr.min</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.arr.sum.html">polars.Series.arr.sum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../series/api/polars.Series.arr.unique.html">polars.Series.arr.unique</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../series/attributes.html">Attributes</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -1001,6 +1002,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.arr.max.html">polars.Expr.arr.max</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.arr.min.html">polars.Expr.arr.min</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.arr.sum.html">polars.Expr.arr.sum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polars.Expr.arr.unique.html">polars.Expr.arr.unique</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../binary.html">Binary</a><input class="toctree-checkbox" id="toctree-checkbox-37" name="toctree-checkbox-37" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-37"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -1145,6 +1147,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="polars.std.html">polars.std</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.struct.html">polars.struct</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.sum.html">polars.sum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polars.sql_expr.html">polars.sql_expr</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.tail.html">polars.tail</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.time.html">polars.time</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.var.html">polars.var</a></li>
@@ -1261,10 +1264,12 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.meta.pop.html">polars.Expr.meta.pop</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.meta.root_names.html">polars.Expr.meta.root_names</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.meta.undo_aliases.html">polars.Expr.meta.undo_aliases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polars.Expr.meta.write_json.html">polars.Expr.meta.write_json</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../miscellaneous.html">Miscellaneous</a><input class="toctree-checkbox" id="toctree-checkbox-46" name="toctree-checkbox-46" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-46"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.cache.html">polars.Expr.cache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polars.Expr.from_json.html">polars.Expr.from_json</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.set_sorted.html">polars.Expr.set_sorted</a></li>
 </ul>
 </li>
@@ -1272,11 +1277,13 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.and_.html">polars.Expr.and_</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.or_.html">polars.Expr.or_</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.eq.html">polars.Expr.eq</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polars.Expr.eq_missing.html">polars.Expr.eq_missing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.ge.html">polars.Expr.ge</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.gt.html">polars.Expr.gt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.le.html">polars.Expr.le</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.lt.html">polars.Expr.lt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.ne.html">polars.Expr.ne</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polars.Expr.ne_missing.html">polars.Expr.ne_missing</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.add.html">polars.Expr.add</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.floordiv.html">polars.Expr.floordiv</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Expr.mod.html">polars.Expr.mod</a></li>
@@ -1377,6 +1384,7 @@ document.write(`
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../selectors.html">Selectors</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">Extending the API</a><input class="toctree-checkbox" id="toctree-checkbox-52" name="toctree-checkbox-52" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-52"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/polars.api.register_expr_namespace.html">polars.api.register_expr_namespace</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/polars.api.register_dataframe_namespace.html">polars.api.register_dataframe_namespace</a></li>
@@ -1401,8 +1409,9 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="../../api/polars.zeros.html">polars.zeros</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/polars.align_frames.html">polars.align_frames</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/polars.collect_all.html">polars.collect_all</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/polars.enable_string_cache.html">polars.enable_string_cache</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/polars.StringCache.html">polars.StringCache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/polars.enable_string_cache.html">polars.enable_string_cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/polars.using_string_cache.html">polars.using_string_cache</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../datatypes.html">Data types</a><input class="toctree-checkbox" id="toctree-checkbox-54" name="toctree-checkbox-54" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-54"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -1572,7 +1581,7 @@ document.write(`
 <h1>polars.format<a class="headerlink" href="#polars-format" title="Permalink to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="polars.format">
-<span class="sig-prename descclassname"><span class="pre">polars.</span></span><span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Expr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Expr</span></span></span><a class="reference external" href="https://github.com/pola-rs/polars/blob/main/py-polars/polars/functions/as_datatype.py#L457-L508"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polars.format" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">polars.</span></span><span class="sig-name descname"><span class="pre">format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f_string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Expr</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Expr</span></span></span><a class="reference external" href="https://github.com/pola-rs/polars/blob/main/py-polars/polars/functions/as_datatype.py#L464-L515"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polars.format" title="Permalink to this definition">#</a></dt>
 <dd><p>Format expressions as a string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
