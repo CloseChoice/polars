@@ -554,11 +554,13 @@ document.write(`
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">polars.Series.list.contains</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.list.count_match.html">polars.Series.list.count_match</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.list.diff.html">polars.Series.list.diff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polars.Series.list.difference.html">polars.Series.list.difference</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.list.eval.html">polars.Series.list.eval</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.list.explode.html">polars.Series.list.explode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.list.first.html">polars.Series.list.first</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.list.get.html">polars.Series.list.get</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.list.head.html">polars.Series.list.head</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polars.Series.list.intersection.html">polars.Series.list.intersection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.list.join.html">polars.Series.list.join</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.list.last.html">polars.Series.list.last</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.list.lengths.html">polars.Series.list.lengths</a></li>
@@ -573,6 +575,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.list.tail.html">polars.Series.list.tail</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.list.take.html">polars.Series.list.take</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.list.to_struct.html">polars.Series.list.to_struct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polars.Series.list.union.html">polars.Series.list.union</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.list.unique.html">polars.Series.list.unique</a></li>
 </ul>
 </li>
@@ -670,6 +673,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.str.to_decimal.html">polars.Series.str.to_decimal</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.str.to_lowercase.html">polars.Series.str.to_lowercase</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.str.to_time.html">polars.Series.str.to_time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polars.Series.str.to_titlecase.html">polars.Series.str.to_titlecase</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.str.to_uppercase.html">polars.Series.str.to_uppercase</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.str.zfill.html">polars.Series.str.zfill</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.str.parse_int.html">polars.Series.str.parse_int</a></li>
@@ -684,6 +688,7 @@ document.write(`
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../temporal.html">Temporal</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-17"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="polars.Series.dt.base_utc_offset.html">polars.Series.dt.base_utc_offset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.dt.cast_time_unit.html">polars.Series.dt.cast_time_unit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.dt.replace_time_zone.html">polars.Series.dt.replace_time_zone</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.dt.combine.html">polars.Series.dt.combine</a></li>
@@ -691,6 +696,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.dt.datetime.html">polars.Series.dt.datetime</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.dt.day.html">polars.Series.dt.day</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.dt.days.html">polars.Series.dt.days</a></li>
+<li class="toctree-l3"><a class="reference internal" href="polars.Series.dt.dst_offset.html">polars.Series.dt.dst_offset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.dt.epoch.html">polars.Series.dt.epoch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.dt.hour.html">polars.Series.dt.hour</a></li>
 <li class="toctree-l3"><a class="reference internal" href="polars.Series.dt.hours.html">polars.Series.dt.hours</a></li>
@@ -1062,6 +1068,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.cumprod.html">polars.Expr.cumprod</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.cumsum.html">polars.Expr.cumsum</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.cumulative_eval.html">polars.Expr.cumulative_eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.degrees.html">polars.Expr.degrees</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.diff.html">polars.Expr.diff</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.dot.html">polars.Expr.dot</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.entropy.html">polars.Expr.entropy</a></li>
@@ -1078,6 +1085,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.n_unique.html">polars.Expr.n_unique</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.null_count.html">polars.Expr.null_count</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.pct_change.html">polars.Expr.pct_change</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.radians.html">polars.Expr.radians</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.rank.html">polars.Expr.rank</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.rolling_apply.html">polars.Expr.rolling_apply</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.rolling_max.html">polars.Expr.rolling_max</a></li>
@@ -1182,11 +1190,13 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.contains.html">polars.Expr.list.contains</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.count_match.html">polars.Expr.list.count_match</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.diff.html">polars.Expr.list.diff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.difference.html">polars.Expr.list.difference</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.eval.html">polars.Expr.list.eval</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.explode.html">polars.Expr.list.explode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.first.html">polars.Expr.list.first</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.get.html">polars.Expr.list.get</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.head.html">polars.Expr.list.head</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.intersection.html">polars.Expr.list.intersection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.join.html">polars.Expr.list.join</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.last.html">polars.Expr.list.last</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.lengths.html">polars.Expr.list.lengths</a></li>
@@ -1201,6 +1211,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.tail.html">polars.Expr.list.tail</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.take.html">polars.Expr.list.take</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.to_struct.html">polars.Expr.list.to_struct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.union.html">polars.Expr.list.union</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.list.unique.html">polars.Expr.list.unique</a></li>
 </ul>
 </li>
@@ -1325,6 +1336,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.str.to_datetime.html">polars.Expr.str.to_datetime</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.str.to_decimal.html">polars.Expr.str.to_decimal</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.str.to_lowercase.html">polars.Expr.str.to_lowercase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.str.to_titlecase.html">polars.Expr.str.to_titlecase</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.str.to_time.html">polars.Expr.str.to_time</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.str.to_uppercase.html">polars.Expr.str.to_uppercase</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.str.zfill.html">polars.Expr.str.zfill</a></li>
@@ -1337,6 +1349,7 @@ document.write(`
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../expressions/temporal.html">Temporal</a><input class="toctree-checkbox" id="toctree-checkbox-50" name="toctree-checkbox-50" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-50"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.dt.base_utc_offset.html">polars.Expr.dt.base_utc_offset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.dt.cast_time_unit.html">polars.Expr.dt.cast_time_unit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.dt.replace_time_zone.html">polars.Expr.dt.replace_time_zone</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.dt.combine.html">polars.Expr.dt.combine</a></li>
@@ -1344,6 +1357,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.dt.datetime.html">polars.Expr.dt.datetime</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.dt.day.html">polars.Expr.dt.day</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.dt.days.html">polars.Expr.dt.days</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.dt.dst_offset.html">polars.Expr.dt.dst_offset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.dt.epoch.html">polars.Expr.dt.epoch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.dt.hour.html">polars.Expr.dt.hour</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../expressions/api/polars.Expr.dt.hours.html">polars.Expr.dt.hours</a></li>
