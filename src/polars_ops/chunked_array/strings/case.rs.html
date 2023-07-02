@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `polars/polars-ops/src/chunked_array/strings/case.rs`."><title>case.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="polars_ops" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0-nightly (871b59520 2023-05-31)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../polars_ops/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `polars/polars-ops/src/chunked_array/strings/case.rs`."><title>case.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-f40c346f39d9abc1.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="polars_ops" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0-nightly (04075b320 2023-06-22)" data-search-js="search-95c92dd01058facf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-190c35055d2a8300.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../polars_ops/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -204,6 +204,61 @@
 <a href="#204" id="204">204</a>
 <a href="#205" id="205">205</a>
 <a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
+<a href="#244" id="244">244</a>
+<a href="#245" id="245">245</a>
+<a href="#246" id="246">246</a>
+<a href="#247" id="247">247</a>
+<a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
 </pre></div><pre class="rust"><code><span class="attr">#[cfg(feature = <span class="string">&quot;nightly&quot;</span>)]
 </span><span class="kw">use </span>core::unicode::conversions;
 
@@ -278,64 +333,69 @@
     ca.apply_mut(f)
 }
 
+<span class="attr">#[cfg(feature = <span class="string">&quot;nightly&quot;</span>)]
+</span><span class="kw">fn </span>to_lowercase_helper(s: <span class="kw-2">&amp;</span>str, buf: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;) {
+    convert_while_ascii(s.as_bytes(), u8::to_ascii_lowercase, buf);
+
+    <span class="comment">// Safety: we know this is a valid char boundary since
+    // out.len() is only progressed if ascii bytes are found
+    </span><span class="kw">let </span>rest = <span class="kw">unsafe </span>{ s.get_unchecked(buf.len()..) };
+
+    <span class="comment">// Safety: We have written only valid ASCII to our vec
+    </span><span class="kw">let </span><span class="kw-2">mut </span>s = <span class="kw">unsafe </span>{ String::from_utf8_unchecked(std::mem::take(buf)) };
+
+    <span class="kw">for </span>(i, c) <span class="kw">in </span>rest[..].char_indices() {
+        <span class="kw">if </span>c == <span class="string">&#39;Σ&#39; </span>{
+            <span class="comment">// Σ maps to σ, except at the end of a word where it maps to ς.
+            // This is the only conditional (contextual) but language-independent mapping
+            // in `SpecialCasing.txt`,
+            // so hard-code it rather than have a generic &quot;condition&quot; mechanism.
+            // See https://github.com/rust-lang/rust/issues/26035
+            </span>map_uppercase_sigma(rest, i, <span class="kw-2">&amp;mut </span>s)
+        } <span class="kw">else </span>{
+            <span class="kw">match </span>conversions::to_lower(c) {
+                [a, <span class="string">&#39;\0&#39;</span>, <span class="kw">_</span>] =&gt; s.push(a),
+                [a, b, <span class="string">&#39;\0&#39;</span>] =&gt; {
+                    s.push(a);
+                    s.push(b);
+                }
+                [a, b, c] =&gt; {
+                    s.push(a);
+                    s.push(b);
+                    s.push(c);
+                }
+            }
+        }
+    }
+
+    <span class="kw">fn </span>map_uppercase_sigma(from: <span class="kw-2">&amp;</span>str, i: usize, to: <span class="kw-2">&amp;mut </span>String) {
+        <span class="comment">// See https://www.unicode.org/versions/Unicode7.0.0/ch03.pdf#G33992
+        // for the definition of `Final_Sigma`.
+        </span><span class="macro">debug_assert!</span>(<span class="string">&#39;Σ&#39;</span>.len_utf8() == <span class="number">2</span>);
+        <span class="kw">let </span>is_word_final = case_ignoreable_then_cased(from[..i].chars().rev())
+            &amp;&amp; !case_ignoreable_then_cased(from[i + <span class="number">2</span>..].chars());
+        to.push_str(<span class="kw">if </span>is_word_final { <span class="string">&quot;ς&quot; </span>} <span class="kw">else </span>{ <span class="string">&quot;σ&quot; </span>});
+    }
+
+    <span class="kw">fn </span>case_ignoreable_then_cased&lt;I: Iterator&lt;Item = char&gt;&gt;(iter: I) -&gt; bool {
+        <span class="kw">use </span>core::unicode::{Case_Ignorable, Cased};
+        <span class="attr">#[allow(clippy::skip_while_next)]
+        </span><span class="kw">match </span>iter.skip_while(|<span class="kw-2">&amp;</span>c| Case_Ignorable(c)).next() {
+            <span class="prelude-val">Some</span>(c) =&gt; Cased(c),
+            <span class="prelude-val">None </span>=&gt; <span class="bool-val">false</span>,
+        }
+    }
+    <span class="comment">// put buf back for next iteration
+    </span><span class="kw-2">*</span>buf = s.into_bytes();
+}
+
 <span class="comment">// inlined from std
 </span><span class="attr">#[cfg(feature = <span class="string">&quot;nightly&quot;</span>)]
 </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>to_lowercase&lt;<span class="lifetime">&#39;a</span>&gt;(ca: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Utf8Chunked) -&gt; Utf8Chunked {
     <span class="comment">// amortize allocation
     </span><span class="kw">let </span><span class="kw-2">mut </span>buf = Vec::new();
     <span class="kw">let </span>f = |s: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str| {
-        convert_while_ascii(s.as_bytes(), u8::to_ascii_lowercase, <span class="kw-2">&amp;mut </span>buf);
-
-        <span class="comment">// Safety: we know this is a valid char boundary since
-        // out.len() is only progressed if ascii bytes are found
-        </span><span class="kw">let </span>rest = <span class="kw">unsafe </span>{ s.get_unchecked(buf.len()..) };
-
-        <span class="comment">// Safety: We have written only valid ASCII to our vec
-        </span><span class="kw">let </span><span class="kw-2">mut </span>s = <span class="kw">unsafe </span>{ String::from_utf8_unchecked(std::mem::take(<span class="kw-2">&amp;mut </span>buf)) };
-
-        <span class="kw">for </span>(i, c) <span class="kw">in </span>rest[..].char_indices() {
-            <span class="kw">if </span>c == <span class="string">&#39;Σ&#39; </span>{
-                <span class="comment">// Σ maps to σ, except at the end of a word where it maps to ς.
-                // This is the only conditional (contextual) but language-independent mapping
-                // in `SpecialCasing.txt`,
-                // so hard-code it rather than have a generic &quot;condition&quot; mechanism.
-                // See https://github.com/rust-lang/rust/issues/26035
-                </span>map_uppercase_sigma(rest, i, <span class="kw-2">&amp;mut </span>s)
-            } <span class="kw">else </span>{
-                <span class="kw">match </span>conversions::to_lower(c) {
-                    [a, <span class="string">&#39;\0&#39;</span>, <span class="kw">_</span>] =&gt; s.push(a),
-                    [a, b, <span class="string">&#39;\0&#39;</span>] =&gt; {
-                        s.push(a);
-                        s.push(b);
-                    }
-                    [a, b, c] =&gt; {
-                        s.push(a);
-                        s.push(b);
-                        s.push(c);
-                    }
-                }
-            }
-        }
-
-        <span class="kw">fn </span>map_uppercase_sigma(from: <span class="kw-2">&amp;</span>str, i: usize, to: <span class="kw-2">&amp;mut </span>String) {
-            <span class="comment">// See https://www.unicode.org/versions/Unicode7.0.0/ch03.pdf#G33992
-            // for the definition of `Final_Sigma`.
-            </span><span class="macro">debug_assert!</span>(<span class="string">&#39;Σ&#39;</span>.len_utf8() == <span class="number">2</span>);
-            <span class="kw">let </span>is_word_final = case_ignoreable_then_cased(from[..i].chars().rev())
-                &amp;&amp; !case_ignoreable_then_cased(from[i + <span class="number">2</span>..].chars());
-            to.push_str(<span class="kw">if </span>is_word_final { <span class="string">&quot;ς&quot; </span>} <span class="kw">else </span>{ <span class="string">&quot;σ&quot; </span>});
-        }
-
-        <span class="kw">fn </span>case_ignoreable_then_cased&lt;I: Iterator&lt;Item = char&gt;&gt;(iter: I) -&gt; bool {
-            <span class="kw">use </span>core::unicode::{Case_Ignorable, Cased};
-            <span class="attr">#[allow(clippy::skip_while_next)]
-            </span><span class="kw">match </span>iter.skip_while(|<span class="kw-2">&amp;</span>c| Case_Ignorable(c)).next() {
-                <span class="prelude-val">Some</span>(c) =&gt; Cased(c),
-                <span class="prelude-val">None </span>=&gt; <span class="bool-val">false</span>,
-            }
-        }
-        <span class="comment">// put buf back for next iteration
-        </span>buf = s.into_bytes();
+        to_lowercase_helper(s, <span class="kw-2">&amp;mut </span>buf);
 
         <span class="comment">// extend lifetime
         // lifetime is bound to &#39;a
@@ -370,6 +430,23 @@
     ca.apply_mut(f)
 }
 
+<span class="attr">#[inline]
+#[cfg(feature = <span class="string">&quot;nightly&quot;</span>)]
+</span><span class="kw">fn </span>push_char_to_upper(c: char, s: <span class="kw-2">&amp;mut </span>String) {
+    <span class="kw">match </span>conversions::to_upper(c) {
+        [a, <span class="string">&#39;\0&#39;</span>, <span class="kw">_</span>] =&gt; s.push(a),
+        [a, b, <span class="string">&#39;\0&#39;</span>] =&gt; {
+            s.push(a);
+            s.push(b);
+        }
+        [a, b, c] =&gt; {
+            s.push(a);
+            s.push(b);
+            s.push(c);
+        }
+    }
+}
+
 <span class="comment">// inlined from std
 </span><span class="attr">#[cfg(feature = <span class="string">&quot;nightly&quot;</span>)]
 </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>to_uppercase&lt;<span class="lifetime">&#39;a</span>&gt;(ca: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Utf8Chunked) -&gt; Utf8Chunked {
@@ -386,17 +463,50 @@
         </span><span class="kw">let </span><span class="kw-2">mut </span>s = <span class="kw">unsafe </span>{ String::from_utf8_unchecked(std::mem::take(<span class="kw-2">&amp;mut </span>buf)) };
 
         <span class="kw">for </span>c <span class="kw">in </span>rest.chars() {
-            <span class="kw">match </span>conversions::to_upper(c) {
-                [a, <span class="string">&#39;\0&#39;</span>, <span class="kw">_</span>] =&gt; s.push(a),
-                [a, b, <span class="string">&#39;\0&#39;</span>] =&gt; {
-                    s.push(a);
-                    s.push(b);
-                }
-                [a, b, c] =&gt; {
-                    s.push(a);
-                    s.push(b);
-                    s.push(c);
-                }
+            push_char_to_upper(c, <span class="kw-2">&amp;mut </span>s);
+        }
+
+        <span class="comment">// put buf back for next iteration
+        </span>buf = s.into_bytes();
+
+        <span class="comment">// extend lifetime
+        // lifetime is bound to &#39;a
+        </span><span class="kw">let </span>slice = <span class="kw">unsafe </span>{ std::str::from_utf8_unchecked(<span class="kw-2">&amp;</span>buf) };
+        <span class="kw">unsafe </span>{ std::mem::transmute::&lt;<span class="kw-2">&amp;</span>str, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str&gt;(slice) }
+    };
+    ca.apply_mut(f)
+}
+
+<span class="attr">#[cfg(feature = <span class="string">&quot;nightly&quot;</span>)]
+</span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>to_titlecase&lt;<span class="lifetime">&#39;a</span>&gt;(ca: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Utf8Chunked) -&gt; Utf8Chunked {
+    <span class="comment">// amortize allocation
+    </span><span class="kw">let </span><span class="kw-2">mut </span>buf = Vec::new();
+
+    <span class="comment">// temporary scratch
+    // we have a double copy as we first convert to lowercase
+    // and then copy to `buf`
+    </span><span class="kw">let </span><span class="kw-2">mut </span>scratch = Vec::new();
+    <span class="kw">let </span>f = |s: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>str| {
+        <span class="kw">unsafe </span>{
+            buf.set_len(<span class="number">0</span>);
+        }
+        <span class="comment">// this helper sets scratch len to 0
+        </span>to_lowercase_helper(s, <span class="kw-2">&amp;mut </span>scratch);
+
+        <span class="kw">let </span><span class="kw-2">mut </span>next_is_upper = <span class="bool-val">true</span>;
+
+        <span class="kw">let </span>lowercased = <span class="kw">unsafe </span>{ std::str::from_utf8_unchecked(<span class="kw-2">&amp;</span>scratch) };
+
+        <span class="kw">let </span><span class="kw-2">mut </span>s = <span class="kw">unsafe </span>{ String::from_utf8_unchecked(std::mem::take(<span class="kw-2">&amp;mut </span>buf)) };
+
+        <span class="kw">for </span>c <span class="kw">in </span>lowercased.chars() {
+            <span class="kw">let </span>is_whitespace = c.is_whitespace();
+            <span class="kw">if </span>is_whitespace || !next_is_upper {
+                next_is_upper = is_whitespace;
+                s.push(c);
+            } <span class="kw">else </span>{
+                next_is_upper = <span class="bool-val">false</span>;
+                push_char_to_upper(c, <span class="kw-2">&amp;mut </span>s);
             }
         }
 

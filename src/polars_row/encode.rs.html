@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `polars/polars-row/src/encode.rs`."><title>encode.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f3501f0f5ae15dfb.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="polars_row" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0-nightly (871b59520 2023-05-31)" data-search-js="search-4926e5fc22a5646a.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-f0540c1d82cde29b.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../polars_row/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `polars/polars-row/src/encode.rs`."><title>encode.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-f40c346f39d9abc1.css" id="mainThemeStyle"><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="polars_row" data-themes="" data-resource-suffix="" data-rustdoc-version="1.72.0-nightly (04075b320 2023-06-22)" data-search-js="search-95c92dd01058facf.js" data-settings-js="settings-de11bff964e9d4e5.js" data-settings-css="settings-8c76f75bfb6bd192.css" data-theme-light-css="light-0f8c037637f9eb3e.css" data-theme-dark-css="dark-1097f8e92a01e3cf.css" data-theme-ayu-css="ayu-614652228113ac93.css" ></div><script src="../../static.files/storage-62ce34ea385b278a.js"></script><script defer src="../../static.files/source-script-11255107d0a65077.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-190c35055d2a8300.js"></script><noscript><link rel="stylesheet" media="(prefers-color-scheme:light)" href="../../static.files/light-0f8c037637f9eb3e.css"><link rel="stylesheet" media="(prefers-color-scheme:dark)" href="../../static.files/dark-1097f8e92a01e3cf.css"><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../polars_row/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -319,12 +319,57 @@
 <a href="#319" id="319">319</a>
 <a href="#320" id="320">320</a>
 <a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>arrow::array::{
     Array, BinaryArray, BooleanArray, DictionaryArray, PrimitiveArray, StructArray, Utf8Array,
 };
 <span class="kw">use </span>arrow::compute::cast::cast;
 <span class="kw">use </span>arrow::datatypes::{DataType <span class="kw">as </span>ArrowDataType, DataType};
 <span class="kw">use </span>arrow::types::NativeType;
+<span class="kw">use </span>polars_utils::vec::PushUnchecked;
 
 <span class="kw">use </span><span class="kw">crate</span>::fixed::FixedLengthEncoding;
 <span class="kw">use </span><span class="kw">crate</span>::row::{RowsEncoded, SortField};
@@ -385,19 +430,24 @@
                 }
             }
         }
-        allocate_rows_buf(<span class="kw-2">&amp;</span>flattened_columns, <span class="kw-2">&amp;mut </span>rows.values, <span class="kw-2">&amp;mut </span>rows.offsets);
+        <span class="kw">let </span>values_size =
+            allocate_rows_buf(<span class="kw-2">&amp;</span>flattened_columns, <span class="kw-2">&amp;mut </span>rows.values, <span class="kw-2">&amp;mut </span>rows.offsets);
         <span class="kw">for </span>(arr, field) <span class="kw">in </span>flattened_columns.iter().zip(flattened_fields.iter()) {
             <span class="comment">// Safety:
             // we allocated rows with enough bytes.
             </span><span class="kw">unsafe </span>{ encode_array(<span class="kw-2">&amp;**</span>arr, field, rows) }
         }
+        <span class="comment">// safety: values are initialized
+        </span><span class="kw">unsafe </span>{ rows.values.set_len(values_size) }
     } <span class="kw">else </span>{
-        allocate_rows_buf(columns, <span class="kw-2">&amp;mut </span>rows.values, <span class="kw-2">&amp;mut </span>rows.offsets);
+        <span class="kw">let </span>values_size = allocate_rows_buf(columns, <span class="kw-2">&amp;mut </span>rows.values, <span class="kw-2">&amp;mut </span>rows.offsets);
         <span class="kw">for </span>(arr, field) <span class="kw">in </span>columns.iter().zip(fields) {
             <span class="comment">// Safety:
             // we allocated rows with enough bytes.
             </span><span class="kw">unsafe </span>{ encode_array(<span class="kw-2">&amp;**</span>arr, field, rows) }
         }
+        <span class="comment">// safety: values are initialized
+        </span><span class="kw">unsafe </span>{ rows.values.set_len(values_size) }
     }
 }
 
@@ -407,9 +457,11 @@
     out: <span class="kw-2">&amp;mut </span>RowsEncoded,
 ) {
     <span class="kw">if </span>arr.null_count() == <span class="number">0 </span>{
-        <span class="kw">crate</span>::fixed::encode_slice(arr.values().as_slice(), out, field);
+        <span class="kw">unsafe </span>{ <span class="kw">crate</span>::fixed::encode_slice(arr.values().as_slice(), out, field) };
     } <span class="kw">else </span>{
-        <span class="kw">crate</span>::fixed::encode_iter(arr.into_iter().map(|v| v.copied()), out, field);
+        <span class="kw">unsafe </span>{
+            <span class="kw">crate</span>::fixed::encode_iter(arr.into_iter().map(|v| v.copied()), out, field);
+        }
     }
 }
 
@@ -468,7 +520,13 @@
     }
 }
 
-<span class="kw">pub fn </span>allocate_rows_buf(columns: <span class="kw-2">&amp;</span>[ArrayRef], values: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;, offsets: <span class="kw-2">&amp;mut </span>Vec&lt;usize&gt;) {
+<span class="comment">// Returns the length that the caller must set on the `values` buf  once the bytes
+// are initialized.
+</span><span class="kw">pub fn </span>allocate_rows_buf(
+    columns: <span class="kw-2">&amp;</span>[ArrayRef],
+    values: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;,
+    offsets: <span class="kw-2">&amp;mut </span>Vec&lt;usize&gt;,
+) -&gt; usize {
     <span class="kw">let </span>has_variable = columns.iter().any(|arr| {
         <span class="macro">matches!</span>(
             arr.data_type(),
@@ -496,19 +554,30 @@
 
         offsets.clear();
         offsets.reserve(num_rows + <span class="number">1</span>);
-        offsets.resize(num_rows, row_size_fixed);
 
         <span class="comment">// first write lengths to this buffer
         </span><span class="kw">let </span>lengths = offsets;
 
         <span class="comment">// for the variable length columns we must iterate to determine the length per row location
-        </span><span class="kw">for </span>array <span class="kw">in </span>columns.iter() {
+        </span><span class="kw">let </span><span class="kw-2">mut </span>processed_count = <span class="number">0</span>;
+        <span class="kw">for </span>array <span class="kw">in </span>columns.iter() {
             <span class="kw">match </span>array.data_type() {
                 ArrowDataType::LargeBinary =&gt; {
                     <span class="kw">let </span>array = array.as_any().downcast_ref::&lt;BinaryArray&lt;i64&gt;&gt;().unwrap();
-                    <span class="kw">for </span>(opt_val, row_length) <span class="kw">in </span>array.into_iter().zip(lengths.iter_mut()) {
-                        <span class="kw-2">*</span>row_length += <span class="kw">crate</span>::variable::encoded_len(opt_val)
+                    <span class="kw">if </span>processed_count == <span class="number">0 </span>{
+                        <span class="kw">for </span>opt_val <span class="kw">in </span>array.into_iter() {
+                            <span class="kw">unsafe </span>{
+                                lengths.push_unchecked(
+                                    row_size_fixed + <span class="kw">crate</span>::variable::encoded_len(opt_val),
+                                );
+                            }
+                        }
+                    } <span class="kw">else </span>{
+                        <span class="kw">for </span>(opt_val, row_length) <span class="kw">in </span>array.into_iter().zip(lengths.iter_mut()) {
+                            <span class="kw-2">*</span>row_length += <span class="kw">crate</span>::variable::encoded_len(opt_val)
+                        }
                     }
+                    processed_count += <span class="number">1</span>;
                 }
                 ArrowDataType::Dictionary(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; {
                     <span class="kw">let </span>array = array
@@ -519,9 +588,20 @@
                         .iter_typed::&lt;Utf8Array&lt;i64&gt;&gt;()
                         .unwrap()
                         .map(|opt_s| opt_s.map(|s| s.as_bytes()));
-                    <span class="kw">for </span>(opt_val, row_length) <span class="kw">in </span>iter.zip(lengths.iter_mut()) {
-                        <span class="kw-2">*</span>row_length += <span class="kw">crate</span>::variable::encoded_len(opt_val)
+                    <span class="kw">if </span>processed_count == <span class="number">0 </span>{
+                        <span class="kw">for </span>opt_val <span class="kw">in </span>iter {
+                            <span class="kw">unsafe </span>{
+                                lengths.push_unchecked(
+                                    row_size_fixed + <span class="kw">crate</span>::variable::encoded_len(opt_val),
+                                )
+                            }
+                        }
+                    } <span class="kw">else </span>{
+                        <span class="kw">for </span>(opt_val, row_length) <span class="kw">in </span>iter.zip(lengths.iter_mut()) {
+                            <span class="kw-2">*</span>row_length += <span class="kw">crate</span>::variable::encoded_len(opt_val)
+                        }
                     }
+                    processed_count += <span class="number">1</span>;
                 }
                 <span class="kw">_ </span>=&gt; {
                     <span class="comment">// the rest is fixed
@@ -544,23 +624,17 @@
         <span class="comment">// ensure we have len + 1 offsets
         </span>offsets.push(lagged_offset);
 
-        values.clear();
-        <span class="comment">// todo! allocate uninit
-        </span>values.resize(current_offset, <span class="number">0u8</span>);
+        <span class="comment">// Only reserve. The init will be done later
+        </span>values.reserve(current_offset);
+        current_offset
     } <span class="kw">else </span>{
         <span class="kw">let </span>row_size: usize = columns
             .iter()
             .map(|arr| encoded_size(arr.data_type()))
             .sum();
         <span class="kw">let </span>n_bytes = num_rows * row_size;
-        <span class="comment">// todo! allocate uninit
-        </span><span class="kw">if </span>values.capacity() == <span class="number">0 </span>{
-            <span class="comment">// it is faster to allocate zeroed
-            // so if the capacity is 0, we alloc
-            </span><span class="kw-2">*</span>values = <span class="macro">vec!</span>[<span class="number">0u8</span>; n_bytes]
-        } <span class="kw">else </span>{
-            values.resize(n_bytes, <span class="number">0u8</span>);
-        }
+        values.clear();
+        values.reserve(n_bytes);
 
         <span class="comment">// note that offsets are shifted to the left
         // assume 2 fields with a len of 1
@@ -582,15 +656,29 @@
             offsets.push(current_offset);
             current_offset += row_size;
         }
+        n_bytes
     }
 }
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>test {
-    <span class="kw">use </span>arrow::array::Utf8Array;
+    <span class="kw">use </span>arrow::array::{Int32Array, Utf8Array};
 
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::variable::{BLOCK_SIZE, EMPTY_SENTINEL, NON_EMPTY_SENTINEL};
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>test_fixed_and_variable_encode() {
+        <span class="kw">let </span>a = Int32Array::from_vec(<span class="macro">vec!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]);
+        <span class="kw">let </span>b = Int32Array::from_vec(<span class="macro">vec!</span>[<span class="number">213</span>, <span class="number">12</span>, <span class="number">12</span>]);
+        <span class="kw">let </span>c = Utf8Array::&lt;i64&gt;::from_iter([<span class="prelude-val">Some</span>(<span class="string">&quot;a&quot;</span>), <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>), <span class="prelude-val">Some</span>(<span class="string">&quot;meep&quot;</span>)]);
+
+        <span class="kw">let </span>encoded = convert_columns_no_order(<span class="kw-2">&amp;</span>[Box::new(a), Box::new(b), Box::new(c)]);
+        <span class="macro">assert_eq!</span>(encoded.offsets, <span class="kw-2">&amp;</span>[<span class="number">0</span>, <span class="number">44</span>, <span class="number">55</span>, <span class="number">99</span>,]);
+        <span class="macro">assert_eq!</span>(encoded.values.len(), <span class="number">99</span>);
+        <span class="macro">assert!</span>(encoded.values.ends_with(<span class="kw-2">&amp;</span>[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">4</span>]));
+        <span class="macro">assert!</span>(encoded.values.starts_with(<span class="kw-2">&amp;</span>[<span class="number">1</span>, <span class="number">128</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">128</span>]));
+    }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_str_encode() {
